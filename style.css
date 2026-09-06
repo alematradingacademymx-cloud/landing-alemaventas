@@ -1,7 +1,6 @@
 :root {
     --fondo-principal: #0b0e14;
     --fondo-tarjeta: #131722;
-    --fondo-tarjeta-hover: #1c2130;
     --texto-principal: #e0e6ed;
     --texto-secundario: #848e9c;
     --dorado-acento: #d4af37;
@@ -91,6 +90,25 @@ body {
     transform: translateY(-3px);
 }
 
+/* ESTILOS DE LAS IMÁGENES */
+.imagen-cuadro {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid var(--borde-tarjeta);
+}
+
+.imagen-cuadro-horizontal {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 25px;
+    border: 1px solid var(--borde-tarjeta);
+}
+
 .insignia {
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -163,7 +181,7 @@ body {
     color: var(--fondo-principal);
 }
 
-/* ESTILOS PROGRAMA ACADÉMICO */
+/* PROGRAMA ACADÉMICO */
 .tarjeta-horizontal {
     background-color: var(--fondo-tarjeta);
     border: 1px solid var(--borde-tarjeta);
