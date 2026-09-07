@@ -4,10 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ALEMA Trading Academy - Cursos y Material Educativo</title>
+    <link rel="icon" type="image/png" href="images/alema_iso.png.png">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== MODAL DE SELECCIÓN DE PAGO ===== */
+        .modal-pago-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(6, 10, 20, 0.75);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-pago-overlay.activo {
+            display: flex;
+        }
+        .modal-pago-caja {
+            background: #101827;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            max-width: 420px;
+            width: 100%;
+            padding: 28px 26px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+        }
+        .modal-pago-cerrar {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #94A3B8;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-pago-cerrar:hover {
+            color: #F1F5F9;
+        }
+        .modal-pago-titulo {
+            color: #F1F5F9;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 0 6px;
+        }
+        .modal-pago-producto {
+            color: #FF6B00;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 0 0 22px;
+        }
+        .modal-pago-opcion {
+            display: block;
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        .modal-pago-opcion:hover {
+            transform: translateY(-1px);
+            opacity: 0.92;
+        }
+        .modal-pago-hotmart {
+            background: #FF6B00;
+            color: #FFFFFF;
+        }
+        .modal-pago-transferencia {
+            background: #25D366;
+            color: #FFFFFF;
+        }
+        .modal-pago-nota {
+            color: #64748B;
+            font-size: 0.78rem;
+            margin-top: 4px;
+        }
+    </style>
 </head>
 <body>
 
@@ -47,7 +132,7 @@
                             <del class="precio-anterior">$650 MXN</del>
                             <span class="precio">$489 MXN</span>
                         </div>
-                        <a href="https://pay.hotmart.com/E98336307S?checkoutMode=10" class="boton-primario" target="_blank" rel="noopener">Adquirir Paquete</a>
+                        <a href="https://pay.hotmart.com/E98336307S?checkoutMode=10" class="boton-primario" onclick="return abrirModalPago(this.href, 'Paquete Guías Élite');">Adquirir Paquete</a>
                     </div>
                 </article>
 
@@ -69,7 +154,7 @@
                             <del class="precio-anterior">$550 MXN</del>
                             <span class="precio">$349 MXN</span>
                         </div>
-                        <a href="https://pay.hotmart.com/R98335967W?checkoutMode=10" class="boton-primario" target="_blank" rel="noopener">Adquirir Kit</a>
+                        <a href="https://pay.hotmart.com/R98335967W?checkoutMode=10" class="boton-primario" onclick="return abrirModalPago(this.href, 'Starter Kit ALEMA');">Adquirir Kit</a>
                     </div>
                 </article>
 
@@ -118,7 +203,7 @@
                         <span class="etiqueta-precio">Inversión del Programa</span>
                         <span class="precio-grande">$1,890 MXN / Mes</span>
                     </div>
-                    <a href="https://pay.hotmart.com/O98336154Y?checkoutMode=10" class="boton-primario" target="_blank" rel="noopener">Inscribirme al Programa</a>
+                    <a href="https://pay.hotmart.com/O98336154Y?checkoutMode=10" class="boton-primario" onclick="return abrirModalPago(this.href, 'Programa Académico Especializado');">Inscribirme al Programa</a>
                 </div>
             </article>
         </section>
@@ -144,7 +229,7 @@
                         <img src="images/suscripcion-herramientas.jpg" alt="Membresía Herramientas" class="imagen-cuadro" style="height: 160px; margin-bottom: 15px;">
                         <span class="etiqueta-precio">Cuota Mensual</span>
                         <span class="precio-pantalla">$150 MXN / mes</span>
-                        <a href="https://pay.hotmart.com/V98335817E?checkoutMode=10" class="boton-dorado" target="_blank" rel="noopener">Suscribirme Ahora</a>
+                        <a href="https://pay.hotmart.com/V98335817E?checkoutMode=10" class="boton-dorado" onclick="return abrirModalPago(this.href, 'Membresía Mensual');">Suscribirme Ahora</a>
                     </div>
                 </div>
             </div>
@@ -168,6 +253,53 @@
             <p>&copy; ALEMA Trading Academy. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <!-- ===== MODAL DE SELECCIÓN DE MÉTODO DE PAGO ===== -->
+    <div class="modal-pago-overlay" id="modal-pago-overlay" onclick="if(event.target===this) cerrarModalPago();">
+        <div class="modal-pago-caja">
+            <button class="modal-pago-cerrar" onclick="cerrarModalPago()" aria-label="Cerrar">&times;</button>
+            <p class="modal-pago-titulo">¿Cómo deseas realizar tu pago?</p>
+            <p class="modal-pago-producto" id="modal-pago-nombre-producto"></p>
+
+            <button class="modal-pago-opcion modal-pago-hotmart" onclick="pagarConHotmart()">
+                💳 Pago Directo (Hotmart)
+            </button>
+            <button class="modal-pago-opcion modal-pago-transferencia" onclick="pagarPorTransferencia()">
+                🏦 Pago por Transferencia
+            </button>
+            <p class="modal-pago-nota">La transferencia te conecta directo con nuestro equipo de ventas por WhatsApp.</p>
+        </div>
+    </div>
+
+    <script>
+        const WHATSAPP_VENTAS = "528136462129";
+        let linkHotmartActual = "";
+        let nombreProductoActual = "";
+
+        function abrirModalPago(linkHotmart, nombreProducto) {
+            linkHotmartActual = linkHotmart;
+            nombreProductoActual = nombreProducto;
+            document.getElementById('modal-pago-nombre-producto').textContent = nombreProducto;
+            document.getElementById('modal-pago-overlay').classList.add('activo');
+            return false; // Evita que el <a> navegue directo
+        }
+
+        function cerrarModalPago() {
+            document.getElementById('modal-pago-overlay').classList.remove('activo');
+        }
+
+        function pagarConHotmart() {
+            window.open(linkHotmartActual, '_blank', 'noopener');
+            cerrarModalPago();
+        }
+
+        function pagarPorTransferencia() {
+            const mensaje = `¡Hola! 👋 Me interesa realizar el pago por transferencia para: ${nombreProductoActual}. ¿Podrían compartirme los datos bancarios, por favor?`;
+            const url = `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, '_blank', 'noopener');
+            cerrarModalPago();
+        }
+    </script>
 
 </body>
 </html>
