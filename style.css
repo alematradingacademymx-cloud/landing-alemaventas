@@ -45,7 +45,7 @@ body {
 .logo {
     font-size: 2.2rem;
     letter-spacing: 3px;
-    color: var(--dorado-acento);
+    color: #FF6B00;
     font-weight: 700;
 }
 
@@ -109,11 +109,11 @@ body {
     border: 1px solid var(--borde-tarjeta);
 }
 
-/* Ajustado para mostrar la imagen del Programa Académico completa */
+/* CORRECCIÓN DE RENDERIZADO PARA PROGRAMA ACADÉMICO */
 .imagen-cuadro-horizontal {
     width: 100%;
     height: auto;
-    max-height: 450px;
+    max-height: none;
     object-fit: contain;
     border-radius: 4px;
     margin-bottom: 25px;
@@ -162,8 +162,19 @@ body {
     color: var(--dorado-acento);
 }
 
+/* PRECIOS Y PRECIO TACHADO */
 .precio-contenedor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 20px;
+}
+
+.precio-anterior {
+    font-size: 1.1rem;
+    color: var(--texto-secundario);
+    text-decoration: line-through;
+    opacity: 0.7;
 }
 
 .precio {
@@ -332,13 +343,20 @@ body {
     border-top: 1px solid var(--borde-tarjeta);
 }
 
-/* RESPONSIVO */
+/* REGLAS RESPONSIVAS */
+@media (min-width: 769px) {
+    .imagen-cuadro-horizontal {
+        max-height: 500px;
+        object-position: center;
+    }
+}
+
 @media (max-width: 768px) {
     .imagen-cuadro {
         height: 220px;
     }
     .imagen-cuadro-horizontal {
-        max-height: 280px;
+        max-height: 100%;
     }
     .precio-contenedor-horizontal, .cuadro-becas {
         flex-direction: column;
