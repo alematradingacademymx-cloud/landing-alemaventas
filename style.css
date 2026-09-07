@@ -109,11 +109,11 @@ body {
     border: 1px solid var(--borde-tarjeta);
 }
 
-/* Ajustado para mostrar la imagen del Programa Académico completa */
+/* CORRECCIÓN DE RENDERIZADO PARA PROGRAMA ACADÉMICO */
 .imagen-cuadro-horizontal {
     width: 100%;
     height: auto;
-    max-height: 450px;
+    max-height: none;
     object-fit: contain;
     border-radius: 4px;
     margin-bottom: 25px;
@@ -332,13 +332,20 @@ body {
     border-top: 1px solid var(--borde-tarjeta);
 }
 
-/* RESPONSIVO */
+/* REGLAS RESPONSIVAS */
+@media (min-width: 769px) {
+    .imagen-cuadro-horizontal {
+        max-height: 500px;
+        object-position: center;
+    }
+}
+
 @media (max-width: 768px) {
     .imagen-cuadro {
         height: 220px;
     }
     .imagen-cuadro-horizontal {
-        max-height: 280px;
+        max-height: 100%;
     }
     .precio-contenedor-horizontal, .cuadro-becas {
         flex-direction: column;
