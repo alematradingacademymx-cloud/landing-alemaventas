@@ -34,6 +34,14 @@ body {
     border-bottom: 1px solid var(--borde-tarjeta);
 }
 
+/* LOGO PROPORCIONADO */
+.logo-imagen {
+    max-width: 80px;
+    height: auto;
+    display: block;
+    margin: 0 auto 15px auto;
+}
+
 .logo {
     font-size: 2.2rem;
     letter-spacing: 3px;
@@ -90,11 +98,12 @@ body {
     transform: translateY(-3px);
 }
 
-/* ESTILOS DE LAS IMÁGENES */
+/* ESTILOS Y PROPORCIONES DE LAS IMÁGENES */
 .imagen-cuadro {
     width: 100%;
-    height: 190px;
+    height: 280px;
     object-fit: cover;
+    object-position: center;
     border-radius: 4px;
     margin-bottom: 20px;
     border: 1px solid var(--borde-tarjeta);
@@ -102,8 +111,9 @@ body {
 
 .imagen-cuadro-horizontal {
     width: 100%;
-    height: 240px;
+    max-height: 250px;
     object-fit: cover;
+    object-position: center;
     border-radius: 4px;
     margin-bottom: 25px;
     border: 1px solid var(--borde-tarjeta);
@@ -320,7 +330,14 @@ body {
     border-top: 1px solid var(--borde-tarjeta);
 }
 
+/* RESPONSIVO */
 @media (max-width: 768px) {
+    .imagen-cuadro {
+        height: 220px;
+    }
+    .imagen-cuadro-horizontal {
+        max-height: 180px;
+    }
     .precio-contenedor-horizontal, .cuadro-becas {
         flex-direction: column;
         align-items: flex-start;
