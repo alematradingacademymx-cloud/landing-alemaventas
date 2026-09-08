@@ -1,504 +1,184 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALEMA Trading Academy - Cursos y Material Educativo</title>
-    <link rel="icon" type="image/png" href="images/alema_iso.png.png">
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* ===== MODAL DE LEAD (Becas / Más Información) ===== */
-        .modal-lead-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(6, 10, 20, 0.75);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+import base64
+
+import streamlit as st
+
+
+def inyectar_estilos():
+    """Inyecta una sola vez el sistema de diseño global de ALEMA Trading Academy."""
+    st.markdown(
+        """
+        <style>
+        /* ============================================
+           TIPOGRAFÍA MODERNA (Inter, vía Google Fonts)
+           ============================================ */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        html, body, [class*="css"], .stApp {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         }
-        .modal-lead-overlay.activo {
-            display: flex;
+
+        /* ============================================
+           OCULTAR SOLO BOTONES DE STREAMLIT CLOUD
+           (Share/⭐/✏️/GitHub/menú) SIN TAPAR EL
+           CONTROL DE ABRIR/CERRAR EL SIDEBAR
+           ============================================ */
+        [data-testid="stToolbarActions"],
+        [data-testid="stToolbar"] button,
+        #MainMenu,
+        footer,
+        .stAppDeployButton {
+            display: none !important;
         }
-        .modal-lead-caja {
-            background: #101827;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            max-width: 420px;
-            width: 100%;
-            padding: 28px 26px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-            position: relative;
-            font-family: 'Montserrat', sans-serif;
+        header[data-testid="stHeader"] {
+            background: transparent !important;
+            box-shadow: none !important;
         }
-        .modal-lead-cerrar {
-            position: absolute;
-            top: 14px;
-            right: 16px;
-            background: none;
-            border: none;
+
+        /* Logo del sidebar (st.logo) centrado horizontalmente */
+        [data-testid="stLogo"] {
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           TÍTULOS UNIFICADOS
+           ============================================ */
+        .main-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #F1F5F9;
+            margin-bottom: 0.1rem;
+        }
+        .sub-title {
+            font-size: 0.95rem;
+            font-weight: 500;
             color: #94A3B8;
-            font-size: 22px;
-            cursor: pointer;
-            line-height: 1;
-        }
-        .modal-lead-cerrar:hover {
-            color: #F1F5F9;
-        }
-        .modal-lead-titulo {
-            color: #F1F5F9;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin: 0 0 4px;
-            text-align: center;
-        }
-        .modal-lead-producto {
-            color: #FF6B00;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin: 0 0 20px;
-            text-align: center;
-        }
-        .modal-lead-campo {
-            margin-bottom: 14px;
-        }
-        .modal-lead-campo label {
-            display: block;
-            color: #CBD5E1;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .modal-lead-campo input {
-            width: 100%;
-            padding: 11px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: #1E293B;
-            color: #F1F5F9;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-        }
-        .modal-lead-campo input:focus {
-            outline: none;
-            border-color: #FF6B00;
-        }
-        .modal-lead-enviar {
-            display: block;
-            width: 100%;
-            padding: 13px 18px;
-            border-radius: 10px;
-            border: none;
-            background: #FF6B00;
-            color: #FFFFFF;
-            font-size: 0.95rem;
-            font-weight: 700;
-            font-family: 'Montserrat', sans-serif;
-            cursor: pointer;
-            margin-top: 6px;
-        }
-        .modal-lead-enviar:hover {
-            opacity: 0.92;
-        }
-        .modal-lead-enviar:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .modal-lead-mensaje {
-            text-align: center;
-            padding: 10px 0;
-        }
-        .modal-lead-mensaje-exito {
-            color: #26A69A;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .modal-lead-mensaje-error {
-            color: #EF5350;
-            font-size: 0.9rem;
-            margin-top: 10px;
-            text-align: center;
+            margin-bottom: 1rem;
         }
 
-        /* ===== Botones dobles (Programa Académico) ===== */
-        .botones-dobles {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        /* Título de marca en la pantalla de login: centrado, naranja oscuro */
+        .login-brand-title {
+            text-align: center;
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #C2410C;
+            margin-bottom: 0.1rem;
         }
-        .boton-secundario {
-            display: inline-block;
-            padding: 12px 22px;
-            border-radius: 8px;
-            border: 1.5px solid #FF6B00;
-            color: #FF6B00 !important;
-            background: transparent;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            text-decoration: none;
-            cursor: pointer;
+        .login-brand-subtitle {
+            text-align: center;
             font-size: 0.95rem;
+            font-weight: 500;
+            color: #94A3B8;
+            margin-bottom: 1rem;
         }
-        .boton-secundario:hover {
-            background: rgba(255, 107, 0, 0.08);
-        }
-        .banner-portal {
-            background: linear-gradient(135deg, #1E293B 0%, #101827 100%);
-            border: 1px solid rgba(255, 107, 0, 0.25);
+
+        /* ============================================
+           TARJETAS UNIFICADAS (.app-card)
+           ============================================ */
+        .app-card {
+            background: linear-gradient(155deg, #16213A 0%, #131C30 100%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 14px;
-            padding: 26px 30px;
-            margin: 24px 0 8px;
-            text-align: center;
+            padding: 18px 22px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+            margin-bottom: 12px;
         }
-        .banner-portal h2 {
-            color: #FF6B00;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0 0 8px;
-        }
-        .banner-portal p {
-            color: #CBD5E1;
-            font-size: 0.95rem;
-            margin: 0 0 16px;
-        }
-        .banner-portal-herramientas {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-        .banner-portal-herramientas span {
-            background: rgba(255, 107, 0, 0.1);
-            border: 1px solid rgba(255, 107, 0, 0.3);
-            color: #F1F5F9;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+        .app-card-label {
+            font-size: 0.75rem;
             font-weight: 600;
-            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #94A3B8;
+            margin-bottom: 4px;
         }
-    </style>
-</head>
-<body>
+        .app-card-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #F1F5F9;
+            line-height: 1.2;
+        }
+        .app-card-delta-up { color: #26A69A; font-size: 0.85rem; font-weight: 600; }
+        .app-card-delta-down { color: #EF5350; font-size: 0.85rem; font-weight: 600; }
 
-    <!-- HEADER / ENCABEZADO PRINCIPAL -->
-    <header class="header-principal">
-        <div class="contenedor">
-            <img src="images/alema_iso.png.png" alt="Logo ALEMA Trading Academy" class="logo-imagen">
-            <h1 class="logo">ALEMA TRADING ACADEMY</h1>
-            <p class="tagline">Catálogo Oficial de Formación y Recursos Educativos</p>
+        /* Botones con esquinas un poco más suaves y consistentes */
+        .stButton > button, .stDownloadButton > button {
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+        }
+
+        /* Separadores más discretos */
+        hr {
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def cargar_imagen_base64(nombre_archivo, alternativas_prefijo=None):
+    """Busca y codifica una imagen en base64. Si no existe el nombre exacto,
+    intenta con archivos que empiecen igual (por si el nombre real difiere un poco)."""
+    import os
+
+    ruta = nombre_archivo
+    if not os.path.exists(ruta) and alternativas_prefijo:
+        coincidencias = [
+            f
+            for f in os.listdir(".")
+            if any(f.lower().startswith(p) for p in alternativas_prefijo)
+        ]
+        if coincidencias:
+            ruta = coincidencias[0]
+
+    if not os.path.exists(ruta):
+        return None
+
+    with open(ruta, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+
+def logo_esquina_superior_derecha(nombre_archivo="alema_iso.png", alto_px=42):
+    """Coloca el logo fijo en la esquina superior derecha de la página."""
+    img_b64 = cargar_imagen_base64(nombre_archivo, alternativas_prefijo=["alema_iso", "alema_a"])
+    if not img_b64:
+        return
+    st.markdown(
+        f"""
+        <style>
+        .logo-esquina-superior {{
+            position: fixed;
+            top: 12px;
+            right: 20px;
+            z-index: 999999;
+        }}
+        .logo-esquina-superior img {{
+            height: {alto_px}px;
+            width: auto;
+        }}
+        </style>
+        <div class="logo-esquina-superior">
+            <img src="data:image/png;base64,{img_b64}" />
         </div>
-    </header>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    <main class="contenedor">
 
-        <!-- BANNER: TODO EN UN MISMO PORTAL -->
-        <section class="banner-portal">
-            <h2>🎯 Todo en un Mismo Portal</h2>
-            <p>Al inscribirte, obtienes tu propio acceso al <strong>Portal Institucional ALEMA</strong> — sin plataformas externas, todo centralizado:</p>
-            <div class="banner-portal-herramientas">
-                <span>📊 Terminal ALEMA</span>
-                <span>🧮 Calculadoras de Riesgo</span>
-                <span>✍️ Trading Journal</span>
-                <span>📚 Biblioteca Digital</span>
-                <span>📝 Evaluaciones y Certificaciones</span>
-            </div>
-            <div style="margin-top: 18px;">
-                <a href="portal.html" target="_blank" class="boton-secundario" style="text-decoration:none;">👀 Vistazo al Portal ALEMA</a>
-            </div>
-        </section>
+def tarjeta(label, value, delta=None, delta_positivo=True):
+    """Genera el HTML de una tarjeta de métrica con el estilo unificado (.app-card)."""
+    delta_html = ""
+    if delta is not None:
+        clase = "app-card-delta-up" if delta_positivo else "app-card-delta-down"
+        signo = "▲" if delta_positivo else "▼"
+        delta_html = f'<div class="{clase}">{signo} {delta}</div>'
 
-        <!-- SECCIÓN 1: GUÍAS Y KITS -->
-        <section class="seccion">
-            <h2 class="titulo-seccion">Paquetes de Estudio Autodidacta</h2>
-            <p class="subtitulo-seccion">Material técnico estructurado para estudio independiente y referencia operativa.</p>
-            
-            <div class="grid-dos-columnas">
-                
-                <!-- Tarjeta 1: Guías Élite -->
-                <article class="tarjeta">
-                    <div>
-                        <img src="images/paquete-elite.jpg" alt="Paquete Guías Élite" class="imagen-cuadro">
-                        <span class="insignia">Digital / PDF</span>
-                        <h3>Paquete Guías Élite</h3>
-                        <p class="descripcion">Compendio integral de guías teóricas y operativas sobre estructura de mercado, liquidaciones y modelos técnicos.</p>
-                        <ul class="lista-caracteristicas">
-                            <li>Manuales técnicos en formato digital</li>
-                            <li>Ejemplos de estructuras y gráficos</li>
-                            <li>Acceso protegido desde tu portal de alumno</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <div class="precio-contenedor">
-                            <del class="precio-anterior">$650 MXN</del>
-                            <span class="precio">$489 MXN</span>
-                        </div>
-                        <a href="#" class="boton-primario" onclick="return abrirWhatsappCompra('Paquete Guías Élite', '$489 MXN');">Adquirir Paquete</a>
-                    </div>
-                </article>
-
-                <!-- Tarjeta 2: Starter Kit -->
-                <article class="tarjeta">
-                    <div>
-                        <img src="images/paquete-starter.jpg" alt="Starter Kit ALEMA" class="imagen-cuadro">
-                        <span class="insignia">Digital / PDF</span>
-                        <h3>Starter Kit ALEMA</h3>
-                        <p class="descripcion">Herramientas fundamentales de inducción para traders que inician su proceso de formación técnica.</p>
-                        <ul class="lista-caracteristicas">
-                            <li>Glosario operativo y terminología</li>
-                            <li>Plantillas de bitácora básica</li>
-                            <li>Guía de gestión de riesgo inicial</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <div class="precio-contenedor">
-                            <del class="precio-anterior">$550 MXN</del>
-                            <span class="precio">$349 MXN</span>
-                        </div>
-                        <a href="#" class="boton-primario" onclick="return abrirWhatsappCompra('Starter Kit ALEMA', '$349 MXN');">Adquirir Kit</a>
-                    </div>
-                </article>
-
-            </div>
-        </section>
-
-        <!-- SECCIÓN 2: PROGRAMA ACADÉMICO COMPLETO -->
-        <section class="seccion">
-            <h2 class="titulo-seccion">Programa Académico Especializado</h2>
-            <p class="subtitulo-seccion">Formación integral modular estructurada desde los fundamentos bursátiles hasta la ejecución institucional.</p>
-
-            <article class="tarjeta-horizontal">
-                <img src="images/programa-academico.jpg" alt="Inscripción al Programa Académico" class="imagen-cuadro-horizontal">
-                <h3>Inscripción al Programa Académico</h3>
-                <p class="descripcion">Un trayecto formativo completo diseñado para desarrollar la disciplina analítica y el criterio operativo riguroso requerido por los mercados financieros contemporáneos.</p>
-                
-                <div class="mantenimiento-modulos">
-                    <div class="bloque-modulo">
-                        <h4>Módulo I: Básico</h4>
-                        <p>Introducción técnica a los mercados financieros y estructura de mercado.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo II: Básico Intermedio</h4>
-                        <p>Metodología avanzada en análisis gráfico y lecturas de liquidez.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo III: Intermedio</h4>
-                        <p>Gestión del riesgo, Order Blocks, indicadores técnicos y formulación de estrategias.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo IV: Intermedio Avanzado</h4>
-                        <p>Modelos operativos, estrategia algorítmica y psicotrading aplicado.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo V: Avanzado</h4>
-                        <p>Análisis integral, integración de IA, Wyckoff avanzado y gestión de fondeo.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo VI: Práctico</h4>
-                        <p>Desarrollo operativo supervisado y evaluación de consistencia.</p>
-                    </div>
-                </div>
-
-                <div class="precio-contenedor-horizontal">
-                    <div>
-                        <span class="etiqueta-precio">Inversión del Programa</span>
-                        <span class="precio-grande">$1,890 MXN / Mes</span>
-                    </div>
-                    <div class="botones-dobles">
-                        <a href="#" class="boton-primario" onclick="return abrirWhatsappCompra('Programa Académico Especializado', '$1,890 MXN/mes');">🏦 Información de Pago</a>
-                        <button class="boton-secundario" onclick="abrirModalLead('Informes', 'Programa Académico Especializado')">ℹ️ Más Información</button>
-                    </div>
-                </div>
-            </article>
-        </section>
-
-        <!-- SECCIÓN 3: SUSCRIPCIÓN MENSUAL -->
-        <section class="seccion">
-            <h2 class="titulo-seccion">Membresía Mensual</h2>
-            <p class="subtitulo-seccion">Acceso continuo a sesiones de análisis en vivo y comunidad de estudio.</p>
-
-            <div class="tarjeta-destacada">
-                <div class="grid-dos-columnas">
-                    <div>
-                        <span class="insignia">Suscripción Recurrente</span>
-                        <h3>Comunidad & Análisis Operativo</h3>
-                        <p class="descripcion">Espacio enfocado en la aplicación práctica, seguimiento diario de mercados y acompañamiento técnico.</p>
-                        <ul class="lista-caracteristicas">
-                            <li>Sesiones de análisis pre-mercado en vivo</li>
-                            <li>Revisión de bitácoras y escenarios técnicos</li>
-                            <li>Acceso a comunidad privada de alumnos</li>
-                        </ul>
-                    </div>
-                    <div class="panel-precio-suscripcion">
-                        <img src="images/suscripcion-herramientas.jpg" alt="Membresía Herramientas" class="imagen-cuadro" style="height: 160px; margin-bottom: 15px;">
-                        <span class="etiqueta-precio">Cuota Mensual</span>
-                        <span class="precio-pantalla">$150 MXN / mes</span>
-                        <!-- 🔧 PENDIENTE: reemplazar este href por el link de pago de Clip cuando esté listo -->
-                        <a href="#" class="boton-dorado" onclick="return abrirWhatsappCompra('Membresía Mensual', '$150 MXN/mes');">Suscribirme Ahora</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN 4: INFORMACIÓN DE BECAS -->
-        <section class="seccion-nota">
-            <div class="cuadro-becas">
-                <div>
-                    <h3>¿Te interesa el Programa de Becas?</h3>
-                    <p>Contamos con opciones de apoyo financiero y becas de formación parciales sujeto a evaluación.</p>
-                </div>
-                <a href="#" class="boton-linea" onclick="abrirModalLead('Beca', 'Programa de Becas'); return false;">Solicitar Evaluación</a>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="footer-principal">
-        <div class="contenedor">
-            <p>&copy; ALEMA Trading Academy. Todos los derechos reservados.</p>
+    return f"""
+        <div class="app-card">
+            <div class="app-card-label">{label}</div>
+            <div class="app-card-value">{value}</div>
+            {delta_html}
         </div>
-    </footer>
-
-    <!-- ===== MODAL DE LEAD (Becas / Más Información) ===== -->
-    <div class="modal-lead-overlay" id="modal-lead-overlay" onclick="if(event.target===this) cerrarModalLead();">
-        <div class="modal-lead-caja">
-            <button class="modal-lead-cerrar" onclick="cerrarModalLead()" aria-label="Cerrar">&times;</button>
-
-            <div id="modal-lead-contenido-form">
-                <p class="modal-lead-titulo" id="modal-lead-titulo">Solicitar Información</p>
-                <p class="modal-lead-producto" id="modal-lead-producto"></p>
-
-                <div class="modal-lead-campo">
-                    <label for="lead-nombre">Nombre completo</label>
-                    <input type="text" id="lead-nombre" placeholder="Tu nombre completo">
-                </div>
-                <div class="modal-lead-campo">
-                    <label for="lead-telefono">Teléfono (WhatsApp)</label>
-                    <input type="tel" id="lead-telefono" placeholder="10 dígitos">
-                </div>
-                <div class="modal-lead-campo">
-                    <label for="lead-correo">Correo electrónico</label>
-                    <input type="email" id="lead-correo" placeholder="tucorreo@ejemplo.com">
-                </div>
-
-                <button class="modal-lead-enviar" id="modal-lead-btn-enviar" onclick="enviarLead()">Enviar Solicitud</button>
-                <p class="modal-lead-mensaje-error" id="modal-lead-error" style="display:none;"></p>
-            </div>
-
-            <div id="modal-lead-contenido-exito" style="display:none;">
-                <div class="modal-lead-mensaje">
-                    <p class="modal-lead-mensaje-exito">✅ ¡Solicitud enviada!</p>
-                    <p style="color:#CBD5E1; font-size:0.9rem;">
-                        Gracias, en breve nuestro equipo se pondrá en contacto contigo.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const WHATSAPP_VENTAS = "528136462129";
-
-        // ⚠️ IMPORTANTE: este token debe ser IDÉNTICO al TOKEN_SECRETO de tu
-        // Apps Script "ALEMA_Leads_Landing" — es un script separado del portal.
-        const LEADS_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-DjhIxqIwu90VftT0VrPnJxydnJBP25o_0nChgkZh0MjvRFvQAAvkPebjcMxjq9gjSA/exec";
-        const LEADS_TOKEN = "LandingLeads_2026_CambiaEsto";
-
-        let tipoSolicitudActual = "";
-        let productoInteresActual = "";
-
-        function abrirWhatsappCompra(nombreProducto, precioTexto) {
-            const mensaje = `¡Hola! 👋 Me interesa adquirir: ${nombreProducto} (${precioTexto}). ¿Me pueden ayudar con el proceso de pago?`;
-            const url = `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensaje)}`;
-            window.open(url, '_blank', 'noopener');
-            return false;
-        }
-
-        function abrirModalLead(tipoSolicitud, productoInteres) {
-            tipoSolicitudActual = tipoSolicitud;
-            productoInteresActual = productoInteres;
-
-            document.getElementById('modal-lead-titulo').textContent =
-                tipoSolicitud === 'Beca' ? '🎓 Solicitar Evaluación de Beca' : 'ℹ️ Solicitar Más Información';
-            document.getElementById('modal-lead-producto').textContent = productoInteres;
-
-            document.getElementById('modal-lead-contenido-form').style.display = 'block';
-            document.getElementById('modal-lead-contenido-exito').style.display = 'none';
-            document.getElementById('modal-lead-error').style.display = 'none';
-            document.getElementById('lead-nombre').value = '';
-            document.getElementById('lead-telefono').value = '';
-            document.getElementById('lead-correo').value = '';
-            document.getElementById('modal-lead-btn-enviar').disabled = false;
-            document.getElementById('modal-lead-btn-enviar').textContent = 'Enviar Solicitud';
-
-            document.getElementById('modal-lead-overlay').classList.add('activo');
-        }
-
-        function cerrarModalLead() {
-            document.getElementById('modal-lead-overlay').classList.remove('activo');
-        }
-
-        function mostrarErrorLead(mensaje) {
-            const errorEl = document.getElementById('modal-lead-error');
-            errorEl.textContent = mensaje;
-            errorEl.style.display = 'block';
-        }
-
-        async function enviarLead() {
-            const nombre = document.getElementById('lead-nombre').value.trim();
-            const telefono = document.getElementById('lead-telefono').value.trim();
-            const correo = document.getElementById('lead-correo').value.trim();
-
-            if (!nombre || !telefono || !correo) {
-                mostrarErrorLead('Por favor llena los 3 campos.');
-                return;
-            }
-            if (!correo.includes('@')) {
-                mostrarErrorLead('Ingresa un correo válido.');
-                return;
-            }
-
-            const btn = document.getElementById('modal-lead-btn-enviar');
-            btn.disabled = true;
-            btn.textContent = 'Enviando...';
-            document.getElementById('modal-lead-error').style.display = 'none';
-
-            try {
-                const resp = await fetch(LEADS_APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        token: LEADS_TOKEN,
-                        accion: 'enviar_lead',
-                        nombre: nombre,
-                        telefono: telefono,
-                        correo: correo,
-                        tipo_solicitud: tipoSolicitudActual,
-                        producto_interes: productoInteresActual
-                    })
-                });
-                const data = await resp.json();
-
-                if (data.success) {
-                    document.getElementById('modal-lead-contenido-form').style.display = 'none';
-                    document.getElementById('modal-lead-contenido-exito').style.display = 'block';
-                } else {
-                    mostrarErrorLead('No se pudo enviar: ' + (data.error || 'error desconocido'));
-                    btn.disabled = false;
-                    btn.textContent = 'Enviar Solicitud';
-                }
-            } catch (err) {
-                mostrarErrorLead('Error de conexión. Intenta de nuevo.');
-                btn.disabled = false;
-                btn.textContent = 'Enviar Solicitud';
-            }
-        }
-    </script>
-
-</body>
-</html>
+    """
