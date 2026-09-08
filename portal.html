@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALEMA Trading Academy - Portal</title>
+    <link rel="icon" type="image/png" href="images/alema_iso.png.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background-color: #0E1726;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #F1F5F9;
+        }
+        .contenedor-portal {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 24px 70px;
+        }
+        .logo-centrado {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .logo-centrado img {
+            width: 95px;
+            height: auto;
+        }
+        .titulo-marca {
+            text-align: center;
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #C2410C;
+            margin-bottom: 0.1rem;
+        }
+        .subtitulo-marca {
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #94A3B8;
+            margin-bottom: 1rem;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.12);
+            margin: 20px 0;
+        }
+        h3 { font-size: 1.15rem; font-weight: 700; margin: 0 0 8px; }
+        h2.pregunta { text-align: center; font-size: 1.4rem; font-weight: 700; margin: 30px 0 8px; }
+        p.centrada { text-align: center; color: #94A3B8; font-size: 1rem; margin: 0 0 20px; }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: #CBD5E1;
+            margin: 14px 0 6px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: #1E293B;
+            color: #F1F5F9;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+        input:focus { outline: none; border-color: #FF6B00; }
+
+        .boton-login {
+            margin-top: 18px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: #1E293B;
+            color: #F1F5F9;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 50%;
+        }
+        .boton-login:hover { border-color: #FF6B00; }
+
+        .mensaje-error {
+            display: none;
+            background: rgba(239, 83, 80, 0.12);
+            border: 1px solid rgba(239, 83, 80, 0.4);
+            color: #FF8A80;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-top: 14px;
+            font-size: 0.9rem;
+        }
+        .mensaje-error.activo { display: block; }
+
+        .whatsapp-boton {
+            display: block;
+            text-decoration: none;
+            background-color: #25D366;
+            color: #FFFFFF !important;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            margin: 10px 0;
+        }
+
+        ul { padding-left: 18px; color: #CBD5E1; font-size: 0.92rem; }
+        ul li { margin-bottom: 6px; }
+
+        .grid-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            .grid-info { grid-template-columns: 1fr; }
+        }
+
+        .cuota-caja {
+            background: #16213A;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .cuota-caja p { margin: 4px 0; }
+
+        .aviso-preview {
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid rgba(255, 107, 0, 0.35);
+            color: #FDBA74;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .aviso-preview a { color: #FF6B00; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="contenedor-portal">
+
+        <div class="aviso-preview">
+            👀 Esto es una <strong>vista previa</strong> del Portal ALEMA. Para tu acceso real, contáctanos por
+            <a href="index.html">nuestra página principal</a>.
+        </div>
+
+        <div class="logo-centrado">
+            <img src="images/alema_iso.png.png" alt="Logo ALEMA Trading Academy">
+        </div>
+        <div class="titulo-marca">ALEMA TRADING ACADEMY</div>
+        <div class="subtitulo-marca">Portal Exclusivo para Alumnos Certificados y Suscriptores</div>
+
+        <hr>
+
+        <h3>👋 ¡Bienvenido al Portal Institucional!</h3>
+        <p style="color:#CBD5E1;">
+            Este es tu ecosistema de herramientas operativas, calculadoras de gestión de riesgo,
+            journal de operaciones y biblioteca digital. Ingresa tus credenciales para comenzar.
+        </p>
+
+        <hr>
+
+        <h3>🔒 Acceso al Portal Privado</h3>
+        <p style="color:#CBD5E1;">Ingresa tus credenciales institucionales:</p>
+
+        <label for="matricula">Matrícula / Usuario</label>
+        <input type="text" id="matricula" placeholder="">
+
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" placeholder="">
+
+        <div>
+            <button class="boton-login" onclick="intentarLogin()">🔑 Iniciar Sesión</button>
+        </div>
+
+        <div class="mensaje-error" id="mensaje-error">
+            ❌ Matrícula o contraseña incorrecta. Verifica con administración.
+        </div>
+
+        <hr>
+
+        <h3 style="text-align:center;">¿Aún no tienes tu acceso al Portal?</h3>
+        <p class="centrada">
+            Obtén acceso a las <strong>Calculadoras Operativas</strong>, <strong>Biblioteca de Guías en PDF</strong>
+            y <strong>Cápsulas de Psicotrading</strong> por solo <strong>$150 MXN / mes</strong>.
+        </p>
+
+        <a href="https://wa.me/528136462129?text=%C2%A1Hola%20Daniela!%20%F0%9F%91%8B%20Vengo%20del%20portal%20web%20y%20me%20gustar%C3%ADa%20adquirir%20mi%20suscripci%C3%B3n%20a%20la%20Membres%C3%ADa%20Mensual%20Alema%20(%24150%20MXN%2Fmes)%20para%20obtener%20mis%20credenciales%20de%20acceso." target="_blank" class="whatsapp-boton">
+            📲 Solicitar Membresía por WhatsApp
+        </a>
+
+        <h2 class="pregunta">¿Deseas Formarte como Trader en ALEMA?</h2>
+        <p class="centrada">Conoce nuestro programa educativo integral, herramientas operativas y acompañamiento personalizado.</p>
+
+        <div class="grid-info">
+            <div>
+                <h3>📚 Ruta Académica Oficial</h3>
+                <ul>
+                    <li><strong>Módulo Básico:</strong> Fundamentos de mercados financieros, estructura de precios y lectura de velas.</li>
+                    <li><strong>Módulo Intermedio:</strong> Metodología institucional, zonas de oferta/demanda y Fibonacci.</li>
+                    <li><strong>Módulo Avanzado:</strong> Wyckoff, liquidez de mercado y modelos de entrada de alta probabilidad.</li>
+                    <li><strong>Módulo Práctico & Psicotrading:</strong> Gestión de riesgo matemática, bitácora y control emocional.</li>
+                </ul>
+            </div>
+            <div>
+                <h3>💡 Beneficios del Portal Privado</h3>
+                <ul>
+                    <li><strong>Calculadoras Operativas:</strong> Gestión exacta de lotaje y riesgo por operación.</li>
+                    <li><strong>Evaluaciones Progresivas:</strong> Exámenes técnicos revisados directamente por Dirección General.</li>
+                    <li><strong>Constancia Institucional:</strong> Reconocimiento con validez interna al aprobar cada nivel.</li>
+                    <li><strong>Biblioteca y Reportes:</strong> Descarga de manuales en PDF y retroalimentación personalizada.</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <h3 style="text-align:center;">💳 Cuota e Inscripciones</h3>
+        <div class="cuota-caja">
+            <p><strong>Membresía Elite ALEMA / Acceso al Portal:</strong></p>
+            <p style="font-size:1.4rem; color:#FF6B00; font-weight:800;">$1,890 MXN / mes</p>
+            <p style="font-size:0.85rem; color:#94A3B8;">
+                Acceso completo al portal · Calculadoras de gestión · Biblioteca digital ·
+                Clases en vivo vía Zoom · Terminal ALEMA · Trading Journal · Evaluaciones
+            </p>
+            <a href="https://wa.me/528136462129?text=%C2%A1Hola%20Daniela!%20%F0%9F%91%8B%20Vengo%20del%20portal%20web%20y%20me%20gustar%C3%ADa%20solicitar%20informaci%C3%B3n%20e%20inscribirme%20a%20ALEMA%20Trading%20Academy.%20%C2%BFMe%20podr%C3%ADas%20compartir%20los%20datos%20de%20pago%20y%20requisitos%3F" target="_blank" class="whatsapp-boton" style="margin-top:14px;">
+                📲 ¡Quiero Inscribirme! (Contactar por WhatsApp)
+            </a>
+        </div>
+
+        <p style="text-align:center; color:#64748B; font-size:0.85rem; margin-top:40px;">
+            © ALEMA Trading Academy. Reservados todos los derechos.
+        </p>
+    </div>
+
+    <script>
+        function intentarLogin() {
+            // 👀 Esta página es solo una vista previa visual — nunca valida
+            // credenciales reales ni se conecta a ninguna base de datos.
+            document.getElementById('mensaje-error').classList.add('activo');
+        }
+
+        // Permitir Enter dentro de los campos para "iniciar sesión"
+        document.getElementById('password').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') intentarLogin();
+        });
+    </script>
+</body>
+</html>
