@@ -148,6 +148,41 @@
         .boton-secundario:hover {
             background: rgba(255, 107, 0, 0.08);
         }
+        .banner-portal {
+            background: linear-gradient(135deg, #1E293B 0%, #101827 100%);
+            border: 1px solid rgba(255, 107, 0, 0.25);
+            border-radius: 14px;
+            padding: 26px 30px;
+            margin: 24px 0 8px;
+            text-align: center;
+        }
+        .banner-portal h2 {
+            color: #FF6B00;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 0 8px;
+        }
+        .banner-portal p {
+            color: #CBD5E1;
+            font-size: 0.95rem;
+            margin: 0 0 16px;
+        }
+        .banner-portal-herramientas {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .banner-portal-herramientas span {
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            color: #F1F5F9;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -162,6 +197,19 @@
     </header>
 
     <main class="contenedor">
+
+        <!-- BANNER: TODO EN UN MISMO PORTAL -->
+        <section class="banner-portal">
+            <h2>🎯 Todo en un Mismo Portal</h2>
+            <p>Al inscribirte, obtienes tu propio acceso al <strong>Portal Institucional ALEMA</strong> — sin plataformas externas, todo centralizado:</p>
+            <div class="banner-portal-herramientas">
+                <span>📊 Simulador Institucional</span>
+                <span>🧮 Calculadoras de Riesgo</span>
+                <span>✍️ Trading Journal</span>
+                <span>📚 Biblioteca Digital</span>
+                <span>📝 Evaluaciones y Certificaciones</span>
+            </div>
+        </section>
 
         <!-- SECCIÓN 1: GUÍAS Y KITS -->
         <section class="seccion">
@@ -357,7 +405,7 @@
         // ⚠️ IMPORTANTE: este token debe ser IDÉNTICO al TOKEN_SECRETO de tu
         // Apps Script "ALEMA_Leads_Landing" — es un script separado del portal.
         const LEADS_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-DjhIxqIwu90VftT0VrPnJxydnJBP25o_0nChgkZh0MjvRFvQAAvkPebjcMxjq9gjSA/exec";
-        const LEADS_TOKEN = "$Alema$Ventas1710$";
+        const LEADS_TOKEN = "LandingLeads_2026_CambiaEsto";
 
         let tipoSolicitudActual = "";
         let productoInteresActual = "";
