@@ -1,184 +1,368 @@
-import base64
+:root {
+    --fondo-principal: #0b0e14;
+    --fondo-tarjeta: #131722;
+    --texto-principal: #e0e6ed;
+    --texto-secundario: #848e9c;
+    --dorado-acento: #d4af37;
+    --dorado-brillo: #f3e5ab;
+    --borde-tarjeta: #2a2e3d;
+    --fuente-principal: 'Montserrat', sans-serif;
+}
 
-import streamlit as st
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    background-color: var(--fondo-principal);
+    color: var(--texto-principal);
+    font-family: var(--fuente-principal);
+    line-height: 1.6;
+}
 
-def inyectar_estilos():
-    """Inyecta una sola vez el sistema de diseño global de ALEMA Trading Academy."""
-    st.markdown(
-        """
-        <style>
-        /* ============================================
-           TIPOGRAFÍA MODERNA (Inter, vía Google Fonts)
-           ============================================ */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+.contenedor {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
-        html, body, [class*="css"], .stApp {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        }
+.header-principal {
+    padding: 60px 0 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--borde-tarjeta);
+}
 
-        /* ============================================
-           OCULTAR SOLO BOTONES DE STREAMLIT CLOUD
-           (Share/⭐/✏️/GitHub/menú) SIN TAPAR EL
-           CONTROL DE ABRIR/CERRAR EL SIDEBAR
-           ============================================ */
-        [data-testid="stToolbarActions"],
-        [data-testid="stToolbar"] button,
-        #MainMenu,
-        footer,
-        .stAppDeployButton {
-            display: none !important;
-        }
-        header[data-testid="stHeader"] {
-            background: transparent !important;
-            box-shadow: none !important;
-        }
+/* LOGO PROPORCIONADO */
+.logo-imagen {
+    max-width: 80px;
+    height: auto;
+    display: block;
+    margin: 0 auto 15px auto;
+}
 
-        /* Logo del sidebar (st.logo) centrado horizontalmente */
-        [data-testid="stLogo"] {
-            display: block;
-            margin: 0 auto;
-        }
+.logo {
+    font-size: 2.2rem;
+    letter-spacing: 3px;
+    color: #FF6B00;
+    font-weight: 700;
+}
 
-        /* ============================================
-           TÍTULOS UNIFICADOS
-           ============================================ */
-        .main-title {
-            font-size: 1.9rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: #F1F5F9;
-            margin-bottom: 0.1rem;
-        }
-        .sub-title {
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: #94A3B8;
-            margin-bottom: 1rem;
-        }
+.tagline {
+    color: var(--texto-secundario);
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    margin-top: 5px;
+    text-transform: uppercase;
+}
 
-        /* Título de marca en la pantalla de login: centrado, naranja oscuro */
-        .login-brand-title {
-            text-align: center;
-            font-size: 1.9rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: #C2410C;
-            margin-bottom: 0.1rem;
-        }
-        .login-brand-subtitle {
-            text-align: center;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: #94A3B8;
-            margin-bottom: 1rem;
-        }
+.seccion {
+    padding: 60px 0;
+    border-bottom: 1px solid var(--borde-tarjeta);
+}
 
-        /* ============================================
-           TARJETAS UNIFICADAS (.app-card)
-           ============================================ */
-        .app-card {
-            background: linear-gradient(155deg, #16213A 0%, #131C30 100%);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-            padding: 18px 22px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
-            margin-bottom: 12px;
-        }
-        .app-card-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #94A3B8;
-            margin-bottom: 4px;
-        }
-        .app-card-value {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #F1F5F9;
-            line-height: 1.2;
-        }
-        .app-card-delta-up { color: #26A69A; font-size: 0.85rem; font-weight: 600; }
-        .app-card-delta-down { color: #EF5350; font-size: 0.85rem; font-weight: 600; }
+.titulo-seccion {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--texto-principal);
+    margin-bottom: 8px;
+}
 
-        /* Botones con esquinas un poco más suaves y consistentes */
-        .stButton > button, .stDownloadButton > button {
-            border-radius: 10px !important;
-            font-weight: 600 !important;
-        }
+.subtitulo-seccion {
+    color: var(--texto-secundario);
+    font-size: 0.95rem;
+    margin-bottom: 35px;
+}
 
-        /* Separadores más discretos */
-        hr {
-            border-color: rgba(255, 255, 255, 0.08) !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+.grid-dos-columnas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
 
+.tarjeta {
+    background-color: var(--fondo-tarjeta);
+    border: 1px solid var(--borde-tarjeta);
+    border-radius: 6px;
+    padding: 30px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
 
-def cargar_imagen_base64(nombre_archivo, alternativas_prefijo=None):
-    """Busca y codifica una imagen en base64. Si no existe el nombre exacto,
-    intenta con archivos que empiecen igual (por si el nombre real difiere un poco)."""
-    import os
+.tarjeta:hover {
+    border-color: var(--dorado-acento);
+    transform: translateY(-3px);
+}
 
-    ruta = nombre_archivo
-    if not os.path.exists(ruta) and alternativas_prefijo:
-        coincidencias = [
-            f
-            for f in os.listdir(".")
-            if any(f.lower().startswith(p) for p in alternativas_prefijo)
-        ]
-        if coincidencias:
-            ruta = coincidencias[0]
+/* ESTILOS Y PROPORCIONES DE LAS IMÁGENES */
+.imagen-cuadro {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid var(--borde-tarjeta);
+}
 
-    if not os.path.exists(ruta):
-        return None
+/* CORRECCIÓN DE RENDERIZADO PARA PROGRAMA ACADÉMICO */
+.imagen-cuadro-horizontal {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    border-radius: 4px;
+    margin-bottom: 25px;
+    border: 1px solid var(--borde-tarjeta);
+    display: block;
+}
 
-    with open(ruta, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
+.insignia {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--dorado-acento);
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: inline-block;
+}
 
+.tarjeta h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+}
 
-def logo_esquina_superior_derecha(nombre_archivo="alema_iso.png", alto_px=42):
-    """Coloca el logo fijo en la esquina superior derecha de la página."""
-    img_b64 = cargar_imagen_base64(nombre_archivo, alternativas_prefijo=["alema_iso", "alema_a"])
-    if not img_b64:
-        return
-    st.markdown(
-        f"""
-        <style>
-        .logo-esquina-superior {{
-            position: fixed;
-            top: 12px;
-            right: 20px;
-            z-index: 999999;
-        }}
-        .logo-esquina-superior img {{
-            height: {alto_px}px;
-            width: auto;
-        }}
-        </style>
-        <div class="logo-esquina-superior">
-            <img src="data:image/png;base64,{img_b64}" />
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+.descripcion {
+    font-size: 0.9rem;
+    color: var(--texto-secundario);
+    margin-bottom: 20px;
+}
 
+.lista-caracteristicas {
+    list-style: none;
+    margin-bottom: 25px;
+}
 
-def tarjeta(label, value, delta=None, delta_positivo=True):
-    """Genera el HTML de una tarjeta de métrica con el estilo unificado (.app-card)."""
-    delta_html = ""
-    if delta is not None:
-        clase = "app-card-delta-up" if delta_positivo else "app-card-delta-down"
-        signo = "▲" if delta_positivo else "▼"
-        delta_html = f'<div class="{clase}">{signo} {delta}</div>'
+.lista-caracteristicas li {
+    font-size: 0.88rem;
+    color: var(--texto-principal);
+    margin-bottom: 10px;
+    padding-left: 15px;
+    position: relative;
+}
 
-    return f"""
-        <div class="app-card">
-            <div class="app-card-label">{label}</div>
-            <div class="app-card-value">{value}</div>
-            {delta_html}
-        </div>
-    """
+.lista-caracteristicas li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--dorado-acento);
+}
+
+/* PRECIOS Y PRECIO TACHADO */
+.precio-contenedor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.precio-anterior {
+    font-size: 1.1rem;
+    color: var(--texto-secundario);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.precio {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+.boton-primario {
+    display: block;
+    text-align: center;
+    background-color: transparent;
+    color: var(--dorado-acento);
+    border: 1px solid var(--dorado-acento);
+    padding: 12px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+
+.boton-primario:hover {
+    background-color: var(--dorado-acento);
+    color: var(--fondo-principal);
+}
+
+/* PROGRAMA ACADÉMICO */
+.tarjeta-horizontal {
+    background-color: var(--fondo-tarjeta);
+    border: 1px solid var(--borde-tarjeta);
+    border-radius: 6px;
+    padding: 35px;
+}
+
+.mantenimiento-modulos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 25px 0;
+}
+
+.bloque-modulo {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-left: 2px solid var(--dorado-acento);
+    padding: 15px;
+}
+
+.bloque-modulo h4 {
+    font-size: 0.95rem;
+    color: var(--texto-principal);
+    margin-bottom: 4px;
+}
+
+.bloque-modulo p {
+    font-size: 0.85rem;
+    color: var(--texto-secundario);
+}
+
+.precio-contenedor-horizontal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--borde-tarjeta);
+    padding-top: 25px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.etiqueta-precio {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--texto-secundario);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.precio-grande {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+/* SUSCRIPCIÓN Y BECAS */
+.tarjeta-destacada {
+    background-color: var(--fondo-tarjeta);
+    border: 1px solid var(--borde-tarjeta);
+    padding: 35px;
+    border-radius: 6px;
+}
+
+.panel-precio-suscripcion {
+    text-align: center;
+    background-color: rgba(212, 175, 55, 0.04);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    padding: 30px;
+    border-radius: 6px;
+}
+
+.precio-pantalla {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 10px 0 20px;
+    color: var(--dorado-brillo);
+}
+
+.boton-dorado {
+    display: inline-block;
+    width: 100%;
+    background-color: var(--dorado-acento);
+    color: var(--fondo-principal);
+    padding: 12px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.seccion-nota {
+    padding: 40px 0;
+}
+
+.cuadro-becas {
+    border: 1px dashed var(--borde-tarjeta);
+    padding: 25px 30px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.cuadro-becas h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.cuadro-becas p {
+    font-size: 0.88rem;
+    color: var(--texto-secundario);
+}
+
+.boton-linea {
+    color: var(--texto-principal);
+    border: 1px solid var(--borde-tarjeta);
+    padding: 10px 18px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.footer-principal {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--texto-secundario);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--borde-tarjeta);
+}
+
+/* REGLAS RESPONSIVAS */
+@media (min-width: 769px) {
+    .imagen-cuadro-horizontal {
+        max-height: 500px;
+        object-position: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .imagen-cuadro {
+        height: 220px;
+    }
+    .imagen-cuadro-horizontal {
+        max-height: 100%;
+    }
+    .precio-contenedor-horizontal, .cuadro-becas {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .boton-primario, .boton-linea {
+        width: 100%;
+    }
+}
