@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ===== MODAL DE SELECCIÓN DE PAGO ===== */
-        .modal-pago-overlay {
+        /* ===== MODAL DE LEAD (Becas / Más Información) ===== */
+        .modal-lead-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -21,10 +21,10 @@
             justify-content: center;
             padding: 20px;
         }
-        .modal-pago-overlay.activo {
+        .modal-lead-overlay.activo {
             display: flex;
         }
-        .modal-pago-caja {
+        .modal-lead-caja {
             background: #101827;
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
@@ -34,9 +34,8 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
             position: relative;
             font-family: 'Montserrat', sans-serif;
-            text-align: center;
         }
-        .modal-pago-cerrar {
+        .modal-lead-cerrar {
             position: absolute;
             top: 14px;
             right: 16px;
@@ -47,50 +46,107 @@
             cursor: pointer;
             line-height: 1;
         }
-        .modal-pago-cerrar:hover {
+        .modal-lead-cerrar:hover {
             color: #F1F5F9;
         }
-        .modal-pago-titulo {
+        .modal-lead-titulo {
             color: #F1F5F9;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            margin: 0 0 6px;
+            margin: 0 0 4px;
+            text-align: center;
         }
-        .modal-pago-producto {
+        .modal-lead-producto {
             color: #FF6B00;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            margin: 0 0 22px;
+            margin: 0 0 20px;
+            text-align: center;
         }
-        .modal-pago-opcion {
+        .modal-lead-campo {
+            margin-bottom: 14px;
+        }
+        .modal-lead-campo label {
+            display: block;
+            color: #CBD5E1;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .modal-lead-campo input {
+            width: 100%;
+            padding: 11px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: #1E293B;
+            color: #F1F5F9;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+        .modal-lead-campo input:focus {
+            outline: none;
+            border-color: #FF6B00;
+        }
+        .modal-lead-enviar {
             display: block;
             width: 100%;
-            padding: 14px 18px;
+            padding: 13px 18px;
             border-radius: 10px;
             border: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            cursor: pointer;
-            margin-bottom: 12px;
-            transition: transform 0.15s ease, opacity 0.15s ease;
-        }
-        .modal-pago-opcion:hover {
-            transform: translateY(-1px);
-            opacity: 0.92;
-        }
-        .modal-pago-hotmart {
             background: #FF6B00;
             color: #FFFFFF;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            margin-top: 6px;
         }
-        .modal-pago-transferencia {
-            background: #25D366;
-            color: #FFFFFF;
+        .modal-lead-enviar:hover {
+            opacity: 0.92;
         }
-        .modal-pago-nota {
-            color: #64748B;
-            font-size: 0.78rem;
-            margin-top: 4px;
+        .modal-lead-enviar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .modal-lead-mensaje {
+            text-align: center;
+            padding: 10px 0;
+        }
+        .modal-lead-mensaje-exito {
+            color: #26A69A;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .modal-lead-mensaje-error {
+            color: #EF5350;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* ===== Botones dobles (Programa Académico) ===== */
+        .botones-dobles {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .boton-secundario {
+            display: inline-block;
+            padding: 12px 22px;
+            border-radius: 8px;
+            border: 1.5px solid #FF6B00;
+            color: #FF6B00 !important;
+            background: transparent;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        .boton-secundario:hover {
+            background: rgba(255, 107, 0, 0.08);
         }
     </style>
 </head>
@@ -124,7 +180,7 @@
                         <ul class="lista-caracteristicas">
                             <li>Manuales técnicos en formato digital</li>
                             <li>Ejemplos de estructuras y gráficos</li>
-                            <li>Acceso directo de descarga</li>
+                            <li>Acceso protegido desde tu portal de alumno</li>
                         </ul>
                     </div>
                     <div>
@@ -132,7 +188,7 @@
                             <del class="precio-anterior">$650 MXN</del>
                             <span class="precio">$489 MXN</span>
                         </div>
-                        <a href="https://pay.hotmart.com/E98336307S?checkoutMode=10" class="boton-primario" onclick="return abrirModalPago(this.href, 'Paquete Guías Élite');">Adquirir Paquete</a>
+                        <a href="#" class="boton-primario" onclick="return abrirWhatsappCompra('Paquete Guías Élite', '$489 MXN');">Adquirir Paquete</a>
                     </div>
                 </article>
 
@@ -154,7 +210,7 @@
                             <del class="precio-anterior">$550 MXN</del>
                             <span class="precio">$349 MXN</span>
                         </div>
-                        <a href="https://pay.hotmart.com/R98335967W?checkoutMode=10" class="boton-primario" onclick="return abrirModalPago(this.href, 'Starter Kit ALEMA');">Adquirir Kit</a>
+                        <a href="#" class="boton-primario" onclick="return abrirWhatsappCompra('Starter Kit ALEMA', '$349 MXN');">Adquirir Kit</a>
                     </div>
                 </article>
 
@@ -203,7 +259,10 @@
                         <span class="etiqueta-precio">Inversión del Programa</span>
                         <span class="precio-grande">$1,890 MXN / Mes</span>
                     </div>
-                    <a href="https://pay.hotmart.com/O98336154Y?checkoutMode=10" class="boton-primario" onclick="return abrirModalPago(this.href, 'Programa Académico Especializado');">Inscribirme al Programa</a>
+                    <div class="botones-dobles">
+                        <a href="#" class="boton-primario" onclick="return abrirWhatsappCompra('Programa Académico Especializado', '$1,890 MXN/mes');">🏦 Información de Pago</a>
+                        <button class="boton-secundario" onclick="abrirModalLead('Informes', 'Programa Académico Especializado')">ℹ️ Más Información</button>
+                    </div>
                 </div>
             </article>
         </section>
@@ -229,7 +288,8 @@
                         <img src="images/suscripcion-herramientas.jpg" alt="Membresía Herramientas" class="imagen-cuadro" style="height: 160px; margin-bottom: 15px;">
                         <span class="etiqueta-precio">Cuota Mensual</span>
                         <span class="precio-pantalla">$150 MXN / mes</span>
-                        <a href="https://pay.hotmart.com/V98335817E?checkoutMode=10" class="boton-dorado" onclick="return abrirModalPago(this.href, 'Membresía Mensual');">Suscribirme Ahora</a>
+                        <!-- 🔧 PENDIENTE: reemplazar este href por el link de pago de Clip cuando esté listo -->
+                        <a href="#" class="boton-dorado" onclick="return abrirWhatsappCompra('Membresía Mensual', '$150 MXN/mes');">Suscribirme Ahora</a>
                     </div>
                 </div>
             </div>
@@ -242,7 +302,7 @@
                     <h3>¿Te interesa el Programa de Becas?</h3>
                     <p>Contamos con opciones de apoyo financiero y becas de formación parciales sujeto a evaluación.</p>
                 </div>
-                <a href="https://forms.gle/4N28S5bN7o5a1y1fA" class="boton-linea" target="_blank" rel="noopener">Solicitar Evaluación</a>
+                <button class="boton-linea" onclick="abrirModalLead('Beca', 'Programa de Becas')">Solicitar Evaluación</button>
             </div>
         </section>
 
@@ -254,50 +314,138 @@
         </div>
     </footer>
 
-    <!-- ===== MODAL DE SELECCIÓN DE MÉTODO DE PAGO ===== -->
-    <div class="modal-pago-overlay" id="modal-pago-overlay" onclick="if(event.target===this) cerrarModalPago();">
-        <div class="modal-pago-caja">
-            <button class="modal-pago-cerrar" onclick="cerrarModalPago()" aria-label="Cerrar">&times;</button>
-            <p class="modal-pago-titulo">¿Cómo deseas realizar tu pago?</p>
-            <p class="modal-pago-producto" id="modal-pago-nombre-producto"></p>
+    <!-- ===== MODAL DE LEAD (Becas / Más Información) ===== -->
+    <div class="modal-lead-overlay" id="modal-lead-overlay" onclick="if(event.target===this) cerrarModalLead();">
+        <div class="modal-lead-caja">
+            <button class="modal-lead-cerrar" onclick="cerrarModalLead()" aria-label="Cerrar">&times;</button>
 
-            <button class="modal-pago-opcion modal-pago-hotmart" onclick="pagarConHotmart()">
-                💳 Pago Directo (Hotmart)
-            </button>
-            <button class="modal-pago-opcion modal-pago-transferencia" onclick="pagarPorTransferencia()">
-                🏦 Pago por Transferencia
-            </button>
-            <p class="modal-pago-nota">La transferencia te conecta directo con nuestro equipo de ventas por WhatsApp.</p>
+            <div id="modal-lead-contenido-form">
+                <p class="modal-lead-titulo" id="modal-lead-titulo">Solicitar Información</p>
+                <p class="modal-lead-producto" id="modal-lead-producto"></p>
+
+                <div class="modal-lead-campo">
+                    <label for="lead-nombre">Nombre completo</label>
+                    <input type="text" id="lead-nombre" placeholder="Tu nombre completo">
+                </div>
+                <div class="modal-lead-campo">
+                    <label for="lead-telefono">Teléfono (WhatsApp)</label>
+                    <input type="tel" id="lead-telefono" placeholder="10 dígitos">
+                </div>
+                <div class="modal-lead-campo">
+                    <label for="lead-correo">Correo electrónico</label>
+                    <input type="email" id="lead-correo" placeholder="tucorreo@ejemplo.com">
+                </div>
+
+                <button class="modal-lead-enviar" id="modal-lead-btn-enviar" onclick="enviarLead()">Enviar Solicitud</button>
+                <p class="modal-lead-mensaje-error" id="modal-lead-error" style="display:none;"></p>
+            </div>
+
+            <div id="modal-lead-contenido-exito" style="display:none;">
+                <div class="modal-lead-mensaje">
+                    <p class="modal-lead-mensaje-exito">✅ ¡Solicitud enviada!</p>
+                    <p style="color:#CBD5E1; font-size:0.9rem;">
+                        Gracias, en breve nuestro equipo se pondrá en contacto contigo.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         const WHATSAPP_VENTAS = "528136462129";
-        let linkHotmartActual = "";
-        let nombreProductoActual = "";
 
-        function abrirModalPago(linkHotmart, nombreProducto) {
-            linkHotmartActual = linkHotmart;
-            nombreProductoActual = nombreProducto;
-            document.getElementById('modal-pago-nombre-producto').textContent = nombreProducto;
-            document.getElementById('modal-pago-overlay').classList.add('activo');
-            return false; // Evita que el <a> navegue directo
-        }
+        // ⚠️ IMPORTANTE: este token debe ser IDÉNTICO al TOKEN_SECRETO de tu
+        // Apps Script "ALEMA_Leads_Landing" — es un script separado del portal.
+        const LEADS_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-DjhIxqIwu90VftT0VrPnJxydnJBP25o_0nChgkZh0MjvRFvQAAvkPebjcMxjq9gjSA/exec";
+        const LEADS_TOKEN = "LandingLeads_2026_CambiaEsto";
 
-        function cerrarModalPago() {
-            document.getElementById('modal-pago-overlay').classList.remove('activo');
-        }
+        let tipoSolicitudActual = "";
+        let productoInteresActual = "";
 
-        function pagarConHotmart() {
-            window.open(linkHotmartActual, '_blank', 'noopener');
-            cerrarModalPago();
-        }
-
-        function pagarPorTransferencia() {
-            const mensaje = `¡Hola! 👋 Me interesa realizar el pago por transferencia para: ${nombreProductoActual}. ¿Podrían compartirme los datos bancarios, por favor?`;
+        function abrirWhatsappCompra(nombreProducto, precioTexto) {
+            const mensaje = `¡Hola! 👋 Me interesa adquirir: ${nombreProducto} (${precioTexto}). ¿Me pueden ayudar con el proceso de pago?`;
             const url = `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensaje)}`;
             window.open(url, '_blank', 'noopener');
-            cerrarModalPago();
+            return false;
+        }
+
+        function abrirModalLead(tipoSolicitud, productoInteres) {
+            tipoSolicitudActual = tipoSolicitud;
+            productoInteresActual = productoInteres;
+
+            document.getElementById('modal-lead-titulo').textContent =
+                tipoSolicitud === 'Beca' ? '🎓 Solicitar Evaluación de Beca' : 'ℹ️ Solicitar Más Información';
+            document.getElementById('modal-lead-producto').textContent = productoInteres;
+
+            document.getElementById('modal-lead-contenido-form').style.display = 'block';
+            document.getElementById('modal-lead-contenido-exito').style.display = 'none';
+            document.getElementById('modal-lead-error').style.display = 'none';
+            document.getElementById('lead-nombre').value = '';
+            document.getElementById('lead-telefono').value = '';
+            document.getElementById('lead-correo').value = '';
+            document.getElementById('modal-lead-btn-enviar').disabled = false;
+            document.getElementById('modal-lead-btn-enviar').textContent = 'Enviar Solicitud';
+
+            document.getElementById('modal-lead-overlay').classList.add('activo');
+        }
+
+        function cerrarModalLead() {
+            document.getElementById('modal-lead-overlay').classList.remove('activo');
+        }
+
+        function mostrarErrorLead(mensaje) {
+            const errorEl = document.getElementById('modal-lead-error');
+            errorEl.textContent = mensaje;
+            errorEl.style.display = 'block';
+        }
+
+        async function enviarLead() {
+            const nombre = document.getElementById('lead-nombre').value.trim();
+            const telefono = document.getElementById('lead-telefono').value.trim();
+            const correo = document.getElementById('lead-correo').value.trim();
+
+            if (!nombre || !telefono || !correo) {
+                mostrarErrorLead('Por favor llena los 3 campos.');
+                return;
+            }
+            if (!correo.includes('@')) {
+                mostrarErrorLead('Ingresa un correo válido.');
+                return;
+            }
+
+            const btn = document.getElementById('modal-lead-btn-enviar');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+            document.getElementById('modal-lead-error').style.display = 'none';
+
+            try {
+                const resp = await fetch(LEADS_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        token: LEADS_TOKEN,
+                        accion: 'enviar_lead',
+                        nombre: nombre,
+                        telefono: telefono,
+                        correo: correo,
+                        tipo_solicitud: tipoSolicitudActual,
+                        producto_interes: productoInteresActual
+                    })
+                });
+                const data = await resp.json();
+
+                if (data.success) {
+                    document.getElementById('modal-lead-contenido-form').style.display = 'none';
+                    document.getElementById('modal-lead-contenido-exito').style.display = 'block';
+                } else {
+                    mostrarErrorLead('No se pudo enviar: ' + (data.error || 'error desconocido'));
+                    btn.disabled = false;
+                    btn.textContent = 'Enviar Solicitud';
+                }
+            } catch (err) {
+                mostrarErrorLead('Error de conexión. Intenta de nuevo.');
+                btn.disabled = false;
+                btn.textContent = 'Enviar Solicitud';
+            }
         }
     </script>
 
