@@ -3,8 +3,8 @@
     --fondo-tarjeta: #131722;
     --texto-principal: #e0e6ed;
     --texto-secundario: #848e9c;
-    --dorado-acento: #d4af37;
-    --dorado-brillo: #f3e5ab;
+    --dorado-acento: #FF6B00;
+    --dorado-brillo: #FF6B00;
     --borde-tarjeta: #2a2e3d;
     --fuente-principal: 'Montserrat', sans-serif;
 }
@@ -271,8 +271,8 @@ body {
 
 .panel-precio-suscripcion {
     text-align: center;
-    background-color: rgba(212, 175, 55, 0.04);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    background-color: rgba(255, 107, 0, 0.04);
+    border: 1px solid rgba(255, 107, 0, 0.2);
     padding: 30px;
     border-radius: 6px;
 }
