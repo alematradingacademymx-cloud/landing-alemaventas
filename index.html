@@ -119,6 +119,30 @@
             font-weight: 700;
             margin-bottom: 8px;
         }
+        .modal-lead-opcion-pago {
+            display: block;
+            width: 100%;
+            padding: 13px 18px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            margin-top: 10px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .modal-lead-opcion-pago:hover {
+            opacity: 0.92;
+        }
+        .modal-lead-transferencia {
+            background: #25D366;
+            color: #FFFFFF !important;
+        }
+        .modal-lead-clip {
+            background: #FF6B00;
+            color: #FFFFFF !important;
+        }
         .modal-lead-mensaje-error {
             color: #EF5350;
             font-size: 0.9rem;
@@ -211,9 +235,6 @@
             </div>
             <div style="margin-top: 18px;">
                 <a href="portal.html" target="_blank" class="boton-secundario" style="text-decoration:none;">👀 Vistazo al Portal ALEMA</a>
-            </div>
-            <div style="margin-top: 12px;">
-                <a href="descargas/AlemaDesktopApp.exe" download class="boton-secundario" style="text-decoration:none;">💻 Descargar App de Escritorio (Windows)</a>
             </div>
         </section>
 
@@ -343,7 +364,7 @@
                         <span class="etiqueta-precio">Cuota Mensual</span>
                         <span class="precio-pantalla">$150 MXN / mes</span>
                         <!-- 🔧 PENDIENTE: reemplazar este href por el link de pago de Clip cuando esté listo -->
-                        <a href="#" class="boton-dorado" onclick="return abrirWhatsappCompra('Membresía Mensual', '$150 MXN/mes');">Suscribirme Ahora</a>
+                        <a href="#" class="boton-dorado" onclick="abrirModalLead('Interes_Suscripcion', 'Membresía Mensual'); return false;">Suscribirme Ahora</a>
                     </div>
                 </div>
             </div>
@@ -395,11 +416,23 @@
             </div>
 
             <div id="modal-lead-contenido-exito" style="display:none;">
-                <div class="modal-lead-mensaje">
+                <div class="modal-lead-mensaje" id="modal-lead-mensaje-generico">
                     <p class="modal-lead-mensaje-exito">✅ ¡Solicitud enviada!</p>
                     <p style="color:#CBD5E1; font-size:0.9rem;">
                         Gracias, en breve nuestro equipo se pondrá en contacto contigo.
                     </p>
+                </div>
+
+                <div id="modal-lead-opciones-pago" style="display:none;">
+                    <p class="modal-lead-mensaje-exito" style="text-align:center;">
+                        ✅ ¡Ya casi! Elige tu método de pago
+                    </p>
+                    <a href="#" id="link-pago-whatsapp" target="_blank" class="modal-lead-opcion-pago modal-lead-transferencia">
+                        🏦 Pago por Transferencia (WhatsApp)
+                    </a>
+                    <a href="#" id="link-pago-clip" target="_blank" class="modal-lead-opcion-pago modal-lead-clip">
+                        💳 Pagar con Clip
+                    </a>
                 </div>
             </div>
         </div>
@@ -407,6 +440,7 @@
 
     <script>
         const WHATSAPP_VENTAS = "528136462129";
+        const CLIP_PAGO_URL = "https://pago.clip.mx/v3/e2656711-2531-4761-ba37-73abf290fabe";
 
         // ⚠️ IMPORTANTE: este token debe ser IDÉNTICO al TOKEN_SECRETO de tu
         // Apps Script "ALEMA_Leads_Landing" — es un script separado del portal.
@@ -423,16 +457,23 @@
             return false;
         }
 
+        function tituloParaSolicitud(tipoSolicitud) {
+            if (tipoSolicitud === 'Beca') return '🎓 Solicitar Evaluación de Beca';
+            if (tipoSolicitud === 'Interes_Suscripcion') return '💳 Suscríbete al Portal ALEMA';
+            return 'ℹ️ Solicitar Más Información';
+        }
+
         function abrirModalLead(tipoSolicitud, productoInteres) {
             tipoSolicitudActual = tipoSolicitud;
             productoInteresActual = productoInteres;
 
-            document.getElementById('modal-lead-titulo').textContent =
-                tipoSolicitud === 'Beca' ? '🎓 Solicitar Evaluación de Beca' : 'ℹ️ Solicitar Más Información';
+            document.getElementById('modal-lead-titulo').textContent = tituloParaSolicitud(tipoSolicitud);
             document.getElementById('modal-lead-producto').textContent = productoInteres;
 
             document.getElementById('modal-lead-contenido-form').style.display = 'block';
             document.getElementById('modal-lead-contenido-exito').style.display = 'none';
+            document.getElementById('modal-lead-mensaje-generico').style.display = 'block';
+            document.getElementById('modal-lead-opciones-pago').style.display = 'none';
             document.getElementById('modal-lead-error').style.display = 'none';
             document.getElementById('lead-nombre').value = '';
             document.getElementById('lead-telefono').value = '';
@@ -490,6 +531,19 @@
                 if (data.success) {
                     document.getElementById('modal-lead-contenido-form').style.display = 'none';
                     document.getElementById('modal-lead-contenido-exito').style.display = 'block';
+
+                    if (tipoSolicitudActual === 'Interes_Suscripcion') {
+                        document.getElementById('modal-lead-mensaje-generico').style.display = 'none';
+                        document.getElementById('modal-lead-opciones-pago').style.display = 'block';
+
+                        const mensajeWa = `¡Hola! 👋 Quiero pagar mi Membresía Mensual de ALEMA Trading Academy ($150 MXN/mes). Mi nombre es ${nombre} y mi correo es ${correo}.`;
+                        document.getElementById('link-pago-whatsapp').href =
+                            `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensajeWa)}`;
+                        document.getElementById('link-pago-clip').href = CLIP_PAGO_URL;
+                    } else {
+                        document.getElementById('modal-lead-mensaje-generico').style.display = 'block';
+                        document.getElementById('modal-lead-opciones-pago').style.display = 'none';
+                    }
                 } else {
                     mostrarErrorLead('No se pudo enviar: ' + (data.error || 'error desconocido'));
                     btn.disabled = false;
