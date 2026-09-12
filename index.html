@@ -263,7 +263,7 @@
                             <del class="precio-anterior">$650 MXN</del>
                             <span class="precio">$489 MXN</span>
                         </div>
-                        <a href="#" class="boton-primario" onclick="return abrirWhatsappCompra('Paquete Guías Élite', '$489 MXN');">Adquirir Paquete</a>
+                        <a href="#" class="boton-primario" onclick="abrirModalLead('Interes_Guia_Elite', 'Paquete Guías Élite'); return false;">Adquirir Paquete</a>
                     </div>
                 </article>
 
@@ -285,7 +285,7 @@
                             <del class="precio-anterior">$550 MXN</del>
                             <span class="precio">$349 MXN</span>
                         </div>
-                        <a href="#" class="boton-primario" onclick="return abrirWhatsappCompra('Starter Kit ALEMA', '$349 MXN');">Adquirir Kit</a>
+                        <a href="#" class="boton-primario" onclick="abrirModalLead('Interes_Guia_Starter', 'Starter Kit ALEMA'); return false;">Adquirir Kit</a>
                     </div>
                 </article>
 
@@ -335,7 +335,7 @@
                         <span class="precio-grande">$1,890 MXN / Mes</span>
                     </div>
                     <div class="botones-dobles">
-                        <a href="#" class="boton-primario" onclick="return abrirWhatsappCompra('Programa Académico Especializado', '$1,890 MXN/mes');">🏦 Información de Pago</a>
+                        <a href="#" class="boton-primario" onclick="abrirModalLead('Interes_Programa', 'Programa Académico Especializado'); return false;">🏦 Información de Pago</a>
                         <button class="boton-secundario" onclick="abrirModalLead('Informes', 'Programa Académico Especializado')">ℹ️ Más Información</button>
                     </div>
                 </div>
@@ -440,7 +440,23 @@
 
     <script>
         const WHATSAPP_VENTAS = "528136462129";
-        const CLIP_PAGO_URL = "https://pago.clip.mx/v3/e2656711-2531-4761-ba37-73abf290fabe";
+
+        // Un link de Clip y un mensaje de WhatsApp por cada producto que
+        // usa el flujo de "captura correo → elige método de pago".
+        const CLIP_LINKS = {
+            "Interes_Suscripcion": "https://pago.clip.mx/v3/e2656711-2531-4761-ba37-73abf290fabe",
+            "Interes_Guia_Elite": "https://pago.clip.mx/v3/f2496ad7-eac8-4650-a0fe-482a1799f807",
+            "Interes_Guia_Starter": "https://pago.clip.mx/v3/cbd3a198-619a-40ee-9c5b-4a0b3dc63a18",
+            "Interes_Programa": "https://pago.clip.mx/v3/16d3bd9e-832a-44d4-aa50-100429a607c5",
+            // 🔧 PENDIENTE: agregar aquí "Interes_Guia_Suelta" cuando esa guía esté lista
+        };
+
+        const MENSAJES_WHATSAPP = {
+            "Interes_Suscripcion": (n, c) => `¡Hola! 👋 Quiero pagar mi Membresía Mensual ALEMA ($150 MXN/mes). Mi nombre es ${n} y mi correo es ${c}.`,
+            "Interes_Guia_Elite": (n, c) => `¡Hola! 👋 Quiero comprar el Paquete Guías Élite ($489 MXN). Mi nombre es ${n} y mi correo es ${c}.`,
+            "Interes_Guia_Starter": (n, c) => `¡Hola! 👋 Quiero comprar el Starter Kit ALEMA ($349 MXN). Mi nombre es ${n} y mi correo es ${c}.`,
+            "Interes_Programa": (n, c) => `¡Hola! 👋 Quiero inscribirme al Programa Académico Especializado de ALEMA ($1,890 MXN/mes). Mi nombre es ${n} y mi correo es ${c}.`,
+        };
 
         // ⚠️ IMPORTANTE: este token debe ser IDÉNTICO al TOKEN_SECRETO de tu
         // Apps Script "ALEMA_Leads_Landing" — es un script separado del portal.
@@ -450,16 +466,12 @@
         let tipoSolicitudActual = "";
         let productoInteresActual = "";
 
-        function abrirWhatsappCompra(nombreProducto, precioTexto) {
-            const mensaje = `¡Hola! 👋 Me interesa adquirir: ${nombreProducto} (${precioTexto}). ¿Me pueden ayudar con el proceso de pago?`;
-            const url = `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensaje)}`;
-            window.open(url, '_blank', 'noopener');
-            return false;
-        }
-
         function tituloParaSolicitud(tipoSolicitud) {
             if (tipoSolicitud === 'Beca') return '🎓 Solicitar Evaluación de Beca';
             if (tipoSolicitud === 'Interes_Suscripcion') return '💳 Suscríbete al Portal ALEMA';
+            if (tipoSolicitud === 'Interes_Guia_Elite') return '💳 Adquirir Paquete Guías Élite';
+            if (tipoSolicitud === 'Interes_Guia_Starter') return '💳 Adquirir Starter Kit ALEMA';
+            if (tipoSolicitud === 'Interes_Programa') return '💳 Inscripción al Programa Académico';
             return 'ℹ️ Solicitar Más Información';
         }
 
@@ -532,14 +544,14 @@
                     document.getElementById('modal-lead-contenido-form').style.display = 'none';
                     document.getElementById('modal-lead-contenido-exito').style.display = 'block';
 
-                    if (tipoSolicitudActual === 'Interes_Suscripcion') {
+                    if (CLIP_LINKS[tipoSolicitudActual]) {
                         document.getElementById('modal-lead-mensaje-generico').style.display = 'none';
                         document.getElementById('modal-lead-opciones-pago').style.display = 'block';
 
-                        const mensajeWa = `¡Hola! 👋 Quiero pagar mi Membresía Mensual de ALEMA Trading Academy ($150 MXN/mes). Mi nombre es ${nombre} y mi correo es ${correo}.`;
+                        const mensajeWa = MENSAJES_WHATSAPP[tipoSolicitudActual](nombre, correo);
                         document.getElementById('link-pago-whatsapp').href =
                             `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensajeWa)}`;
-                        document.getElementById('link-pago-clip').href = CLIP_PAGO_URL;
+                        document.getElementById('link-pago-clip').href = CLIP_LINKS[tipoSolicitudActual];
                     } else {
                         document.getElementById('modal-lead-mensaje-generico').style.display = 'block';
                         document.getElementById('modal-lead-opciones-pago').style.display = 'none';
