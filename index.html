@@ -343,6 +343,31 @@
             </article>
         </section>
 
+        <!-- SECCIÓN: SUSCRIPCIÓN TERMINAL ALEMA PROP FIRM -->
+        <section class="seccion">
+            <h2 class="titulo-seccion">Suscripción Terminal ALEMA Prop Firm</h2>
+            <p class="subtitulo-seccion">Pon a prueba tu perfil de trader con capital simulado y evaluación real de desempeño.</p>
+
+            <article class="tarjeta">
+                <div>
+                    <span class="insignia">Suscripción Recurrente</span>
+                    <h3>Terminal ALEMA Prop Firm</h3>
+                    <p class="descripcion">¿Quieres probarte como trader? Opera nuestra Terminal Prop Firm con capital simulado, supera las fases de evaluación, y accede a fondeo real con reparto de utilidades 70/30.</p>
+                    <ul class="lista-caracteristicas">
+                        <li>Acceso completo a la Terminal ALEMA Prop Firm</li>
+                        <li>Biblioteca de guías y material de apoyo incluido</li>
+                        <li>1-2 asesorías mensuales de evaluación y auditoría de desempeño</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="precio-contenedor">
+                        <span class="precio">$500 MXN / mes</span>
+                    </div>
+                    <a href="#" class="boton-primario" onclick="abrirModalLead('Interes_PropFirm', 'Terminal ALEMA Prop Firm'); return false;">Quiero Probarme como Trader</a>
+                </div>
+            </article>
+        </section>
+
         <!-- SECCIÓN 3: SUSCRIPCIÓN MENSUAL -->
         <section class="seccion">
             <h2 class="titulo-seccion">Membresía Mensual</h2>
@@ -449,6 +474,7 @@
             "Interes_Guia_Elite": "https://pago.clip.mx/v3/f2496ad7-eac8-4650-a0fe-482a1799f807",
             "Interes_Guia_Starter": "https://pago.clip.mx/v3/cbd3a198-619a-40ee-9c5b-4a0b3dc63a18",
             "Interes_Programa": "https://pago.clip.mx/v3/16d3bd9e-832a-44d4-aa50-100429a607c5",
+            "Interes_PropFirm": "https://pago.clip.mx/v3/9351d373-a5f5-4b40-9c47-9141d9581987",
             // 🔧 PENDIENTE: agregar aquí "Interes_Guia_Suelta" cuando esa guía esté lista
         };
 
@@ -457,6 +483,7 @@
             "Interes_Guia_Elite": (n, c) => `¡Hola! 👋 Quiero comprar el Paquete Guías Élite ($489 MXN). Mi nombre es ${n} y mi correo es ${c}.`,
             "Interes_Guia_Starter": (n, c) => `¡Hola! 👋 Quiero comprar el Starter Kit ALEMA ($349 MXN). Mi nombre es ${n} y mi correo es ${c}.`,
             "Interes_Programa": (n, c) => `¡Hola! 👋 Quiero inscribirme al Programa Académico Especializado de ALEMA ($1,890 MXN/mes). Mi nombre es ${n} y mi correo es ${c}.`,
+            "Interes_PropFirm": (n, c) => `¡Hola! 👋 Quiero probarme como trader en la Terminal ALEMA Prop Firm ($500 MXN/mes). Mi nombre es ${n} y mi correo es ${c}.`,
         };
 
         // ⚠️ IMPORTANTE: este token debe ser IDÉNTICO al TOKEN_SECRETO de tu
@@ -473,6 +500,7 @@
             if (tipoSolicitud === 'Interes_Guia_Elite') return '💳 Adquirir Paquete Guías Élite';
             if (tipoSolicitud === 'Interes_Guia_Starter') return '💳 Adquirir Starter Kit ALEMA';
             if (tipoSolicitud === 'Interes_Programa') return '💳 Inscripción al Programa Académico';
+            if (tipoSolicitud === 'Interes_PropFirm') return '💳 Suscripción Terminal ALEMA Prop Firm';
             return 'ℹ️ Solicitar Más Información';
         }
 
