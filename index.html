@@ -149,6 +149,13 @@
             margin-top: 10px;
             text-align: center;
         }
+        .modal-lead-nota-cuenta {
+            color: #94A3B8;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            text-align: center;
+            margin-top: 12px;
+        }
 
         /* ===== Botones dobles (Programa Académico) ===== */
         .botones-dobles {
@@ -439,6 +446,7 @@
                 </div>
 
                 <button class="modal-lead-enviar" id="modal-lead-btn-enviar" onclick="enviarLead()">Enviar Solicitud</button>
+                <p class="modal-lead-nota-cuenta" id="modal-lead-nota-cuenta" style="display:none;">Ingresa tus datos para vincular tu compra a tu cuenta del Portal de Alumnos.</p>
                 <p class="modal-lead-mensaje-error" id="modal-lead-error" style="display:none;"></p>
             </div>
 
@@ -505,9 +513,16 @@
             return 'ℹ️ Solicitar Más Información';
         }
 
+        function textoBotonParaSolicitud(tipoSolicitud) {
+            if (CLIP_LINKS[tipoSolicitud]) return 'Elegir método de pago ➔';
+            return 'Enviar Solicitud';
+        }
+
         function abrirModalLead(tipoSolicitud, productoInteres) {
             tipoSolicitudActual = tipoSolicitud;
             productoInteresActual = productoInteres;
+
+            const esFlujoDePago = !!CLIP_LINKS[tipoSolicitud];
 
             document.getElementById('modal-lead-titulo').textContent = tituloParaSolicitud(tipoSolicitud);
             document.getElementById('modal-lead-producto').textContent = productoInteres;
@@ -517,11 +532,12 @@
             document.getElementById('modal-lead-mensaje-generico').style.display = 'block';
             document.getElementById('modal-lead-opciones-pago').style.display = 'none';
             document.getElementById('modal-lead-error').style.display = 'none';
+            document.getElementById('modal-lead-nota-cuenta').style.display = esFlujoDePago ? 'block' : 'none';
             document.getElementById('lead-nombre').value = '';
             document.getElementById('lead-telefono').value = '';
             document.getElementById('lead-correo').value = '';
             document.getElementById('modal-lead-btn-enviar').disabled = false;
-            document.getElementById('modal-lead-btn-enviar').textContent = 'Enviar Solicitud';
+            document.getElementById('modal-lead-btn-enviar').textContent = textoBotonParaSolicitud(tipoSolicitud);
 
             document.getElementById('modal-lead-overlay').classList.add('activo');
         }
@@ -589,12 +605,12 @@
                 } else {
                     mostrarErrorLead('No se pudo enviar: ' + (data.error || 'error desconocido'));
                     btn.disabled = false;
-                    btn.textContent = 'Enviar Solicitud';
+                    btn.textContent = textoBotonParaSolicitud(tipoSolicitudActual);
                 }
             } catch (err) {
                 mostrarErrorLead('Error de conexión. Intenta de nuevo.');
                 btn.disabled = false;
-                btn.textContent = 'Enviar Solicitud';
+                btn.textContent = textoBotonParaSolicitud(tipoSolicitudActual);
             }
         }
     </script>
