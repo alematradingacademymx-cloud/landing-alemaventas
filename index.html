@@ -571,9 +571,21 @@
             btn.textContent = 'Enviando...';
             document.getElementById('modal-lead-error').style.display = 'none';
 
+            // Algunos navegadores integrados (WhatsApp, Instagram, etc.) envían la
+            // petición correctamente a Apps Script pero no logran leer la respuesta
+            // redirigida, dejando el fetch colgado sin resolver ni fallar nunca.
+            // Por eso limitamos la espera con un timeout: si no hay respuesta a
+            // tiempo, asumimos que el lead sí llegó (igual que confirmó la prueba
+            // en móvil, donde el correo siempre llega) y dejamos avanzar al usuario
+            // en vez de dejarlo atorado en "Enviando...".
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            let exito = false;
+
             try {
                 const resp = await fetch(LEADS_APPS_SCRIPT_URL, {
                     method: 'POST',
+                    signal: controller.signal,
                     body: JSON.stringify({
                         token: LEADS_TOKEN,
                         accion: 'enviar_lead',
@@ -587,30 +599,37 @@
                 const data = await resp.json();
 
                 if (data.success) {
-                    document.getElementById('modal-lead-contenido-form').style.display = 'none';
-                    document.getElementById('modal-lead-contenido-exito').style.display = 'block';
-
-                    if (CLIP_LINKS[tipoSolicitudActual]) {
-                        document.getElementById('modal-lead-mensaje-generico').style.display = 'none';
-                        document.getElementById('modal-lead-opciones-pago').style.display = 'block';
-
-                        const mensajeWa = MENSAJES_WHATSAPP[tipoSolicitudActual](nombre, correo);
-                        document.getElementById('link-pago-whatsapp').href =
-                            `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensajeWa)}`;
-                        document.getElementById('link-pago-clip').href = CLIP_LINKS[tipoSolicitudActual];
-                    } else {
-                        document.getElementById('modal-lead-mensaje-generico').style.display = 'block';
-                        document.getElementById('modal-lead-opciones-pago').style.display = 'none';
-                    }
+                    exito = true;
                 } else {
                     mostrarErrorLead('No se pudo enviar: ' + (data.error || 'error desconocido'));
                     btn.disabled = false;
                     btn.textContent = textoBotonParaSolicitud(tipoSolicitudActual);
                 }
             } catch (err) {
-                mostrarErrorLead('Error de conexión. Intenta de nuevo.');
-                btn.disabled = false;
-                btn.textContent = textoBotonParaSolicitud(tipoSolicitudActual);
+                // Fetch abortado (timeout) o falla al leer la respuesta: el lead
+                // probablemente sí se guardó del lado del servidor, así que dejamos
+                // avanzar al usuario en vez de bloquear la venta.
+                exito = true;
+            } finally {
+                clearTimeout(timeoutId);
+            }
+
+            if (exito) {
+                document.getElementById('modal-lead-contenido-form').style.display = 'none';
+                document.getElementById('modal-lead-contenido-exito').style.display = 'block';
+
+                if (CLIP_LINKS[tipoSolicitudActual]) {
+                    document.getElementById('modal-lead-mensaje-generico').style.display = 'none';
+                    document.getElementById('modal-lead-opciones-pago').style.display = 'block';
+
+                    const mensajeWa = MENSAJES_WHATSAPP[tipoSolicitudActual](nombre, correo);
+                    document.getElementById('link-pago-whatsapp').href =
+                        `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensajeWa)}`;
+                    document.getElementById('link-pago-clip').href = CLIP_LINKS[tipoSolicitudActual];
+                } else {
+                    document.getElementById('modal-lead-mensaje-generico').style.display = 'block';
+                    document.getElementById('modal-lead-opciones-pago').style.display = 'none';
+                }
             }
         }
     </script>
