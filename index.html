@@ -149,13 +149,6 @@
             margin-top: 10px;
             text-align: center;
         }
-        .modal-lead-nota-cuenta {
-            color: #94A3B8;
-            font-size: 0.8rem;
-            line-height: 1.4;
-            text-align: center;
-            margin-top: 12px;
-        }
 
         /* ===== Botones dobles (Programa Académico) ===== */
         .botones-dobles {
@@ -428,10 +421,10 @@
         <div class="modal-lead-caja">
             <button class="modal-lead-cerrar" onclick="cerrarModalLead()" aria-label="Cerrar">&times;</button>
 
-            <div id="modal-lead-contenido-form">
-                <p class="modal-lead-titulo" id="modal-lead-titulo">Solicitar Información</p>
-                <p class="modal-lead-producto" id="modal-lead-producto"></p>
+            <p class="modal-lead-titulo" id="modal-lead-titulo">Solicitar Información</p>
+            <p class="modal-lead-producto" id="modal-lead-producto"></p>
 
+            <div id="modal-lead-contenido-form">
                 <div class="modal-lead-campo">
                     <label for="lead-nombre">Nombre completo</label>
                     <input type="text" id="lead-nombre" placeholder="Tu nombre completo">
@@ -446,7 +439,6 @@
                 </div>
 
                 <button class="modal-lead-enviar" id="modal-lead-btn-enviar" onclick="enviarLead()">Enviar Solicitud</button>
-                <p class="modal-lead-nota-cuenta" id="modal-lead-nota-cuenta" style="display:none;">Ingresa tus datos para vincular tu compra a tu cuenta del Portal de Alumnos.</p>
                 <p class="modal-lead-mensaje-error" id="modal-lead-error" style="display:none;"></p>
             </div>
 
@@ -460,7 +452,7 @@
 
                 <div id="modal-lead-opciones-pago" style="display:none;">
                     <p class="modal-lead-mensaje-exito" style="text-align:center;">
-                        ✅ ¡Ya casi! Elige tu método de pago
+                        Elige tu método de pago
                     </p>
                     <a href="#" id="link-pago-whatsapp" target="_blank" class="modal-lead-opcion-pago modal-lead-transferencia">
                         🏦 Pago por Transferencia (WhatsApp)
@@ -476,8 +468,8 @@
     <script>
         const WHATSAPP_VENTAS = "528136462129";
 
-        // Un link de Clip y un mensaje de WhatsApp por cada producto que
-        // usa el flujo de "captura correo → elige método de pago".
+        // Un link de Clip y un mensaje de WhatsApp por cada producto de pago.
+        // Estos productos abren directo las opciones de pago, sin formulario.
         const CLIP_LINKS = {
             "Interes_Suscripcion": "https://pago.clip.mx/v3/e2656711-2531-4761-ba37-73abf290fabe",
             "Interes_Guia_Elite": "https://pago.clip.mx/v3/f2496ad7-eac8-4650-a0fe-482a1799f807",
@@ -488,11 +480,11 @@
         };
 
         const MENSAJES_WHATSAPP = {
-            "Interes_Suscripcion": (n, c) => `¡Hola! 👋 Quiero pagar mi Membresía Mensual ALEMA ($150 MXN/mes). Mi nombre es ${n} y mi correo es ${c}.`,
-            "Interes_Guia_Elite": (n, c) => `¡Hola! 👋 Quiero comprar el Paquete Guías Élite ($489 MXN). Mi nombre es ${n} y mi correo es ${c}.`,
-            "Interes_Guia_Starter": (n, c) => `¡Hola! 👋 Quiero comprar el Starter Kit ALEMA ($349 MXN). Mi nombre es ${n} y mi correo es ${c}.`,
-            "Interes_Programa": (n, c) => `¡Hola! 👋 Quiero inscribirme al Programa Académico Especializado de ALEMA ($1,890 MXN/mes). Mi nombre es ${n} y mi correo es ${c}.`,
-            "Interes_PropFirm": (n, c) => `¡Hola! 👋 Quiero probarme como trader en la Terminal ALEMA Prop Firm ($500 MXN/mes). Mi nombre es ${n} y mi correo es ${c}.`,
+            "Interes_Suscripcion": "¡Hola! 👋 Quiero pagar mi Membresía Mensual ALEMA ($150 MXN/mes) por transferencia.",
+            "Interes_Guia_Elite": "¡Hola! 👋 Quiero comprar el Paquete Guías Élite ($489 MXN) por transferencia.",
+            "Interes_Guia_Starter": "¡Hola! 👋 Quiero comprar el Starter Kit ALEMA ($349 MXN) por transferencia.",
+            "Interes_Programa": "¡Hola! 👋 Quiero inscribirme al Programa Académico Especializado de ALEMA ($1,890 MXN/mes) por transferencia.",
+            "Interes_PropFirm": "¡Hola! 👋 Quiero probarme como trader en la Terminal ALEMA Prop Firm ($500 MXN/mes) por transferencia.",
         };
 
         // ⚠️ IMPORTANTE: este token debe ser IDÉNTICO al TOKEN_SECRETO de tu
@@ -513,31 +505,37 @@
             return 'ℹ️ Solicitar Más Información';
         }
 
-        function textoBotonParaSolicitud(tipoSolicitud) {
-            if (CLIP_LINKS[tipoSolicitud]) return 'Elegir método de pago ➔';
-            return 'Enviar Solicitud';
-        }
-
         function abrirModalLead(tipoSolicitud, productoInteres) {
             tipoSolicitudActual = tipoSolicitud;
             productoInteresActual = productoInteres;
 
-            const esFlujoDePago = !!CLIP_LINKS[tipoSolicitud];
-
             document.getElementById('modal-lead-titulo').textContent = tituloParaSolicitud(tipoSolicitud);
             document.getElementById('modal-lead-producto').textContent = productoInteres;
 
-            document.getElementById('modal-lead-contenido-form').style.display = 'block';
-            document.getElementById('modal-lead-contenido-exito').style.display = 'none';
-            document.getElementById('modal-lead-mensaje-generico').style.display = 'block';
-            document.getElementById('modal-lead-opciones-pago').style.display = 'none';
-            document.getElementById('modal-lead-error').style.display = 'none';
-            document.getElementById('modal-lead-nota-cuenta').style.display = esFlujoDePago ? 'block' : 'none';
-            document.getElementById('lead-nombre').value = '';
-            document.getElementById('lead-telefono').value = '';
-            document.getElementById('lead-correo').value = '';
-            document.getElementById('modal-lead-btn-enviar').disabled = false;
-            document.getElementById('modal-lead-btn-enviar').textContent = textoBotonParaSolicitud(tipoSolicitud);
+            const form = document.getElementById('modal-lead-contenido-form');
+            const exito = document.getElementById('modal-lead-contenido-exito');
+            const opcionesPago = document.getElementById('modal-lead-opciones-pago');
+
+            if (CLIP_LINKS[tipoSolicitud]) {
+                form.style.display = 'none';
+                exito.style.display = 'block';
+                document.getElementById('modal-lead-mensaje-generico').style.display = 'none';
+                opcionesPago.style.display = 'block';
+                document.getElementById('link-pago-whatsapp').href =
+                    `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(MENSAJES_WHATSAPP[tipoSolicitud])}`;
+                document.getElementById('link-pago-clip').href = CLIP_LINKS[tipoSolicitud];
+            } else {
+                form.style.display = 'block';
+                exito.style.display = 'none';
+                document.getElementById('modal-lead-mensaje-generico').style.display = 'block';
+                opcionesPago.style.display = 'none';
+                document.getElementById('modal-lead-error').style.display = 'none';
+                document.getElementById('lead-nombre').value = '';
+                document.getElementById('lead-telefono').value = '';
+                document.getElementById('lead-correo').value = '';
+                document.getElementById('modal-lead-btn-enviar').disabled = false;
+                document.getElementById('modal-lead-btn-enviar').textContent = 'Enviar Solicitud';
+            }
 
             document.getElementById('modal-lead-overlay').classList.add('activo');
         }
@@ -603,7 +601,7 @@
                 } else {
                     mostrarErrorLead('No se pudo enviar: ' + (data.error || 'error desconocido'));
                     btn.disabled = false;
-                    btn.textContent = textoBotonParaSolicitud(tipoSolicitudActual);
+                    btn.textContent = 'Enviar Solicitud';
                 }
             } catch (err) {
                 // Fetch abortado (timeout) o falla al leer la respuesta: el lead
@@ -617,19 +615,6 @@
             if (exito) {
                 document.getElementById('modal-lead-contenido-form').style.display = 'none';
                 document.getElementById('modal-lead-contenido-exito').style.display = 'block';
-
-                if (CLIP_LINKS[tipoSolicitudActual]) {
-                    document.getElementById('modal-lead-mensaje-generico').style.display = 'none';
-                    document.getElementById('modal-lead-opciones-pago').style.display = 'block';
-
-                    const mensajeWa = MENSAJES_WHATSAPP[tipoSolicitudActual](nombre, correo);
-                    document.getElementById('link-pago-whatsapp').href =
-                        `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensajeWa)}`;
-                    document.getElementById('link-pago-clip').href = CLIP_LINKS[tipoSolicitudActual];
-                } else {
-                    document.getElementById('modal-lead-mensaje-generico').style.display = 'block';
-                    document.getElementById('modal-lead-opciones-pago').style.display = 'none';
-                }
             }
         }
     </script>
