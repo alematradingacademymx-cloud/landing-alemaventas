@@ -152,6 +152,24 @@
             white-space: nowrap;
         }
     </style>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1709948527428609');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1709948527428609&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 </head>
 <body>
 
@@ -371,10 +389,10 @@
             <p class="modal-lead-mensaje-exito" style="text-align:center;">
                 Elige tu método de pago
             </p>
-            <a href="#" id="link-pago-whatsapp" target="_blank" class="modal-lead-opcion-pago modal-lead-transferencia">
+            <a href="#" id="link-pago-whatsapp" target="_blank" onclick="registrarClicPago('transferencia')" class="modal-lead-opcion-pago modal-lead-transferencia">
                 🏦 Pago por Transferencia (WhatsApp)
             </a>
-            <a href="#" id="link-pago-clip" target="_blank" class="modal-lead-opcion-pago modal-lead-clip">
+            <a href="#" id="link-pago-clip" target="_blank" onclick="registrarClicPago('clip')" class="modal-lead-opcion-pago modal-lead-clip">
                 💳 Pagar con Clip
             </a>
         </div>
@@ -414,11 +432,43 @@
             "Interes_PropFirm": "💳 Suscripción Terminal ALEMA Prop Firm",
         };
 
+        const PRECIOS_MXN = {
+            "Interes_Suscripcion": 150,
+            "Interes_Guia_Elite": 489,
+            "Interes_Guia_Starter": 349,
+            "Interes_Programa": 1890,
+            "Interes_PropFirm": 500,
+        };
+
+        let productoActual = { tipo: "", nombre: "" };
+
+        function rastrear(tipoEvento, evento, datos) {
+            if (typeof fbq !== 'function') return;
+            fbq(tipoEvento, evento, datos);
+        }
+
+        function registrarClicPago(metodo) {
+            const datos = {
+                content_name: productoActual.nombre,
+                value: PRECIOS_MXN[productoActual.tipo],
+                currency: 'MXN',
+                metodo_pago: metodo
+            };
+            if (metodo === 'transferencia') rastrear('track', 'Contact', datos);
+            else rastrear('trackCustom', 'ClicPagoClip', datos);
+        }
+
         function urlWhatsApp(mensaje) {
             return `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(mensaje)}`;
         }
 
         function abrirModalLead(tipoSolicitud, productoInteres) {
+            productoActual = { tipo: tipoSolicitud, nombre: productoInteres };
+            rastrear('track', 'InitiateCheckout', {
+                content_name: productoInteres,
+                value: PRECIOS_MXN[tipoSolicitud],
+                currency: 'MXN'
+            });
             document.getElementById('modal-lead-titulo').textContent = TITULOS_MODAL[tipoSolicitud];
             document.getElementById('modal-lead-producto').textContent = productoInteres;
             document.getElementById('link-pago-whatsapp').href = urlWhatsApp(MENSAJES_WHATSAPP[tipoSolicitud]);
@@ -431,6 +481,7 @@
         }
 
         function abrirWhatsAppConsulta(tipoConsulta) {
+            rastrear('track', 'Contact', { content_name: tipoConsulta });
             window.open(urlWhatsApp(MENSAJES_CONSULTA[tipoConsulta]), '_blank');
         }
     </script>
