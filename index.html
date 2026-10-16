@@ -184,6 +184,28 @@
 
     <main class="contenedor">
 
+        <!-- SEMINARIO / MASTERCLASS: se oculta solo después de data-expira (UTC).
+             Para quitarlo a mano, borra todo este bloque <section id="seccion-seminario">. -->
+        <section class="seccion" id="seccion-seminario" data-expira="2026-10-27T03:00:00Z" style="display:none;">
+            <h2 class="titulo-seccion">Masterclass Gratuita en Vivo</h2>
+            <p class="subtitulo-seccion">Lunes 26 de octubre · 7:00 PM (CDMX) · Acceso gratuito con cupo limitado.</p>
+
+            <article class="tarjeta tarjeta-seminario">
+                <img src="images/seminario-masterclass.webp" alt="Masterclass gratuita en vivo: Estructura de Mercado y Gestión de Riesgo con Alex Marroquín" class="imagen-seminario">
+                <div class="seminario-info">
+                    <span class="insignia">Masterclass Gratuita · En Vivo</span>
+                    <h3>Estructura de Mercado y Gestión de Riesgo</h3>
+                    <p class="descripcion">De cero a consistentemente rentable. Conoce en vivo la Terminal y el Portal de Alumnos ALEMA de la mano de Alex Marroquín, mentor de ALEMA Trading Academy.</p>
+                    <ul class="lista-caracteristicas">
+                        <li>Fecha: lunes 26 de octubre</li>
+                        <li>Hora: 7:00 PM (CDMX)</li>
+                        <li>Plataforma: Zoom · 50–60 min</li>
+                    </ul>
+                    <a href="#" id="boton-grupo-vip" target="_blank" rel="noopener" class="boton-primario boton-seminario" onclick="rastrear('track', 'Lead', { content_name: 'Masterclass 26 oct' })">Ingresa al Grupo VIP</a>
+                </div>
+            </article>
+        </section>
+
         <!-- BANNER: TODO EN UN MISMO PORTAL -->
         <section class="banner-portal">
             <h2>🎯 Todo en un Mismo Portal</h2>
@@ -479,6 +501,27 @@
         function cerrarModalLead() {
             document.getElementById('modal-lead-overlay').classList.remove('activo');
         }
+
+        // 🔧 PENDIENTE: pegar aquí el link del grupo VIP de WhatsApp.
+        // Mientras esté vacío, el bloque del seminario no se muestra al público
+        // (para verlo igual al revisar, abre la página con ?preview al final).
+        const GRUPO_VIP_URL = "";
+
+        function iniciarSeminario() {
+            const seccion = document.getElementById('seccion-seminario');
+            if (!seccion) return;
+
+            const expirado = Date.now() > new Date(seccion.dataset.expira).getTime();
+            const vistaPrevia = new URLSearchParams(location.search).has('preview');
+
+            if (expirado || (!GRUPO_VIP_URL && !vistaPrevia)) {
+                seccion.remove();
+                return;
+            }
+            if (GRUPO_VIP_URL) document.getElementById('boton-grupo-vip').href = GRUPO_VIP_URL;
+            seccion.style.display = '';
+        }
+        iniciarSeminario();
 
         function abrirWhatsAppConsulta(tipoConsulta) {
             rastrear('track', 'Contact', { content_name: tipoConsulta });

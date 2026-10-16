@@ -343,6 +343,47 @@ body {
     border-top: 1px solid var(--borde-tarjeta);
 }
 
+/* SEMINARIO / MASTERCLASS */
+.tarjeta-seminario {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 35px;
+}
+
+.imagen-seminario {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    flex-shrink: 0;
+    border-radius: 4px;
+    border: 1px solid var(--borde-tarjeta);
+}
+
+.seminario-info {
+    flex: 1;
+}
+
+.boton-seminario {
+    background-color: var(--dorado-acento);
+    color: var(--fondo-principal);
+}
+
+.boton-seminario:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+    .tarjeta-seminario {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 25px;
+    }
+    .imagen-seminario {
+        max-width: 100%;
+    }
+}
+
 /* REGLAS RESPONSIVAS */
 @media (min-width: 769px) {
     .imagen-cuadro-horizontal {
