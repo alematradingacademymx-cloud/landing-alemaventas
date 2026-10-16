@@ -502,10 +502,9 @@
             document.getElementById('modal-lead-overlay').classList.remove('activo');
         }
 
-        // 🔧 PENDIENTE: pegar aquí el link del grupo VIP de WhatsApp.
-        // Mientras esté vacío, el bloque del seminario no se muestra al público
-        // (para verlo igual al revisar, abre la página con ?preview al final).
-        const GRUPO_VIP_URL = "";
+        // Link del grupo VIP de WhatsApp. Si se deja vacío, el bloque del seminario
+        // no se muestra al público (para verlo igual, abre la página con ?preview).
+        const GRUPO_VIP_URL = "https://chat.whatsapp.com/JSdnBKV67chJolbvnQdUCD?mode=gi_t";
 
         function iniciarSeminario() {
             const seccion = document.getElementById('seccion-seminario');
