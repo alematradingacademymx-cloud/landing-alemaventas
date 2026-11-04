@@ -57,21 +57,28 @@ a { color: inherit; }
   background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgb(254 166 33 / .9), transparent 70%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
 }
+@media (hover: hover) {
 .brilla:hover { transform: translateY(-5px); border-color: rgb(254 166 33 / .35);
   box-shadow: inset 0 1px 0 var(--brillo), 0 30px 70px -30px rgb(0 0 0 / .9), 0 0 40px -18px rgb(254 166 33 / .55); }
 .brilla:hover::before, .brilla:hover::after { opacity: 1; }
+.btn-oro:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgb(255 255 255 / .6), 0 18px 34px -14px rgb(254 166 33 / 1); }
+.btn-vidrio:hover { border-color: rgb(254 166 33 / .5); color: #FFD08A; transform: translateY(-2px); }
+.modal-lead-opcion-pago:hover { transform: translateY(-2px); }
+.tarjeta:hover .foto img { transform: scale(1.03); }
+}
 @media (prefers-reduced-motion: reduce) { .brilla, .brilla::before, .brilla::after { transition: none; } .brilla:hover { transform: none; } html { scroll-behavior: auto; } }
 
 /* ===== Botones ===== */
 .btn { display: inline-flex; align-items: center; justify-content: center; text-align: center; gap: 8px; font: 600 .92rem/1.25 var(--letra); letter-spacing: .01em;
-  padding: 14px 22px; border-radius: 14px; text-decoration: none; cursor: pointer; border: 1px solid transparent; transition: transform .2s, filter .2s, background .2s, border-color .2s; }
+  padding: 14px 22px; border-radius: 14px; text-decoration: none; cursor: pointer; border: 1px solid transparent; -webkit-tap-highlight-color: transparent;
+  transition: transform .2s, box-shadow .2s, border-color .2s, color .2s; }
 .btn:focus-visible { outline: 2px solid var(--ambar); outline-offset: 3px; }
-.btn-oro { background: linear-gradient(180deg, #FFBE4D, var(--ambar) 55%, #F08F0C); color: #2B1C02;
+/* Color sólido de respaldo debajo del degradado: el botón nunca se queda sin fondo (Safari en iPhone). */
+.btn-oro, .btn-oro:visited, .btn-oro:active, .btn-oro:focus { background: var(--ambar) linear-gradient(180deg, #FFBE4D, var(--ambar) 55%, #F08F0C); color: #2B1C02; }
+.btn-oro {
   box-shadow: inset 0 1px 0 rgb(255 255 255 / .55), 0 14px 30px -14px rgb(254 166 33 / .9); }
-.btn-oro:hover { transform: translateY(-2px); filter: brightness(1.06); }
 .btn-vidrio { background: rgb(255 255 255 / .06); border-color: var(--borde); color: var(--tinta); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   box-shadow: inset 0 1px 0 var(--brillo); }
-.btn-vidrio:hover { border-color: rgb(254 166 33 / .5); color: #FFD08A; transform: translateY(-2px); }
 .btn-ancho { width: 100%; }
 
 /* ===== Barra superior ===== */
@@ -142,7 +149,6 @@ h1 em { font-style: normal; background: linear-gradient(90deg, #FFD08A, var(--am
 .tarjeta { padding: 18px; display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 30px; align-items: center; min-width: 0; }
 .tarjeta .foto { border-radius: 16px; overflow: hidden; background: #0E1422; border: 1px solid rgb(255 255 255 / .06); justify-self: center; width: 100%; }
 .tarjeta .foto img { width: 100%; height: auto; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
-.tarjeta:hover .foto img { transform: scale(1.03); }
 .tarjeta .cuerpo { padding: 6px 6px 6px 0; display: flex; flex-direction: column; min-width: 0; }
 .tarjeta .pie { margin-top: 6px; }
 .tarjeta .pie .btn { max-width: 360px; }
@@ -218,8 +224,7 @@ h1 em { font-style: normal; background: linear-gradient(90deg, #FFD08A, var(--am
 .modal-lead-producto { color: var(--ambar); font-weight: 600; font-size: .92rem; margin: 0 0 18px; }
 .modal-lead-mensaje-exito { color: var(--tenue); font-size: .9rem; margin: 0 0 6px; }
 .modal-lead-opcion-pago { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 10px; padding: 14px 18px; border-radius: 14px;
-  font: 600 .95rem var(--letra); text-decoration: none; transition: transform .2s, filter .2s; }
-.modal-lead-opcion-pago:hover { transform: translateY(-2px); filter: brightness(1.06); }
+  font: 600 .95rem var(--letra); text-decoration: none; transition: transform .2s; }
 .modal-lead-transferencia { background: #25D366; color: #fff !important; }
 .modal-lead-clip { background: linear-gradient(180deg, #FFBE4D, var(--ambar)); color: #2B1C02 !important; }
 
