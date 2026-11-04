@@ -29,7 +29,6 @@
     try { sesion = JSON.parse(localStorage.getItem(CLAVE)); } catch (e) {}
     var url = new URL(APP + "/");
     url.searchParams.set("embed", "true");
-    url.searchParams.set("embed_options", "hide_loading_screen");
     if (sesion && sesion.u && sesion.t) {
       url.searchParams.set("u", sesion.u);
       url.searchParams.set("t", sesion.t);
