@@ -17,154 +17,11 @@
     <meta property="og:image:alt" content="Isotipo y logotipo de ALEMA Trading Academy">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="images/alema_iso.png.png">
-    <link rel="stylesheet" href="style.css?v=2">
+    <meta name="theme-color" content="#070B13">
+    <link rel="stylesheet" href="style.css?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* ===== MODAL DE LEAD (Becas / Más Información) ===== */
-        .modal-lead-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(6, 10, 20, 0.75);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-lead-overlay.activo {
-            display: flex;
-        }
-        .modal-lead-caja {
-            background: #101827;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            max-width: 420px;
-            width: 100%;
-            padding: 28px 26px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-            position: relative;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .modal-lead-cerrar {
-            position: absolute;
-            top: 14px;
-            right: 16px;
-            background: none;
-            border: none;
-            color: #94A3B8;
-            font-size: 22px;
-            cursor: pointer;
-            line-height: 1;
-        }
-        .modal-lead-cerrar:hover {
-            color: #F1F5F9;
-        }
-        .modal-lead-titulo {
-            color: #F1F5F9;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin: 0 0 4px;
-            text-align: center;
-        }
-        .modal-lead-producto {
-            color: #FF6B00;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin: 0 0 20px;
-            text-align: center;
-        }
-        .modal-lead-mensaje-exito {
-            color: #26A69A;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .modal-lead-opcion-pago {
-            display: block;
-            width: 100%;
-            padding: 13px 18px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            font-family: 'Montserrat', sans-serif;
-            cursor: pointer;
-            margin-top: 10px;
-            text-align: center;
-            text-decoration: none;
-        }
-        .modal-lead-opcion-pago:hover {
-            opacity: 0.92;
-        }
-        .modal-lead-transferencia {
-            background: #25D366;
-            color: #FFFFFF !important;
-        }
-        .modal-lead-clip {
-            background: #FF6B00;
-            color: #FFFFFF !important;
-        }
-
-        /* ===== Botones dobles (Programa Académico) ===== */
-        .botones-dobles {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .boton-secundario {
-            display: inline-block;
-            padding: 12px 22px;
-            border-radius: 8px;
-            border: 1.5px solid #FF6B00;
-            color: #FF6B00 !important;
-            background: transparent;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            text-decoration: none;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-        .boton-secundario:hover {
-            background: rgba(255, 107, 0, 0.08);
-        }
-        .banner-portal {
-            background: linear-gradient(135deg, #1E293B 0%, #101827 100%);
-            border: 1px solid rgba(255, 107, 0, 0.25);
-            border-radius: 14px;
-            padding: 26px 30px;
-            margin: 24px 0 8px;
-            text-align: center;
-        }
-        .banner-portal h2 {
-            color: #FF6B00;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0 0 8px;
-        }
-        .banner-portal p {
-            color: #CBD5E1;
-            font-size: 0.95rem;
-            margin: 0 0 16px;
-        }
-        .banner-portal-herramientas {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-        .banner-portal-herramientas span {
-            background: rgba(255, 107, 0, 0.1);
-            border: 1px solid rgba(255, 107, 0, 0.3);
-            color: #F1F5F9;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-    </style>
-
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
@@ -185,251 +42,231 @@
 </head>
 <body>
 
-    <!-- HEADER / ENCABEZADO PRINCIPAL -->
-    <header class="header-principal">
+    <div class="fondo-luces" aria-hidden="true"></div>
+    <div class="fondo-rejilla" aria-hidden="true"></div>
+
+    <!-- BARRA SUPERIOR -->
+    <header class="barra">
         <div class="contenedor">
-            <img src="images/alema_iso.png.png" alt="Logo ALEMA Trading Academy" class="logo-imagen">
-            <h1 class="logo">ALEMA TRADING ACADEMY</h1>
-            <p class="tagline">Catálogo Oficial de Formación y Recursos Educativos</p>
-            <a href="app/" class="boton-portal">🔑 Ingresar al Portal</a>
+            <nav class="vidrio" aria-label="Principal">
+                <a href="#inicio" class="marca">
+                    <img src="images/alema_iso.png.png" alt="Logo ALEMA Trading Academy">
+                    <span><b>ALEMA</b><small>Trading Academy</small></span>
+                </a>
+                <div class="menu">
+                    <a href="#paquetes">Paquetes</a>
+                    <a href="#programa">Programa</a>
+                    <a href="#propfirm">Prop Firm</a>
+                    <a href="#membresia">Membresía</a>
+                </div>
+                <a href="app/" class="btn btn-oro">🔑 Ingresar al Portal</a>
+            </nav>
         </div>
     </header>
 
-    <main class="contenedor">
+    <main id="inicio">
+        <!-- PORTADA -->
+        <section class="contenedor portada">
+            <div class="aparece">
+                <span class="antetitulo"><i></i>Catálogo oficial de formación y recursos educativos</span>
+                <h1>Aprende trading <em>con método.</em></h1>
+                <p class="lead">Guías, programa académico, Terminal Prop Firm y Portal de Alumnos de ALEMA Trading Academy, todo en un mismo lugar.</p>
+                <div class="acciones">
+                    <a href="app/" class="btn btn-oro">🔑 Ingresar al Portal</a>
+                    <a href="#programa" class="btn btn-vidrio">Ver programa académico</a>
+                </div>
+                <ul class="confianza">
+                    <li><span>💳</span>Paga con transferencia o con Clip</li>
+                    <li><span>🔐</span>Tu propio acceso al Portal de Alumnos</li>
+                    <li><span>🎓</span>Becas parciales sujetas a evaluación</li>
+                </ul>
+            </div>
 
-        <!-- SEMINARIO / MASTERCLASS: se oculta solo después de data-expira (UTC).
-             Para quitarlo a mano, borra todo este bloque <section id="seccion-seminario">. -->
-        <section class="seccion" id="seccion-seminario" data-expira="2026-10-27T03:00:00Z" style="display:none;">
-            <h2 class="titulo-seccion">Masterclass Gratuita en Vivo</h2>
-            <p class="subtitulo-seccion">Lunes 26 de octubre · 7:00 PM (CDMX) · Acceso gratuito con cupo limitado.</p>
+            <!-- TODO EN UN MISMO PORTAL -->
+            <aside class="vidrio brilla portal">
+                <h2>🎯 Todo en un mismo portal</h2>
+                <p>Al inscribirte, obtienes tu propio acceso al <strong>Portal Institucional ALEMA</strong>, sin plataformas externas, todo centralizado:</p>
+                <div class="herramientas">
+                    <div class="herr"><span class="ico">📊</span><div><b>Terminal ALEMA</b><small>Opera con capital simulado</small></div></div>
+                    <div class="herr"><span class="ico">🧮</span><div><b>Calculadoras de Riesgo</b><small>Lotaje y gestión por operación</small></div></div>
+                    <div class="herr"><span class="ico">✍️</span><div><b>Trading Journal</b><small>Tu bitácora de operaciones</small></div></div>
+                    <div class="herr"><span class="ico">📚</span><div><b>Biblioteca Digital</b><small>Guías y material de apoyo</small></div></div>
+                    <div class="herr"><span class="ico">📝</span><div><b>Evaluaciones y Certificaciones</b><small>Avanza módulo por módulo</small></div></div>
+                </div>
+                <div class="acciones">
+                    <a href="portal.html" target="_blank" rel="noopener" class="btn btn-vidrio">👀 Vistazo al Portal</a>
+                    <a href="descargas/AlemaDesktopApp.exe" class="btn btn-vidrio">💻 App para Windows</a>
+                </div>
+            </aside>
+        </section>
 
-            <article class="tarjeta tarjeta-seminario">
-                <img src="images/seminario-masterclass.webp" alt="Masterclass gratuita en vivo: Estructura de Mercado y Gestión de Riesgo con Alex Marroquín" class="imagen-seminario">
-                <div class="seminario-info">
+        <!-- MASTERCLASS: se oculta sola después de data-expira (UTC). Para quitarla a mano, borra esta sección. -->
+        <section class="contenedor seccion" id="seccion-seminario" data-expira="2026-10-27T03:00:00Z" hidden>
+            <div class="cabeza"><span class="eti">En vivo</span><h2>Masterclass Gratuita en Vivo</h2>
+                <p>Lunes 26 de octubre · 7:00 PM (CDMX) · Acceso gratuito con cupo limitado.</p></div>
+            <article class="vidrio brilla seminario">
+                <img src="images/seminario-masterclass.webp" alt="Masterclass gratuita en vivo: Estructura de Mercado y Gestión de Riesgo con Alex Marroquín">
+                <div>
                     <span class="insignia">Masterclass Gratuita · En Vivo</span>
                     <h3>Estructura de Mercado y Gestión de Riesgo</h3>
                     <p class="descripcion">De cero a consistentemente rentable. Conoce en vivo la Terminal y el Portal de Alumnos ALEMA de la mano de Alex Marroquín, mentor de ALEMA Trading Academy.</p>
-                    <ul class="lista-caracteristicas">
+                    <ul class="lista">
                         <li>Fecha: lunes 26 de octubre</li>
                         <li>Hora: 7:00 PM (CDMX)</li>
                         <li>Plataforma: Zoom · 50–60 min</li>
                     </ul>
-                    <a href="#" id="boton-grupo-vip" target="_blank" rel="noopener" class="boton-primario boton-seminario" onclick="rastrear('track', 'Lead', { content_name: 'Masterclass 26 oct' })">Ingresa al Grupo VIP</a>
+                    <a href="#" id="boton-grupo-vip" target="_blank" rel="noopener" class="btn btn-oro" onclick="rastrear('track', 'Lead', { content_name: 'Masterclass 26 oct' })">Ingresa al Grupo VIP</a>
                 </div>
             </article>
         </section>
 
-        <!-- BANNER: TODO EN UN MISMO PORTAL -->
-        <section class="banner-portal">
-            <h2>🎯 Todo en un Mismo Portal</h2>
-            <p>Al inscribirte, obtienes tu propio acceso al <strong>Portal Institucional ALEMA</strong> — sin plataformas externas, todo centralizado:</p>
-            <div class="banner-portal-herramientas">
-                <span>📊 Terminal ALEMA</span>
-                <span>🧮 Calculadoras de Riesgo</span>
-                <span>✍️ Trading Journal</span>
-                <span>📚 Biblioteca Digital</span>
-                <span>📝 Evaluaciones y Certificaciones</span>
-            </div>
-            <div style="margin-top: 18px;">
-                <a href="portal.html" target="_blank" class="boton-secundario" style="text-decoration:none;">👀 Vistazo al Portal ALEMA</a>
-                <a href="descargas/AlemaDesktopApp.exe" class="boton-secundario" style="text-decoration:none;">💻 Descargar App de Escritorio (Windows)</a>
-            </div>
-        </section>
-
-        <!-- SECCIÓN 1: GUÍAS Y KITS -->
-        <section class="seccion">
-            <h2 class="titulo-seccion">Paquetes de Estudio Autodidacta</h2>
-            <p class="subtitulo-seccion">Material técnico estructurado para estudio independiente y referencia operativa.</p>
-            
-            <div class="grid-dos-columnas">
-                
-                <!-- Tarjeta 1: Guías Élite -->
-                <article class="tarjeta">
-                    <div>
-                        <img src="images/paquete-elite.jpg" alt="Paquete Guías Élite" class="imagen-cuadro">
+        <!-- PAQUETES DE ESTUDIO -->
+        <section class="contenedor seccion" id="paquetes">
+            <div class="cabeza"><span class="eti">Estudio autodidacta</span><h2>Paquetes de Estudio Autodidacta</h2>
+                <p>Material técnico estructurado para estudio independiente y referencia operativa.</p></div>
+            <div class="grid-2">
+                <article class="vidrio brilla tarjeta">
+                    <div class="foto"><img src="images/paquete-elite.jpg" alt="Paquete Guías Élite" loading="lazy"></div>
+                    <div class="cuerpo">
                         <span class="insignia">Digital / PDF</span>
                         <h3>Paquete Guías Élite</h3>
                         <p class="descripcion">Compendio integral de guías teóricas y operativas sobre estructura de mercado, liquidaciones y modelos técnicos.</p>
-                        <ul class="lista-caracteristicas">
+                        <ul class="lista">
                             <li>Manuales técnicos en formato digital</li>
                             <li>Ejemplos de estructuras y gráficos</li>
                             <li>Acceso protegido desde tu portal de alumno</li>
                         </ul>
-                    </div>
-                    <div>
-                        <div class="precio-contenedor">
-                            <del class="precio-anterior">$650 MXN</del>
-                            <span class="precio">$489 MXN</span>
+                        <div class="pie">
+                            <div class="precio"><del>$650 MXN</del><b>$489 MXN</b><span class="ahorro">Ahorras $161</span></div>
+                            <a href="#" class="btn btn-oro btn-ancho" onclick="abrirModalLead('Interes_Guia_Elite', 'Paquete Guías Élite'); return false;">Adquirir Paquete</a>
                         </div>
-                        <a href="#" class="boton-primario" onclick="abrirModalLead('Interes_Guia_Elite', 'Paquete Guías Élite'); return false;">Adquirir Paquete</a>
                     </div>
                 </article>
-
-                <!-- Tarjeta 2: Starter Kit -->
-                <article class="tarjeta">
-                    <div>
-                        <img src="images/paquete-starter.jpg" alt="Starter Kit ALEMA" class="imagen-cuadro">
+                <article class="vidrio brilla tarjeta">
+                    <div class="foto"><img src="images/paquete-starter.jpg" alt="Starter Kit ALEMA" loading="lazy"></div>
+                    <div class="cuerpo">
                         <span class="insignia">Digital / PDF</span>
                         <h3>Starter Kit ALEMA</h3>
                         <p class="descripcion">Herramientas fundamentales de inducción para traders que inician su proceso de formación técnica.</p>
-                        <ul class="lista-caracteristicas">
+                        <ul class="lista">
                             <li>Glosario operativo y terminología</li>
                             <li>Plantillas de bitácora básica</li>
                             <li>Guía de gestión de riesgo inicial</li>
                         </ul>
-                    </div>
-                    <div>
-                        <div class="precio-contenedor">
-                            <del class="precio-anterior">$550 MXN</del>
-                            <span class="precio">$349 MXN</span>
+                        <div class="pie">
+                            <div class="precio"><del>$550 MXN</del><b>$349 MXN</b><span class="ahorro">Ahorras $201</span></div>
+                            <a href="#" class="btn btn-oro btn-ancho" onclick="abrirModalLead('Interes_Guia_Starter', 'Starter Kit ALEMA'); return false;">Adquirir Kit</a>
                         </div>
-                        <a href="#" class="boton-primario" onclick="abrirModalLead('Interes_Guia_Starter', 'Starter Kit ALEMA'); return false;">Adquirir Kit</a>
                     </div>
                 </article>
-
             </div>
         </section>
 
-        <!-- SECCIÓN 2: PROGRAMA ACADÉMICO COMPLETO -->
-        <section class="seccion">
-            <h2 class="titulo-seccion">Programa Académico Especializado</h2>
-            <p class="subtitulo-seccion">Formación integral modular estructurada desde los fundamentos bursátiles hasta la ejecución institucional.</p>
-
-            <article class="tarjeta-horizontal">
-                <img src="images/programa-academico.jpg" alt="Inscripción al Programa Académico" class="imagen-cuadro-horizontal">
-                <h3>Inscripción al Programa Académico</h3>
-                <p class="descripcion">Un trayecto formativo completo diseñado para desarrollar la disciplina analítica y el criterio operativo riguroso requerido por los mercados financieros contemporáneos.</p>
-                
-                <div class="mantenimiento-modulos">
-                    <div class="bloque-modulo">
-                        <h4>Módulo I: Básico</h4>
-                        <p>Introducción técnica a los mercados financieros y estructura de mercado.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo II: Básico Intermedio</h4>
-                        <p>Metodología avanzada en análisis gráfico y lecturas de liquidez.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo III: Intermedio</h4>
-                        <p>Gestión del riesgo, Order Blocks, indicadores técnicos y formulación de estrategias.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo IV: Intermedio Avanzado</h4>
-                        <p>Modelos operativos, estrategia algorítmica y psicotrading aplicado.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo V: Avanzado</h4>
-                        <p>Análisis integral, integración de IA, Wyckoff avanzado y gestión de fondeo.</p>
-                    </div>
-                    <div class="bloque-modulo">
-                        <h4>Módulo VI: Práctico</h4>
-                        <p>Desarrollo operativo supervisado y evaluación de consistencia.</p>
+        <!-- PROGRAMA ACADÉMICO -->
+        <section class="contenedor seccion" id="programa">
+            <div class="cabeza"><span class="eti">Formación completa</span><h2>Programa Académico Especializado</h2>
+                <p>Formación integral modular estructurada desde los fundamentos bursátiles hasta la ejecución institucional.</p></div>
+            <article class="vidrio programa">
+                <div class="foto"><img src="images/programa-academico.jpg" alt="Inscripción al Programa Académico" loading="lazy"></div>
+                <div class="info">
+                    <h3 style="margin:0 0 8px;font-size:1.32rem">Inscripción al Programa Académico</h3>
+                    <p class="descripcion">Un trayecto formativo completo diseñado para desarrollar la disciplina analítica y el criterio operativo riguroso requerido por los mercados financieros contemporáneos.</p>
+                    <div class="modulos">
+                        <div class="vidrio brilla modulo"><span class="num">Módulo I</span><h4>Básico</h4><p>Introducción técnica a los mercados financieros y estructura de mercado.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo II</span><h4>Básico Intermedio</h4><p>Metodología avanzada en análisis gráfico y lecturas de liquidez.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo III</span><h4>Intermedio</h4><p>Gestión del riesgo, Order Blocks, indicadores técnicos y formulación de estrategias.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo IV</span><h4>Intermedio Avanzado</h4><p>Modelos operativos, estrategia algorítmica y psicotrading aplicado.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo V</span><h4>Avanzado</h4><p>Análisis integral, integración de IA, Wyckoff avanzado y gestión de fondeo.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo VI</span><h4>Práctico</h4><p>Desarrollo operativo supervisado y evaluación de consistencia.</p></div>
                     </div>
                 </div>
-
-                <div class="precio-contenedor-horizontal">
-                    <div>
-                        <span class="etiqueta-precio">Inversión del Programa</span>
-                        <span class="precio-grande">$1,890 MXN / Mes</span>
-                    </div>
-                    <div class="botones-dobles">
-                        <a href="#" class="boton-primario" onclick="abrirModalLead('Interes_Programa', 'Programa Académico Especializado'); return false;">🏦 Información de Pago</a>
-                        <button class="boton-secundario" onclick="abrirWhatsAppConsulta('Informes')">ℹ️ Más Información</button>
+                <div class="barra-precio">
+                    <div><span class="eti">Inversión del programa</span><div class="precio"><b>$1,890 MXN</b><small>/ mes</small></div></div>
+                    <div class="acciones">
+                        <a href="#" class="btn btn-oro" onclick="abrirModalLead('Interes_Programa', 'Programa Académico Especializado'); return false;">🏦 Información de Pago</a>
+                        <button type="button" class="btn btn-vidrio" onclick="abrirWhatsAppConsulta('Informes')">ℹ️ Más Información</button>
                     </div>
                 </div>
             </article>
         </section>
 
-        <!-- SECCIÓN: SUSCRIPCIÓN TERMINAL ALEMA PROP FIRM -->
-        <section class="seccion">
-            <h2 class="titulo-seccion">Suscripción Terminal ALEMA Prop Firm</h2>
-            <p class="subtitulo-seccion">Pon a prueba tu perfil de trader con capital simulado y evaluación real de desempeño.</p>
-
-            <article class="tarjeta">
-                <div>
-                    <img src="images/terminal-propfirm.jpg" alt="Terminal ALEMA Prop Firm" class="imagen-cuadro" style="height: auto; object-fit: contain;">
-                    <span class="insignia">Suscripción Recurrente</span>
-                    <h3>Terminal ALEMA Prop Firm</h3>
+        <!-- TERMINAL PROP FIRM -->
+        <section class="contenedor seccion" id="propfirm">
+            <div class="cabeza"><span class="eti">Pruébate como trader</span><h2>Suscripción Terminal ALEMA Prop Firm</h2>
+                <p>Pon a prueba tu perfil de trader con capital simulado y evaluación real de desempeño.</p></div>
+            <article class="vidrio brilla propfirm">
+                <div class="foto"><img src="images/terminal-propfirm.jpg" alt="Terminal ALEMA Prop Firm" loading="lazy"></div>
+                <div class="info">
+                    <span class="insignia">Suscripción recurrente</span>
+                    <h3 style="margin:12px 0 8px;font-size:1.32rem">Terminal ALEMA Prop Firm</h3>
                     <p class="descripcion">¿Quieres probarte como trader? Opera nuestra Terminal Prop Firm con capital simulado, supera las fases de evaluación, y accede a fondeo real con reparto de utilidades 70/30.</p>
-                    <ul class="lista-caracteristicas">
+                    <div class="reparto"><b>70/30</b> reparto de utilidades al pasar a fondeo real</div>
+                    <ul class="lista">
                         <li>Acceso completo a la Terminal ALEMA Prop Firm</li>
                         <li>Biblioteca de guías y material de apoyo incluido</li>
                         <li>1-2 asesorías mensuales de evaluación y auditoría de desempeño</li>
                     </ul>
-                </div>
-                <div>
-                    <div class="precio-contenedor">
-                        <span class="precio">$500 MXN / mes</span>
-                    </div>
-                    <a href="#" class="boton-primario" onclick="abrirModalLead('Interes_PropFirm', 'Terminal ALEMA Prop Firm'); return false;">Quiero Probarme como Trader</a>
+                    <div class="precio"><b>$500 MXN</b><small>/ mes</small></div>
+                    <a href="#" class="btn btn-oro btn-ancho" onclick="abrirModalLead('Interes_PropFirm', 'Terminal ALEMA Prop Firm'); return false;">Quiero Probarme como Trader</a>
                 </div>
             </article>
         </section>
 
-        <!-- SECCIÓN 3: SUSCRIPCIÓN MENSUAL -->
-        <section class="seccion">
-            <h2 class="titulo-seccion">Membresía Mensual</h2>
-            <p class="subtitulo-seccion">Acceso continuo a sesiones de análisis en vivo y comunidad de estudio.</p>
-
-            <div class="tarjeta-destacada">
-                <div class="grid-dos-columnas">
-                    <div>
-                        <span class="insignia">Suscripción Recurrente</span>
-                        <h3>Comunidad & Análisis Operativo</h3>
-                        <p class="descripcion">Espacio enfocado en la aplicación práctica, seguimiento diario de mercados y acompañamiento técnico.</p>
-                        <ul class="lista-caracteristicas">
-                            <li>Sesiones de análisis pre-mercado en vivo</li>
-                            <li>Revisión de bitácoras y escenarios técnicos</li>
-                            <li>Acceso a comunidad privada de alumnos</li>
-                        </ul>
-                    </div>
-                    <div class="panel-precio-suscripcion">
-                        <img src="images/suscripcion-herramientas.jpg" alt="Membresía Herramientas" class="imagen-cuadro" style="height: 160px; margin-bottom: 15px;">
-                        <span class="etiqueta-precio">Cuota Mensual</span>
-                        <span class="precio-pantalla">$150 MXN / mes</span>
-                        <!-- 🔧 PENDIENTE: reemplazar este href por el link de pago de Clip cuando esté listo -->
-                        <a href="#" class="boton-dorado" onclick="abrirModalLead('Interes_Suscripcion', 'Membresía Mensual'); return false;">Suscribirme Ahora</a>
-                    </div>
+        <!-- MEMBRESÍA MENSUAL -->
+        <section class="contenedor seccion" id="membresia">
+            <div class="cabeza"><span class="eti">Comunidad</span><h2>Membresía Mensual</h2>
+                <p>Acceso continuo a sesiones de análisis en vivo y comunidad de estudio.</p></div>
+            <article class="vidrio brilla membresia">
+                <div class="info">
+                    <span class="insignia">Suscripción recurrente</span>
+                    <h3 style="margin:12px 0 8px;font-size:1.32rem">Comunidad &amp; Análisis Operativo</h3>
+                    <p class="descripcion">Espacio enfocado en la aplicación práctica, seguimiento diario de mercados y acompañamiento técnico.</p>
+                    <ul class="lista">
+                        <li>Sesiones de análisis pre-mercado en vivo</li>
+                        <li>Revisión de bitácoras y escenarios técnicos</li>
+                        <li>Acceso a comunidad privada de alumnos</li>
+                    </ul>
                 </div>
-            </div>
+                <div class="panel-precio">
+                    <div class="foto"><img src="images/suscripcion-herramientas.jpg" alt="Membresía Herramientas" loading="lazy"></div>
+                    <span class="eti">Cuota mensual</span>
+                    <span class="monto">$150 MXN <small>/ mes</small></span>
+                    <a href="#" class="btn btn-oro btn-ancho" onclick="abrirModalLead('Interes_Suscripcion', 'Membresía Mensual'); return false;">Suscribirme Ahora</a>
+                </div>
+            </article>
         </section>
 
-        <!-- SECCIÓN 4: INFORMACIÓN DE BECAS -->
-        <section class="seccion-nota">
-            <div class="cuadro-becas">
-                <div>
-                    <h3>¿Te interesa el Programa de Becas?</h3>
-                    <p>Contamos con opciones de apoyo financiero y becas de formación parciales sujeto a evaluación.</p>
+        <!-- BECAS -->
+        <section class="contenedor" style="padding-block: 8px 40px;">
+            <div class="vidrio brilla becas">
+                <div class="txt">
+                    <span class="icono">🎓</span>
+                    <div><h3>¿Te interesa el Programa de Becas?</h3>
+                        <p>Contamos con opciones de apoyo financiero y becas de formación parciales sujeto a evaluación.</p></div>
                 </div>
-                <a href="#" class="boton-linea" onclick="abrirWhatsAppConsulta('Beca'); return false;">Solicitar Evaluación</a>
+                <a href="#" class="btn btn-vidrio" onclick="abrirWhatsAppConsulta('Beca'); return false;">Solicitar Evaluación</a>
             </div>
         </section>
-
     </main>
 
-    <footer class="footer-principal">
+    <footer class="pie-pagina">
         <div class="contenedor">
-            <p>&copy; ALEMA Trading Academy. Todos los derechos reservados.</p>
+            <div class="vidrio">
+                <span>&copy; ALEMA Trading Academy. Todos los derechos reservados.</span>
+                <a href="app/">Portal de Alumnos →</a>
+            </div>
         </div>
     </footer>
 
-    <!-- ===== MODAL DE PAGO ===== -->
+    <!-- VENTANA DE PAGO -->
     <div class="modal-lead-overlay" id="modal-lead-overlay" onclick="if(event.target===this) cerrarModalLead();">
-        <div class="modal-lead-caja">
+        <div class="modal-lead-caja" role="dialog" aria-modal="true" aria-labelledby="modal-lead-titulo">
             <button class="modal-lead-cerrar" onclick="cerrarModalLead()" aria-label="Cerrar">&times;</button>
-
             <p class="modal-lead-titulo" id="modal-lead-titulo"></p>
             <p class="modal-lead-producto" id="modal-lead-producto"></p>
-
-            <p class="modal-lead-mensaje-exito" style="text-align:center;">
-                Elige tu método de pago
-            </p>
-            <a href="#" id="link-pago-whatsapp" target="_blank" onclick="registrarClicPago('transferencia')" class="modal-lead-opcion-pago modal-lead-transferencia">
-                🏦 Pago por Transferencia (WhatsApp)
-            </a>
-            <a href="#" id="link-pago-clip" target="_blank" onclick="registrarClicPago('clip')" class="modal-lead-opcion-pago modal-lead-clip">
-                💳 Pagar con Clip
-            </a>
+            <p class="modal-lead-mensaje-exito">Elige tu método de pago</p>
+            <a href="#" id="link-pago-whatsapp" target="_blank" rel="noopener" onclick="registrarClicPago('transferencia')" class="modal-lead-opcion-pago modal-lead-transferencia">🏦 Pago por Transferencia (WhatsApp)</a>
+            <a href="#" id="link-pago-clip" target="_blank" rel="noopener" onclick="registrarClicPago('clip')" class="modal-lead-opcion-pago modal-lead-clip">💳 Pagar con Clip</a>
         </div>
     </div>
 
@@ -531,7 +368,7 @@
                 return;
             }
             if (GRUPO_VIP_URL) document.getElementById('boton-grupo-vip').href = GRUPO_VIP_URL;
-            seccion.style.display = '';
+            seccion.hidden = false;
         }
         iniciarSeminario();
 
@@ -539,6 +376,17 @@
             rastrear('track', 'Contact', { content_name: tipoConsulta });
             window.open(urlWhatsApp(MENSAJES_CONSULTA[tipoConsulta]), '_blank');
         }
+    </script>
+
+    <script>
+        // Luz que sigue al puntero en cada bloque de vidrio.
+        document.querySelectorAll('.brilla').forEach(function (el) {
+            el.addEventListener('pointermove', function (e) {
+                var r = el.getBoundingClientRect();
+                el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+                el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+            });
+        });
     </script>
 
 </body>
