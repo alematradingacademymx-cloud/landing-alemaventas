@@ -242,8 +242,8 @@ const SIMBOLOS = [
   ["Forex", "USDCHF", 0.8000, 5, 0.0001, 0.00012, [0.00012, 0.00018, 0.00026]],
   ["Forex", "EURJPY", 177.50, 3, 0.01, 0.028, [0.015, 0.022, 0.032]],
   ["Forex", "GBPJPY", 203.40, 3, 0.01, 0.036, [0.018, 0.026, 0.038]],
-  ["Forex", "USDMXN", 18.400, 4, 0.0001, 0.0065, [0.0150, 0.0220, 0.0350]],
-  ["Forex", "EURMXN", 21.400, 4, 0.0001, 0.0085, [0.0250, 0.0400, 0.0650]],
+  ["Forex", "USDMXN", 18.400, 5, 0.0001, 0.0065, [0.0150, 0.0220, 0.0350]],
+  ["Forex", "EURMXN", 21.400, 5, 0.0001, 0.0085, [0.0250, 0.0400, 0.0650]],
   ["Materias primas", "XAUUSD", 4000.00, 2, 0.1, 1.10, [0.25, 0.35, 0.50]],
   ["Materias primas", "WTIUSD", 61.00, 2, 0.01, 0.045, [0.03, 0.04, 0.06]],
   ["Materias primas", "BRENTUSD", 65.00, 2, 0.01, 0.045, [0.03, 0.05, 0.07]],
@@ -272,9 +272,12 @@ function pnl(s, tipo, entrada, salida, lotes) {
   if (s.includes("WTI") || s.includes("BRENT")) return d * 1000 * lotes;
   if (["US30", "SPX500", "NAS100", "GER40"].some(i => s.includes(i))) return d * lotes;
   if (s.includes("JPY")) return d * 100 * (1000 / salida) * lotes;
-  if (s.includes("MXN")) return d * 10000 * (10 / salida) * lotes;
+  // Pares con peso: 1 pip (0.0001) de 1 lote = 10 MXN, que se pasan a dólares con el USDMXN del momento
+  // (en USDMXN es el mismo precio de salida; en EURMXN se usa el último USDMXN, no el precio del EURMXN).
+  if (s.includes("MXN")) return d * 10000 * (10 / (s === "USDMXN" ? salida : ultimoUSDMXN)) * lotes;
   return d * 100000 * lotes;
 }
+let ultimoUSDMXN = 18.4;  // se actualiza con cada cotización de USDMXN (la lista del mercado la pide en cada ciclo)
 const unidadPips = s => esForex(s) ? "pips" : "puntos";
 
 // =====================================================================================================================
@@ -342,6 +345,7 @@ class Motor {
   cotizacion(s, t) {
     const x = POR_SIMBOLO[s], bid = this.precio(s, Math.floor(t)), sp = this.spread(s, Math.floor(t));
     const r = v => Math.round(v * 10 ** x.dec) / 10 ** x.dec;
+    if (s === "USDMXN") ultimoUSDMXN = bid;
     return { bid: r(bid), ask: r(bid + sp), spread: r(sp) };
   }
   vela(s, t0, dur) {
