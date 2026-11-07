@@ -18,7 +18,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="images/alema_iso.png.png">
     <meta name="theme-color" content="#070B13">
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=6">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -172,18 +172,18 @@
                     <h3 style="margin:0 0 8px;font-size:1.32rem">Inscripción al Programa Académico</h3>
                     <p class="descripcion">Un trayecto formativo completo diseñado para desarrollar la disciplina analítica y el criterio operativo riguroso requerido por los mercados financieros contemporáneos.</p>
                     <div class="modulos">
-                        <div class="vidrio brilla modulo"><span class="num">Módulo I</span><h4>Básico</h4><p>Introducción técnica a los mercados financieros y estructura de mercado.</p></div>
-                        <div class="vidrio brilla modulo"><span class="num">Módulo II</span><h4>Básico Intermedio</h4><p>Metodología avanzada en análisis gráfico y lecturas de liquidez.</p></div>
-                        <div class="vidrio brilla modulo"><span class="num">Módulo III</span><h4>Intermedio</h4><p>Gestión del riesgo, Order Blocks, indicadores técnicos y formulación de estrategias.</p></div>
-                        <div class="vidrio brilla modulo"><span class="num">Módulo IV</span><h4>Intermedio Avanzado</h4><p>Modelos operativos, estrategia algorítmica y psicotrading aplicado.</p></div>
-                        <div class="vidrio brilla modulo"><span class="num">Módulo V</span><h4>Avanzado</h4><p>Análisis integral, integración de IA, Wyckoff avanzado y gestión de fondeo.</p></div>
-                        <div class="vidrio brilla modulo"><span class="num">Módulo VI</span><h4>Práctico</h4><p>Desarrollo operativo supervisado y evaluación de consistencia.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo I</span><h4>Básico</h4><p>Introducción a los mercados, soportes y resistencias y método Wyckoff.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo II</span><h4>Básico Intermedio</h4><p>Indicadores y osciladores, RSI y Bandas de Bollinger, abanico de Gann, diagonales dinámicas y rangos operativos.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo III</span><h4>Intermedio</h4><p>Fibonacci, métodos operativos, pivotes con patrones, mercado accionario, calculadora de lotes y Journal.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo IV</span><h4>Intermedio Avanzado</h4><p>Patrones de Fibonacci, ondas de Elliott y operación en mercados accionario y de criptomonedas.</p></div>
+                        <div class="vidrio brilla modulo"><span class="num">Módulo V</span><h4>Avanzado</h4><p>Desarrollo de métodos operativos, gestión de plataforma, plan de trabajo y proyección en accionario y cripto.</p></div>
                     </div>
                 </div>
                 <div class="barra-precio">
                     <div><span class="eti">Inversión del programa</span><div class="precio"><b>$1,890 MXN</b><small>/ mes</small></div></div>
                     <div class="acciones">
                         <a href="#" class="btn btn-oro" onclick="abrirModalLead('Interes_Programa', 'Programa Académico Especializado'); return false;">🏦 Información de Pago</a>
+                        <button type="button" class="btn btn-vidrio" onclick="abrirTemario()">📄 Ver temario y costos</button>
                         <button type="button" class="btn btn-vidrio" onclick="abrirWhatsAppConsulta('Informes')">ℹ️ Más Información</button>
                     </div>
                 </div>
@@ -257,6 +257,111 @@
             </div>
         </div>
     </footer>
+
+    <!-- VENTANA: INFORMACIÓN GENERAL (temario y costos). Texto transcrito; no se publica el PDF. -->
+    <div class="temario-overlay" id="temario-overlay" onclick="if(event.target===this) cerrarTemario();">
+        <div class="temario-caja" role="dialog" aria-modal="true" aria-labelledby="temario-titulo">
+            <div class="temario-cab">
+                <img src="images/alema_iso.png.png" alt="" draggable="false">
+                <div><small>Información general</small><h3 id="temario-titulo">Programa, temario y costos</h3></div>
+                <button type="button" class="temario-cerrar" onclick="cerrarTemario()" aria-label="Cerrar">&times;</button>
+            </div>
+            <nav class="temario-indice" aria-label="Secciones">
+                <a href="#t-quienes">Quiénes somos</a><a href="#t-costos">Opciones y costos</a><a href="#t-modulos">Módulos</a>
+                <a href="#t-biblioteca">Biblioteca y herramientas</a><a href="#t-inscribirte">Cómo inscribirte</a><a href="#t-preguntas">Preguntas</a><a href="#t-contacto">Contacto</a>
+            </nav>
+            <div class="temario-cuerpo" id="temario-cuerpo" tabindex="0">
+                <section id="t-quienes">
+                    <h4>Quiénes somos</h4>
+                    <p>ALEMA Trading Academy es una academia en México que enseña a operar los mercados con método: análisis técnico, gestión del riesgo y psicología del trader. Aprendes con clases en vivo, uno a uno con un mentor individual, evaluaciones y herramientas propias, dentro de un portal para alumnos.</p>
+                    <p class="temario-nota">ALEMA es una academia, no un bróker: no maneja dinero de los alumnos ni da asesoría de inversión. Las prácticas en la Terminal se hacen con dinero ficticio.</p>
+                </section>
+                <section id="t-costos">
+                    <h4>Opciones y costos</h4>
+                    <p>Puedes empezar con el Programa Académico completo, o con los materiales y las guías por separado. Todos los precios son en pesos mexicanos (MXN).</p>
+                    <div class="temario-opciones">
+                        <div class="temario-opcion destacada"><b>Programa Académico <small style="color:var(--tenue);font-weight:500">(Formación Integral)</small></b><span class="costo">$1,890<small>al mes</small></span>
+                            <p>Clases en vivo, uno a uno por Zoom, con un mentor individual (de 1 a 1.5 horas); evaluaciones con retroalimentación y constancias; materiales de apoyo; calculadoras, Trading Journal y comunidad.</p></div>
+                        <div class="temario-opcion"><b>Materiales de apoyo</b><span class="costo gratis">Gratis</span><p>Material de apoyo sin costo.</p></div>
+                        <div class="temario-opcion"><b>Guías</b><span class="costo">Precio fijo<small>compra voluntaria</small></span><p>Las siete guías de la biblioteca (ver más abajo).</p></div>
+                        <div class="temario-opcion"><b>Terminal de simulación ALEMA Prop</b><span class="costo">Por avance</span><p>Práctica con dinero ficticio, con reglas de evaluación por fases.</p></div>
+                    </div>
+                    <p class="temario-nota">El pago del Programa es mensual, por transferencia. Si un pago vence sin registrarse, el acceso se suspende hasta que te pongas al corriente, y antes te avisamos por correo.</p>
+                </section>
+                <section id="t-modulos">
+                    <h4>Módulos del Programa Académico</h4>
+                    <p>El programa avanza por niveles de unas 4 semanas cada uno, con evaluaciones a lo largo del camino que revisa tu mentor.</p>
+                    <ol class="temario-niveles">
+                        <li><b>Básico</b><span>Introducción a los mercados; soportes y resistencias; método Wyckoff.</span></li>
+                        <li><b>Básico intermedio</b><span>Evaluación; introducción a indicadores y osciladores; RSI y bandas de Bollinger; teoría del abanico; diagonales dinámicas; rangos operativos; abanico de Gann.</span></li>
+                        <li><b>Intermedio</b><span>Evaluación; introducción a Fibonacci; métodos operativos; pivotes; pivotes con patrones; mercado accionario; figuras y métodos operativos; calculadora de lotes y Journal.</span></li>
+                        <li><b>Intermedio / Avanzado</b><span>Introducción a los patrones de Fibonacci; retroceso, canales, abanico y extensión de Fibonacci; osciladores y métodos operativos; evaluación; ondas de Elliott: teoría, operativa, figuras y ondas completas; manejo de mercados accionario y de criptomonedas.</span></li>
+                        <li><b>Avanzado</b><span>Desarrollo en métodos operativos, gestión de plataforma operativa, plan de trabajo. Proyección en mercados como accionario y criptomonedas.</span></li>
+                    </ol>
+                    <p>Cada evaluación se responde en el portal y lleva tu análisis en TradingView; recibes calificación, comentarios del instructor y constancias.</p>
+                    <p>Las clases son en vivo, uno a uno con tu mentor individual, y duran de 1 hora a 1 hora y media. <b>Dos clases por semana</b>, con horario personalizado acorde al alumno.</p>
+                </section>
+                <section id="t-biblioteca">
+                    <h4>Biblioteca y herramientas</h4>
+                    <p>La biblioteca reúne siete guías, de compra voluntaria a precio fijo, y materiales de apoyo gratuitos. El portal trae además las herramientas para practicar lo que aprendes.</p>
+                    <p><b>Guías</b></p>
+                    <ul class="temario-lista">
+                        <li>La guía inicial del trader ALEMA (edición 2026)</li>
+                        <li>Manual del Trader (Básico)</li>
+                        <li>Nueva guía de Acción del precio</li>
+                        <li>Guía 1: Arquitectura de Riesgo</li>
+                        <li>Guía 2: Psicología del Trader de Élite</li>
+                        <li>Guía 3: Bitácora Institucional y Auditoría de Métricas</li>
+                        <li>Guía 4: Implementación de la IA en Análisis Técnico</li>
+                    </ul>
+                    <p><b>Herramientas del portal</b></p>
+                    <ul class="temario-lista">
+                        <li>Calculadora operativa y calculadora de riesgo.</li>
+                        <li>Calculadora de pivotes.</li>
+                        <li>Trading Journal: tu bitácora de operaciones, con resultado, emoción y notas.</li>
+                        <li>Evaluaciones con retroalimentación de tu mentor.</li>
+                        <li>Comunidad: un muro para compartir análisis con otros alumnos, con alias.</li>
+                        <li>Terminal de simulación: módulo Intermedio Avanzado.</li>
+                    </ul>
+                </section>
+                <section id="t-inscribirte">
+                    <h4>Cómo inscribirte</h4>
+                    <p>Inscribirte toma cuatro pasos, y empiezas en cuanto se registra tu pago.</p>
+                    <ol class="temario-pasos">
+                        <li>Escríbenos por WhatsApp al +52 81 3646 2129 y elige tu opción.</li>
+                        <li>Haz tu pago por transferencia (SPEI). Te enviamos los datos por WhatsApp.</li>
+                        <li>Recibes por correo tu código de registro.</li>
+                        <li>Con ese código creas tu usuario y contraseña en el portal, y comienzas.</li>
+                    </ol>
+                    <p><b>Menores de edad.</b> Puedes inscribirte desde los 16 años con una carta de autorización firmada por tu madre, padre o tutor.</p>
+                    <p><b>Becas.</b> Existe un Programa de Becas para estudiantes. Los requisitos se revisan directamente con coordinación.</p>
+                </section>
+                <section id="t-preguntas">
+                    <h4>Preguntas frecuentes</h4>
+                    <div class="temario-faq">
+                        <div><b>¿Operan con dinero real?</b><span>No. Las prácticas son con dinero ficticio, y ALEMA no maneja tu dinero.</span></div>
+                        <div><b>¿Qué pasa si no pago a tiempo?</b><span>Tu acceso se suspende hasta que regularices el pago. Antes te enviamos recordatorios por correo.</span></div>
+                        <div><b>¿Necesito experiencia previa?</b><span>No. El modelo de aprendizaje de ALEMA es desde cero.</span></div>
+                    </div>
+                </section>
+                <section id="t-contacto">
+                    <h4>Contacto</h4>
+                    <p>Escríbenos para resolver tus dudas antes de inscribirte.</p>
+                    <div class="temario-contacto">
+                        <div><small>WhatsApp</small>+52 81 3646 2129</div>
+                        <div><small>Correo</small>alematradingacademymx@gmail.com</div>
+                        <div><small>Facebook e Instagram</small>Alema Trading Mx</div>
+                        <div><small>Sitio web</small>alematradingacademy.com.mx</div>
+                    </div>
+                    <p class="temario-aviso"><b>Aviso importante.</b> El contenido de ALEMA es educativo: no constituye asesoría de inversión ni garantiza resultados. Operar en los mercados implica riesgo de pérdida, y los resultados dependen de cada persona.</p>
+                </section>
+            </div>
+            <div class="temario-pie">
+                <a href="#" class="btn btn-oro" onclick="cerrarTemario(); abrirModalLead('Interes_Programa', 'Programa Académico Especializado'); return false;">🏦 Información de Pago</a>
+                <button type="button" class="btn btn-vidrio" onclick="abrirWhatsAppConsulta('Informes')">💬 Preguntar por WhatsApp</button>
+            </div>
+        </div>
+    </div>
 
     <!-- VENTANA DE PAGO -->
     <div class="modal-lead-overlay" id="modal-lead-overlay" onclick="if(event.target===this) cerrarModalLead();">
@@ -389,5 +494,42 @@
         });
     </script>
 
+    <script>
+    // Ventana "Programa, temario y costos": abre/cierra, y dentro de ella bloquea copiar, clic derecho e imprimir.
+    (function () {
+        var overlay = document.getElementById('temario-overlay');
+        var ultimoFoco = null;
+        window.abrirTemario = function () {
+            ultimoFoco = document.activeElement;
+            overlay.classList.add('activo');
+            document.body.classList.add('temario-abierto');
+            document.getElementById('temario-cuerpo').scrollTop = 0;
+            overlay.querySelector('.temario-cerrar').focus();
+            if (typeof rastrear === 'function') { rastrear('trackCustom', 'VerTemario'); }
+        };
+        window.cerrarTemario = function () {
+            overlay.classList.remove('activo');
+            document.body.classList.remove('temario-abierto');
+            if (ultimoFoco && ultimoFoco.focus) { ultimoFoco.focus(); }
+        };
+        // El índice baja dentro de la ventana (no mueve la página de atrás).
+        overlay.querySelectorAll('.temario-indice a').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                e.preventDefault();
+                var destino = document.querySelector(a.getAttribute('href'));
+                if (destino) { destino.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            });
+        });
+        ['contextmenu', 'copy', 'cut', 'dragstart', 'selectstart'].forEach(function (evento) {
+            overlay.addEventListener(evento, function (e) { e.preventDefault(); });
+        });
+        document.addEventListener('keydown', function (e) {
+            if (!overlay.classList.contains('activo')) { return; }
+            if (e.key === 'Escape') { cerrarTemario(); return; }
+            var tecla = (e.key || '').toLowerCase();
+            if ((e.ctrlKey || e.metaKey) && ['p', 's', 'c', 'a', 'u'].indexOf(tecla) !== -1) { e.preventDefault(); }
+        });
+    })();
+    </script>
 </body>
 </html>
