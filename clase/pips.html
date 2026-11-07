@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo calcular pips · ALEMA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap">
+<style>
+/* Calculadora de pips para clase: parte del Bid y el Ask (de ahí salen la entrada, el SL y el TP). */
+:root {
+  --vidrio: rgb(18 24 36 / .62); --borde: rgb(255 255 255 / .12); --brillo: rgb(255 255 255 / .12); --pista: rgb(255 255 255 / .06);
+  --ink: #EEF1F6; --muted: #9AA4B6; --brand: #FEA621; --on: rgb(254 166 33 / .16); --on-ink: #FEA621;
+  --up: #26A69A; --down: #EF5350; --azul: #6C8EF5; --font: "Lexend", "Segoe UI", system-ui, sans-serif; color-scheme: dark;
+}
+body.claro {
+  --vidrio: rgb(255 255 255 / .72); --borde: rgb(20 30 50 / .12); --brillo: rgb(255 255 255 / .9); --pista: rgb(20 30 50 / .05);
+  --ink: #1A2130; --muted: #5B6476; --on: rgb(254 166 33 / .22); --on-ink: #8A5300; --up: #138A59; --down: #D6334A; --azul: #3B63D9; color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; background: transparent; }
+body { color: var(--ink); font: 14px/1.5 var(--font); }
+.app { max-width: 1480px; margin: 0 auto; padding: 10px 8px 30px; display: grid; gap: 14px; }
+.vidrio { background: var(--vidrio); border: 1px solid var(--borde); border-radius: 18px; box-shadow: inset 0 1px 0 var(--brillo); padding: 16px 18px; min-width: 0; }
+h2 { margin: 0 0 4px; font-size: 1.25rem; }
+h3 { margin: 0 0 10px; font-size: 1rem; }
+.sub { color: var(--muted); margin: 0; max-width: 80ch; }
+.reglas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.regla { border-radius: 14px; padding: 14px 16px; background: var(--pista); border: 1px solid var(--borde); }
+.regla.compra { border-color: color-mix(in srgb, var(--up) 45%, transparent); }
+.regla.venta { border-color: color-mix(in srgb, var(--down) 45%, transparent); }
+.regla b.t { display: block; font-size: 1rem; margin-bottom: 6px; }
+.regla.compra b.t { color: var(--up); } .regla.venta b.t { color: var(--down); }
+.regla ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.etq { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 99px; vertical-align: 1px; }
+.etq.bid { background: color-mix(in srgb, var(--down) 18%, transparent); color: var(--down); }
+.etq.ask { background: color-mix(in srgb, var(--up) 18%, transparent); color: var(--up); }
+.rejilla { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 14px; align-items: start; }
+.campos { display: grid; gap: 10px; }
+.campo { display: grid; gap: 4px; font-size: .76rem; color: var(--muted); min-width: 0; }
+.campo input, .campo select { border: 1px solid var(--borde); background: var(--pista); border-radius: 10px; padding: 8px 10px; font: 500 .92rem var(--font); color: var(--ink);
+  width: 100%; min-width: 0; font-variant-numeric: tabular-nums; }
+.campo select option { background: #151b25; color: #eef1f6; }
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.seg button { border-radius: 12px; padding: 10px; cursor: pointer; border: 1px solid var(--borde); background: var(--pista); font: 600 .9rem var(--font); color: var(--muted); }
+.seg button[data-d="BUY"][aria-pressed="true"] { background: color-mix(in srgb, var(--up) 18%, transparent); border-color: var(--up); color: var(--up); }
+.seg button[data-d="SELL"][aria-pressed="true"] { background: color-mix(in srgb, var(--down) 18%, transparent); border-color: var(--down); color: var(--down); }
+.btn { border: 1px solid var(--borde); background: var(--pista); border-radius: 10px; padding: 9px 12px; cursor: pointer; font: 600 .84rem var(--font); color: var(--ink); }
+.btn:hover { border-color: var(--brand); }
+:is(.btn, .seg button, input, select):focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.aviso { font-size: .78rem; color: var(--muted); margin: 0; min-height: 1.2em; }
+.aviso.error { color: var(--down); }
+.resumen { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.dato { border-radius: 12px; padding: 10px 12px; background: var(--pista); display: grid; gap: 2px; min-width: 0; }
+.dato small { color: var(--muted); font-size: .72rem; }
+.dato b { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.dato.rojo b { color: var(--down); } .dato.verde b { color: var(--up); }
+.tabla { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .86rem; font-variant-numeric: tabular-nums; }
+th { text-align: left; font-weight: 500; color: var(--muted); font-size: .74rem; padding: 0 10px 8px; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.n { width: 30px; color: var(--muted); }
+td.res { font-weight: 600; white-space: nowrap; text-align: right; }
+td.res.rojo { color: var(--down); } td.res.verde { color: var(--up); }
+td small { display: block; color: var(--muted); font-size: .76rem; }
+.nota { margin: 12px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--on); color: var(--ink); font-size: .84rem; }
+.ref td, .ref th { white-space: nowrap; }
+@media (max-width: 980px) { .rejilla, .reglas { grid-template-columns: 1fr; } .resumen { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media print { body { display: none !important; } }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <section class="vidrio">
+    <h2>Cómo calcular pips, Stop Loss y Take Profit</h2>
+    <p class="sub">Todo se mide desde el precio al que <b>entras</b> y se cierra con el precio al que <b>sales</b>. Por eso importa saber cuándo se usa el
+      <span class="etq bid">BID</span> (precio de venta) y cuándo el <span class="etq ask">ASK</span> (precio de compra).</p>
+  </section>
+
+  <section class="reglas">
+    <div class="regla compra"><b class="t">Compra (BUY)</b><ul>
+      <li>Entras al <span class="etq ask">ASK</span>: el precio más alto.</li>
+      <li>Cierras al <span class="etq bid">BID</span>: por eso, al abrir ya vas en negativo lo que mide el spread.</li>
+      <li>SL abajo de la entrada y TP arriba. Los dos se activan cuando el <span class="etq bid">BID</span> los toca.</li></ul></div>
+    <div class="regla venta"><b class="t">Venta (SELL)</b><ul>
+      <li>Entras al <span class="etq bid">BID</span>: el precio más bajo.</li>
+      <li>Cierras al <span class="etq ask">ASK</span>: también empiezas en negativo lo que mide el spread.</li>
+      <li>SL arriba de la entrada y TP abajo. Los dos se activan cuando el <span class="etq ask">ASK</span> los toca.</li></ul></div>
+  </section>
+
+  <div class="rejilla">
+    <section class="vidrio campos" aria-label="Datos de la operación">
+      <h3>Datos de la operación</h3>
+      <button type="button" class="btn" id="traer">📈 Traer Bid y Ask de la terminal</button>
+      <p class="aviso" id="aviso"></p>
+      <label class="campo" for="par">Par<select id="par"></select></label>
+      <label class="campo" for="conv" id="conv-c" hidden><span id="conv-t">Precio del USDJPY (para pasar a dólares)</span><input id="conv" inputmode="decimal"></label>
+      <div class="seg" role="group" aria-label="Dirección"><button type="button" data-d="BUY" aria-pressed="true">Compra</button><button type="button" data-d="SELL" aria-pressed="false">Venta</button></div>
+      <div class="dos">
+        <label class="campo" for="bid">Bid<input id="bid" inputmode="decimal" value="1.16500"></label>
+        <label class="campo" for="ask">Ask<input id="ask" inputmode="decimal" value="1.16514"></label>
+      </div>
+      <label class="campo" for="lotes">Lotes<input id="lotes" inputmode="decimal" value="0.10"></label>
+      <div class="dos">
+        <label class="campo" for="slp">Stop Loss (pips)<input id="slp" inputmode="decimal" value="20"></label>
+        <label class="campo" for="tpp">Take Profit (pips)<input id="tpp" inputmode="decimal" value="40"></label>
+      </div>
+    </section>
+
+    <section class="vidrio" aria-label="Resultado paso a paso">
+      <h3>Resultado paso a paso</h3>
+      <div class="resumen">
+        <div class="dato"><small>Entrada</small><b id="r-ent">—</b></div>
+        <div class="dato rojo"><small>Stop Loss</small><b id="r-sl">—</b></div>
+        <div class="dato verde"><small>Take Profit</small><b id="r-tp">—</b></div>
+        <div class="dato"><small>Riesgo : beneficio</small><b id="r-rr">—</b></div>
+      </div>
+      <div class="tabla"><table>
+        <thead><tr><th>#</th><th>Paso</th><th>Cálculo</th><th style="text-align:right">Resultado</th></tr></thead>
+        <tbody id="pasos"></tbody>
+      </table></div>
+      <p class="nota" id="nota"></p>
+    </section>
+  </div>
+
+  <section class="vidrio">
+    <h3>Tabla de referencia (1 lote estándar = 100,000 unidades)</h3>
+    <div class="tabla ref"><table>
+      <thead><tr><th>Par</th><th>Decimales</th><th>El pip es</th><th>1 pip con 1 lote</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td>EURUSD, GBPUSD, AUDUSD</td><td>5 → 1.16502</td><td>4.º decimal · 0.0001</td><td>10 USD</td><td>$10.00</td></tr>
+        <tr><td>USDCAD</td><td>5 → 1.39502</td><td>4.º decimal · 0.0001</td><td>10 CAD ÷ precio</td><td>10 ÷ 1.3950 = $7.17</td></tr>
+        <tr><td>USDCHF</td><td>5 → 0.80002</td><td>4.º decimal · 0.0001</td><td>10 CHF ÷ precio</td><td>10 ÷ 0.8000 = $12.50</td></tr>
+        <tr><td>USDJPY</td><td>3 → 152.405</td><td>2.º decimal · 0.01</td><td>1,000 JPY ÷ precio</td><td>1,000 ÷ 152.40 = $6.56</td></tr>
+        <tr><td>EURJPY, GBPJPY</td><td>3 → 177.505</td><td>2.º decimal · 0.01</td><td>1,000 JPY ÷ USDJPY</td><td>≈ $6.56</td></tr>
+        <tr><td>USDMXN</td><td>5 → 19.22602</td><td>4.º decimal · 0.0001</td><td>10 MXN ÷ precio</td><td>10 ÷ 19.226 = $0.52</td></tr>
+        <tr><td>EURMXN</td><td>5 → 21.40012</td><td>4.º decimal · 0.0001</td><td>10 MXN ÷ USDMXN</td><td>≈ $0.52</td></tr>
+      </tbody>
+    </table></div>
+    <p class="nota">Regla rápida: el pip es el <b>penúltimo decimal</b>; el último es el <b>pipette</b> (una décima de pip). Con 0.10 lotes el pip vale la décima parte y con 0.01, la centésima.</p>
+  </section>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  // dec: decimales · pip · conv: cómo pasar 1 pip de 1 lote a dólares (directo, con su propio precio o con otro par)
+  var PARES = {
+    EURUSD: { dec: 5, pip: 0.0001, tipo: "usd" }, GBPUSD: { dec: 5, pip: 0.0001, tipo: "usd" }, AUDUSD: { dec: 5, pip: 0.0001, tipo: "usd" },
+    USDCAD: { dec: 5, pip: 0.0001, tipo: "propio", mon: "CAD", unid: 10 }, USDCHF: { dec: 5, pip: 0.0001, tipo: "propio", mon: "CHF", unid: 10 },
+    USDJPY: { dec: 3, pip: 0.01, tipo: "propio", mon: "JPY", unid: 1000 },
+    EURJPY: { dec: 3, pip: 0.01, tipo: "cruce", mon: "JPY", unid: 1000, ref: "USDJPY", refDef: 152.40 },
+    GBPJPY: { dec: 3, pip: 0.01, tipo: "cruce", mon: "JPY", unid: 1000, ref: "USDJPY", refDef: 152.40 },
+    USDMXN: { dec: 5, pip: 0.0001, tipo: "propio", mon: "MXN", unid: 10 },
+    EURMXN: { dec: 5, pip: 0.0001, tipo: "cruce", mon: "MXN", unid: 10, ref: "USDMXN", refDef: 19.226 }
+  };
+  var $ = function (id) { return document.getElementById(id); };
+  var dir = "BUY";
+  var sel = $("par");
+  Object.keys(PARES).forEach(function (s) { var o = document.createElement("option"); o.value = o.textContent = s; sel.appendChild(o); });
+  var num = function (id) { var v = parseFloat(String($(id).value).replace(",", ".")); return isFinite(v) ? v : NaN; };
+  var usd = function (v) { return (v < 0 ? "−$" : "$") + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  var f = function (v, d) { return Number(v).toFixed(d); };
+  var nombrePip = function (x) { return x.pip === 0.01 ? "2.º decimal" : "4.º decimal"; };
+
+  function valorPip(x, s, precio) {
+    if (x.tipo === "usd") return { v: 10, txt: "10 USD (el par termina en USD)" };
+    var base = x.tipo === "propio" ? precio : num("conv");
+    return { v: x.unid / base, txt: x.unid.toLocaleString("en-US") + " " + x.mon + " ÷ " + (x.tipo === "propio" ? s : x.ref) + " " + f(base, x.mon === "JPY" ? 3 : 5) };
+  }
+
+  function calcular() {
+    var s = sel.value, x = PARES[s];
+    var bid = num("bid"), ask = num("ask"), lotes = num("lotes"), slp = num("slp"), tpp = num("tpp");
+    $("conv-c").hidden = x.tipo !== "cruce";
+    if (x.tipo === "cruce") { $("conv-t").textContent = "Precio del " + x.ref + " (para pasar a dólares)"; if (!$("conv").value) $("conv").value = x.refDef; }
+    var cuerpo = $("pasos");
+    if ([bid, ask, lotes, slp, tpp].some(isNaN) || (x.tipo === "cruce" && isNaN(num("conv")))) {
+      cuerpo.innerHTML = '<tr><td colspan="4">Escribe todos los datos con números.</td></tr>'; return;
+    }
+    if (ask < bid) { cuerpo.innerHTML = '<tr><td colspan="4">El Ask siempre es mayor o igual que el Bid: revisa los precios.</td></tr>'; return; }
+    var compra = dir === "BUY", d = x.dec, p = x.pip;
+    var ent = compra ? ask : bid, sl = compra ? ent - slp * p : ent + slp * p, tp = compra ? ent + tpp * p : ent - tpp * p;
+    var spread = (ask - bid) / p, salidaHoy = compra ? bid : ask;
+    var vpSL = valorPip(x, s, sl), vpTP = valorPip(x, s, tp);
+    var riesgo = slp * vpSL.v * lotes, gan = tpp * vpTP.v * lotes;
+    var activa = compra ? "BID" : "ASK", signoSL = compra ? "−" : "+", signoTP = compra ? "+" : "−";
+    $("r-ent").textContent = f(ent, d); $("r-sl").textContent = f(sl, d); $("r-tp").textContent = f(tp, d);
+    $("r-rr").textContent = "1 : " + (tpp / slp).toFixed(2);
+    var filas = [
+      ["Precio de entrada", (compra ? "Una compra entra al ASK" : "Una venta entra al BID"), f(ent, d)],
+      ["Tamaño del pip", s + " → " + nombrePip(x), String(p)],
+      ["Spread", "(" + f(ask, d) + " − " + f(bid, d) + ") ÷ " + p, f(spread, 1) + " pips"],
+      ["Stop Loss", f(ent, d) + " " + signoSL + " " + slp + " pips × " + p + "<small>Se activa cuando el " + activa + " llega a este precio</small>", f(sl, d), "rojo"],
+      ["Take Profit", f(ent, d) + " " + signoTP + " " + tpp + " pips × " + p + "<small>Se activa cuando el " + activa + " llega a este precio</small>", f(tp, d), "verde"],
+      ["Valor de 1 pip (1 lote)", vpSL.txt + (x.tipo === "usd" ? "" : "<small>Se usa el precio del nivel donde se cierra</small>"), usd(vpSL.v)],
+      ["Riesgo si toca el SL", slp + " pips × " + usd(vpSL.v) + " × " + lotes + " lotes", "−" + usd(riesgo), "rojo"],
+      ["Ganancia si toca el TP", tpp + " pips × " + usd(vpTP.v) + " × " + lotes + " lotes", "+" + usd(gan), "verde"],
+      ["Resultado al abrir", "Al cerrar al " + activa + " (" + f(salidaHoy, d) + ") se pierde el spread: " + f(spread, 1) + " pips", "−" + usd(spread * valorPip(x, s, salidaHoy).v * lotes), "rojo"]
+    ];
+    cuerpo.innerHTML = filas.map(function (r, i) {
+      return '<tr><td class="n">' + (i + 1) + "</td><td>" + r[0] + "</td><td>" + r[1] + '</td><td class="res ' + (r[3] || "") + '">' + r[2] + "</td></tr>";
+    }).join("");
+    var lejos = slp - spread;
+    $("nota").innerHTML = lejos > 0
+      ? "Ojo: el SL está a <b>" + slp + " pips de la entrada</b>, pero solo a <b>" + f(lejos, 1) + " pips del " + activa +
+        "</b> actual, porque ya pagaste " + f(spread, 1) + " pips de spread. Por eso un SL muy pegado se toca casi de inmediato."
+      : "Cuidado: el spread es de <b>" + f(spread, 1) + " pips</b> y el SL de <b>" + slp + " pips</b>, así que el SL quedaría <b>dentro del spread</b>: el " +
+        activa + " ya está en ese nivel y la operación se cerraría al instante. Pon un SL de más de " + Math.ceil(spread) + " pips.";
+    alturaAviso();
+  }
+
+  document.querySelector(".seg").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return; dir = b.dataset.d;
+    document.querySelectorAll(".seg button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); calcular();
+  });
+  ["par", "bid", "ask", "lotes", "slp", "tpp", "conv"].forEach(function (id) { $(id).addEventListener("input", calcular); });
+  sel.addEventListener("change", function () {
+    var x = PARES[sel.value]; $("conv").value = x.tipo === "cruce" ? x.refDef : "";
+    var ejemplo = { EURUSD: [1.16500, 1.16514], GBPUSD: [1.33500, 1.33515], AUDUSD: [0.65500, 0.65516], USDCAD: [1.39500, 1.39518], USDCHF: [0.80000, 0.80018],
+      USDJPY: [152.400, 152.412], EURJPY: [177.500, 177.522], GBPJPY: [203.400, 203.426], USDMXN: [19.22602, 19.22952], EURMXN: [21.40012, 21.40612] }[sel.value];
+    $("bid").value = f(ejemplo[0], x.dec); $("ask").value = f(ejemplo[1], x.dec); calcular();
+  });
+
+  // Toma el símbolo, el Bid y el Ask que está mostrando la Terminal de práctica (pestaña de al lado).
+  $("traer").addEventListener("click", function () {
+    var av = $("aviso"); av.className = "aviso";
+    try {
+      var marco = window.parent.document.getElementById("p-terminal");
+      var doc = marco && marco.contentDocument;
+      var s = doc.getElementById("g-titulo").textContent.trim(), b = doc.getElementById("g-bid").textContent, a = doc.getElementById("g-ask").textContent;
+      if (!PARES[s]) { av.className = "aviso error"; av.textContent = s + " no es un par de divisas: elige un par en la terminal."; return; }
+      sel.value = s; var x = PARES[s];
+      $("conv").value = x.tipo === "cruce" ? (x.refDef) : "";
+      $("bid").value = b; $("ask").value = a;
+      av.textContent = "Precios de " + s + " tomados de la terminal.";
+      calcular();
+    } catch (e) { av.className = "aviso error"; av.textContent = "Abre primero la pestaña Terminal para que cargue sus precios."; }
+  });
+
+  // ---- Dentro de la página de clase: tema y altura (mismo aviso que usan la terminal y la pizarra) ----
+  var dentro = window.parent !== window;
+  var avisar = function (tipo, datos) { if (dentro) window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: tipo }, datos || {}), "*"); };
+  var ultima = 0;
+  function alturaAviso() { var h = Math.ceil($("app").getBoundingClientRect().bottom + window.scrollY + 8); if (Math.abs(h - ultima) > 2) { ultima = h; avisar("streamlit:setFrameHeight", { height: h }); } }
+  window.addEventListener("message", function (ev) {
+    var dt = ev.data; if (!dt || dt.type !== "streamlit:render") return;
+    document.body.classList.toggle("claro", (dt.args || {}).modo_color === "claro"); alturaAviso();
+  });
+  if ("ResizeObserver" in window) new ResizeObserver(alturaAviso).observe($("app"));
+  window.addEventListener("resize", alturaAviso);
+  calcular();
+  avisar("streamlit:componentReady", { apiVersion: 1 });
+})();
+</script>
+</body>
+</html>
