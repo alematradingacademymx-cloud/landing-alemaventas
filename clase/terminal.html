@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terminal ALEMA de práctica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap">
+<style>
+/* Terminal de práctica: mercado 100% simulado (no se conecta a ningún proveedor de precios ni usa dinero real). */
+:root {
+  --fondo: #0B1018; --vidrio: rgb(18 24 36 / .55); --vidrio-fuerte: rgb(16 22 33 / .78); --borde: rgb(255 255 255 / .12); --brillo: rgb(255 255 255 / .14);
+  --pista: rgb(255 255 255 / .06); --soft: rgb(254 166 33 / .16); --ink: #EEF1F6; --muted: #9AA4B6; --brand: #FEA621; --brand-ink: #2B1C02; --on: #FEA621;
+  --up: #26A69A; --down: #EF5350; --azul: #6C8EF5; --rejilla: rgb(255 255 255 / .05); --sombra: 0 18px 40px -20px rgb(0 0 0 / .7);
+  --font: "Lexend", "Segoe UI", system-ui, sans-serif; color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --fondo: #EEF1F6; --vidrio: rgb(255 255 255 / .62); --vidrio-fuerte: rgb(255 255 255 / .86); --borde: rgb(20 30 50 / .12); --brillo: rgb(255 255 255 / .9);
+  --pista: rgb(20 30 50 / .05); --soft: rgb(254 166 33 / .2); --ink: #1A2130; --muted: #5B6476; --on: #8A5300; --up: #138A59; --down: #D6334A; --azul: #3B63D9;
+  --rejilla: rgb(20 30 50 / .07); --sombra: 0 18px 40px -22px rgb(30 40 70 / .3); color-scheme: light;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --fondo: #EEF1F6; --vidrio: rgb(255 255 255 / .62); --vidrio-fuerte: rgb(255 255 255 / .86); --borde: rgb(20 30 50 / .12); --brillo: rgb(255 255 255 / .9);
+  --pista: rgb(20 30 50 / .05); --soft: rgb(254 166 33 / .2); --ink: #1A2130; --muted: #5B6476; --on: #8A5300; --up: #138A59; --down: #D6334A; --azul: #3B63D9;
+  --rejilla: rgb(20 30 50 / .07); --sombra: 0 18px 40px -22px rgb(30 40 70 / .3); color-scheme: light; } }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--fondo); color: var(--ink); font: 14px/1.45 var(--font); min-height: 100vh; }
+body::before { content: ""; position: fixed; inset: -12%; z-index: -1; pointer-events: none; filter: blur(80px); opacity: .9;
+  background: radial-gradient(closest-side, rgb(254 166 33 / .28), transparent) 4% 2% / 50% 50% no-repeat,
+              radial-gradient(closest-side, rgb(59 91 219 / .28), transparent) 98% 30% / 46% 46% no-repeat,
+              radial-gradient(closest-side, rgb(18 184 134 / .18), transparent) 40% 100% / 42% 42% no-repeat; }
+button, input, select { font: inherit; color: inherit; }
+.app { max-width: 1480px; margin: 0 auto; padding: 16px max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 14px; }
+.vidrio { background: var(--vidrio); border: 1px solid var(--borde); border-radius: 18px; box-shadow: inset 0 1px 0 var(--brillo), var(--sombra);
+  -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); min-width: 0; }
+.fuerte { background: var(--vidrio-fuerte); }
+/* Encabezado */
+.cabeza { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; padding: 12px 16px; }
+.marca { display: flex; align-items: center; gap: 10px; flex: 1 1 260px; }
+.logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(160deg, #FFC062, #FEA621); color: #2B1C02; display: grid; place-items: center; font-weight: 700; }
+.marca b { display: block; font-weight: 700; letter-spacing: .03em; line-height: 1.1; }
+.marca small { color: var(--muted); font-size: .76rem; }
+.sello { font-size: .72rem; font-weight: 700; letter-spacing: .05em; padding: 4px 10px; border-radius: 99px; background: var(--soft); color: var(--on); white-space: nowrap; }
+.controles { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.seg { display: inline-flex; gap: 3px; padding: 3px; border-radius: 11px; background: var(--pista); border: 1px solid var(--borde); }
+.seg button { border: 0; background: transparent; border-radius: 8px; padding: 6px 11px; cursor: pointer; font-size: .8rem; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--soft); color: var(--on); font-weight: 600; }
+.btn { border: 1px solid var(--borde); background: var(--pista); border-radius: 10px; padding: 7px 12px; cursor: pointer; font-size: .8rem; font-weight: 600; white-space: nowrap;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: inset 0 1px 0 var(--brillo); }
+.btn:hover { border-color: var(--brand); }
+.btn.prim { background: linear-gradient(180deg, #FFB84A, #FEA621); color: #2B1C02; border-color: rgb(255 255 255 / .35); }
+.btn:focus-visible, .seg button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.campo { display: grid; gap: 4px; font-size: .72rem; color: var(--muted); min-width: 0; }
+.campo input, .campo select, .entrada { border: 1px solid var(--borde); background: var(--pista); border-radius: 9px; padding: 7px 9px; font-size: .86rem; color: var(--ink); width: 100%; min-width: 0; }
+.campo select option { background: #151b25; color: #eef1f6; }
+/* Barra del modo */
+.modo { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; padding: 12px 16px; }
+.modo .campo { width: auto; }
+.modo .info { flex: 1 1 260px; font-size: .8rem; color: var(--muted); align-self: center; }
+.modo .info b { color: var(--ink); }
+.reloj { font-variant-numeric: tabular-nums; font-weight: 600; font-size: .86rem; }
+/* Distribución */
+.rejilla { display: grid; grid-template-columns: 250px minmax(0, 1fr) 320px; gap: 14px; align-items: start; }
+.panel { padding: 12px; display: grid; gap: 10px; }
+.titulo { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; font-weight: 600; font-size: .92rem; }
+.titulo small { font-weight: 400; color: var(--muted); font-size: .74rem; }
+/* Lista de símbolos */
+.grupo-s { font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 6px 4px 2px; }
+.lista { display: grid; gap: 2px; max-height: 640px; overflow-y: auto; padding-right: 2px; scrollbar-width: thin; }
+.sim { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; padding: 7px 9px; border-radius: 10px; cursor: pointer; border: 1px solid transparent; background: transparent; text-align: left; width: 100%; }
+.sim:hover { background: var(--pista); }
+.sim[aria-pressed="true"] { background: var(--soft); border-color: rgb(254 166 33 / .4); }
+.sim b { font-weight: 600; font-size: .84rem; }
+.sim .pr { font-variant-numeric: tabular-nums; font-size: .82rem; text-align: right; }
+.sim small { color: var(--muted); font-size: .7rem; }
+.sim .pr.sube { color: var(--up); } .sim .pr.baja { color: var(--down); }
+/* Gráfica */
+.grafica { padding: 10px 10px 8px; display: grid; gap: 8px; }
+.gcab { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; }
+.gcab h2 { margin: 0; font-size: 1.05rem; font-weight: 600; }
+.gcab .cot { display: flex; gap: 12px; font-variant-numeric: tabular-nums; font-size: .82rem; flex-wrap: wrap; }
+.gcab .cot span b { font-weight: 600; }
+.lienzo { position: relative; height: 470px; border-radius: 12px; overflow: hidden; background: rgb(0 0 0 / .12); touch-action: none; }
+:root[data-theme="light"] .lienzo { background: rgb(255 255 255 / .6); }
+.lienzo canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ayuda-g { font-size: .72rem; color: var(--muted); display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+/* Boleta */
+.lado-compra { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.lado-compra button { border-radius: 12px; padding: 10px 8px; cursor: pointer; border: 1px solid var(--borde); background: var(--pista); display: grid; gap: 2px; text-align: center; }
+.lado-compra button span { font-size: .72rem; color: var(--muted); }
+.lado-compra button b { font-variant-numeric: tabular-nums; font-size: 1rem; }
+.lado-compra button[data-lado="SELL"][aria-pressed="true"] { background: rgb(239 83 80 / .18); border-color: var(--down); }
+.lado-compra button[data-lado="BUY"][aria-pressed="true"] { background: rgb(38 166 154 / .18); border-color: var(--up); }
+.lado-compra button[data-lado="SELL"] b { color: var(--down); } .lado-compra button[data-lado="BUY"] b { color: var(--up); }
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tres { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; align-items: end; }
+.calc { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.dato { border-radius: 10px; padding: 7px 9px; background: var(--pista); display: grid; gap: 1px; }
+.dato small { color: var(--muted); font-size: .68rem; }
+.dato b { font-variant-numeric: tabular-nums; font-size: .9rem; font-weight: 600; }
+.dato.rojo b { color: var(--down); } .dato.verde b { color: var(--up); }
+.aviso { font-size: .76rem; color: var(--muted); margin: 0; min-height: 1.2em; }
+.aviso.error { color: var(--down); }
+.enviar { width: 100%; padding: 11px; font-size: .9rem; border-radius: 12px; }
+.enviar.compra { background: linear-gradient(180deg, #2fbfae, #23998d); color: #fff; border-color: transparent; }
+.enviar.venta { background: linear-gradient(180deg, #f2706d, #d9443f); color: #fff; border-color: transparent; }
+.sub { font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 2px 0 -2px; }
+/* Cuenta y posiciones */
+.cuenta { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; padding: 12px; }
+.cuenta .dato b { font-size: 1.05rem; }
+.inferior { padding: 12px; display: grid; gap: 10px; }
+.tabla-env { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .8rem; font-variant-numeric: tabular-nums; }
+th { text-align: left; font-weight: 500; color: var(--muted); font-size: .7rem; padding: 0 8px 7px; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+td { padding: 8px; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.verde { color: var(--up); font-weight: 600; } td.rojo { color: var(--down); font-weight: 600; }
+.mini { font-size: .72rem; padding: 4px 9px; border-radius: 8px; }
+.vacio { color: var(--muted); font-size: .8rem; padding: 10px 2px; }
+.pill { font-size: .68rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+.pill.buy { background: rgb(38 166 154 / .16); color: var(--up); } .pill.sell { background: rgb(239 83 80 / .16); color: var(--down); }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(20px); opacity: 0; transition: .25s; z-index: 20;
+  background: var(--vidrio-fuerte); border: 1px solid var(--borde); border-radius: 12px; padding: 10px 16px; box-shadow: var(--sombra); font-size: .86rem;
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); max-width: calc(100vw - 32px); }
+.toast.on { opacity: 1; transform: translateX(-50%); }
+@media (max-width: 1180px) { .rejilla { grid-template-columns: minmax(0, 1fr) 320px; } .lista-panel { grid-column: 1 / -1; } .lista { grid-auto-flow: column; grid-template-rows: auto; grid-auto-columns: 150px; overflow-x: auto; max-height: none; }
+  .grupo-s { display: none; } }
+@media (max-width: 860px) { .rejilla { grid-template-columns: 1fr; } .cuenta { grid-template-columns: repeat(2, minmax(0, 1fr)); } .lienzo { height: 360px; } }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+
+/* Dentro del portal: sin la barra de título propia (la página del portal ya tiene su encabezado y el tema lo pone el portal). */
+.cabeza { display: none !important; }
+html, body { background: transparent !important; }
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="vidrio cabeza">
+    <div class="marca"><span class="logo">A</span><div><b>ALEMA · Terminal de práctica</b><small>Mercado simulado para practicar en clase · sin dinero real y sin conexión a proveedores de precios</small></div></div>
+    <span class="sello">🎓 SIMULADO</span>
+    <div class="controles">
+      <div class="seg" role="group" aria-label="Apariencia"><button type="button" data-tema="dark">🌙</button><button type="button" data-tema="light">☀️</button></div>
+    </div>
+  </header>
+
+  <section class="vidrio modo" aria-label="Modo de práctica">
+    <div class="seg" role="group" aria-label="Modo">
+      <button type="button" data-modo="clase">👥 Modo clase</button>
+      <button type="button" data-modo="libre">🧪 Modo libre</button>
+    </div>
+    <label class="campo" id="campo-codigo">Código de clase<input id="codigo" maxlength="20" placeholder="Ej. ALEMA7" autocomplete="off" style="width:130px"></label>
+    <button type="button" class="btn prim" id="unirse">Unirse</button>
+    <label class="campo" id="campo-escenario" hidden>Escenario<select id="escenario">
+      <option value="auto">Aleatorio (como el mercado)</option><option value="alcista">Tendencia alcista</option><option value="bajista">Tendencia bajista</option>
+      <option value="rango">Rango lateral</option><option value="noticia">Noticia fuerte</option></select></label>
+    <div class="seg" role="group" aria-label="Velocidad" id="velocidad" hidden>
+      <button type="button" data-vel="0">⏸</button><button type="button" data-vel="1">x1</button><button type="button" data-vel="5">x5</button><button type="button" data-vel="20">x20</button>
+    </div>
+    <div class="seg" role="group" aria-label="Temporalidad" id="temporalidad">
+      <button type="button" data-tf="15">15s</button><button type="button" data-tf="60">1m</button><button type="button" data-tf="300">5m</button>
+    </div>
+    <div class="info" id="info-modo"></div>
+    <span class="reloj" id="reloj">--:--:--</span>
+  </section>
+
+  <section class="vidrio cuenta" aria-label="Cuenta">
+    <div class="dato"><small>Balance</small><b id="c-balance">$0</b></div>
+    <div class="dato"><small>Equidad</small><b id="c-equidad">$0</b></div>
+    <div class="dato" id="c-flot-caja"><small>Resultado abierto</small><b id="c-flotante">$0</b></div>
+    <div class="dato"><small>Operaciones cerradas</small><b id="c-ops">0</b></div>
+    <div class="dato"><small>Acierto</small><b id="c-acierto">—</b></div>
+  </section>
+
+  <div class="rejilla">
+    <aside class="vidrio panel lista-panel" aria-label="Símbolos">
+      <div class="titulo">Mercado <small>bid · spread</small></div>
+      <div class="lista" id="lista"></div>
+    </aside>
+
+    <section class="vidrio grafica" aria-label="Gráfica">
+      <div class="gcab"><h2 id="g-titulo">EURUSD</h2>
+        <div class="cot"><span>Bid <b id="g-bid">—</b></span><span>Ask <b id="g-ask">—</b></span><span>Spread <b id="g-spread">—</b></span></div></div>
+      <div class="lienzo" id="lienzo"><canvas id="cv"></canvas></div>
+      <div class="ayuda-g"><span>Rueda del mouse: zoom · Arrastra: mover · Arrastra las líneas punteadas de SL y TP para acomodarlas</span><button type="button" class="btn mini" id="al-final">⇥ Ir al precio actual</button></div>
+    </section>
+
+    <aside class="vidrio fuerte panel" aria-label="Nueva orden">
+      <div class="titulo">Nueva orden <small id="t-simbolo">EURUSD</small></div>
+      <div class="lado-compra">
+        <button type="button" data-lado="SELL"><span>VENDER</span><b id="t-bid">—</b></button>
+        <button type="button" data-lado="BUY"><span>COMPRAR</span><b id="t-ask">—</b></button>
+      </div>
+      <label class="campo"><span id="t-lab-lote">Lotes</span><input id="t-lote" type="number" step="0.01" min="0.01" value="0.10" inputmode="decimal"></label>
+      <p class="sub">Stop Loss</p>
+      <div class="dos"><label class="campo">Precio<input id="t-sl" type="number" inputmode="decimal" placeholder="Sin SL"></label><label class="campo"><span class="u-pips">Pips</span><input id="t-sl-p" type="number" inputmode="decimal" placeholder="—"></label></div>
+      <p class="sub">Take Profit</p>
+      <div class="dos"><label class="campo">Precio<input id="t-tp" type="number" inputmode="decimal" placeholder="Sin TP"></label><label class="campo"><span class="u-pips">Pips</span><input id="t-tp-p" type="number" inputmode="decimal" placeholder="—"></label></div>
+      <div class="calc">
+        <div class="dato rojo"><small>Riesgo si toca el SL</small><b id="k-riesgo">—</b></div>
+        <div class="dato verde"><small>Ganancia si toca el TP</small><b id="k-ganancia">—</b></div>
+        <div class="dato"><small>Relación riesgo : beneficio</small><b id="k-rr">—</b></div>
+        <div class="dato"><small id="k-lab-pip">Valor del pip (este lote)</small><b id="k-pip">—</b></div>
+      </div>
+      <div class="tres">
+        <label class="campo">Arriesgar % de la cuenta<input id="t-pct" type="number" step="0.1" min="0.1" value="1" inputmode="decimal"></label>
+        <span class="dato" style="padding:6px 9px"><small>Lote sugerido</small><b id="k-lote">—</b></span>
+        <button type="button" class="btn" id="usar-lote">Usar</button>
+      </div>
+      <button type="button" class="btn" id="sugerir">Sugerir SL y TP 1:2</button>
+      <p class="aviso" id="t-aviso"></p>
+      <button type="button" class="btn enviar" id="enviar">Selecciona Comprar o Vender</button>
+    </aside>
+  </div>
+
+  <section class="vidrio inferior" aria-label="Operaciones">
+    <div class="titulo"><div class="seg" role="group" aria-label="Tabla"><button type="button" data-tab="abiertas">Posiciones abiertas</button><button type="button" data-tab="historial">Historial</button></div>
+      <span style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn mini" id="cerrar-todo">Cerrar todas</button>
+      <label class="campo" style="flex-direction:row;display:flex;align-items:center;gap:6px">Cuenta<select id="saldo-inicial" class="entrada" style="width:auto;padding:4px 6px"><option value="1000">$1,000</option><option value="5000">$5,000</option><option value="10000" selected>$10,000</option><option value="100000">$100,000</option></select></label>
+      <button type="button" class="btn mini" id="reiniciar">↺ Reiniciar cuenta</button></span></div>
+    <div class="tabla-env" id="tabla"></div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+"use strict";
+// =====================================================================================================================
+// Instrumentos: spreads típicos de bróker (los mismos de la Terminal del portal) y cómo se calcula el resultado.
+// =====================================================================================================================
+const SIMBOLOS = [
+  // grupo, símbolo, precio de referencia, decimales, tamaño del pip, volatilidad por minuto, spreads (bajo, medio, alto)
+  ["Forex", "EURUSD", 1.1650, 5, 0.0001, 0.00014, [0.00006, 0.00010, 0.00015]],
+  ["Forex", "GBPUSD", 1.3350, 5, 0.0001, 0.00018, [0.00010, 0.00015, 0.00022]],
+  ["Forex", "USDJPY", 152.40, 3, 0.01, 0.022, [0.008, 0.012, 0.018]],
+  ["Forex", "AUDUSD", 0.6550, 5, 0.0001, 0.00012, [0.00010, 0.00016, 0.00024]],
+  ["Forex", "USDCAD", 1.3950, 5, 0.0001, 0.00013, [0.00012, 0.00018, 0.00026]],
+  ["Forex", "USDCHF", 0.8000, 5, 0.0001, 0.00012, [0.00012, 0.00018, 0.00026]],
+  ["Forex", "EURJPY", 177.50, 3, 0.01, 0.028, [0.015, 0.022, 0.032]],
+  ["Forex", "GBPJPY", 203.40, 3, 0.01, 0.036, [0.018, 0.026, 0.038]],
+  ["Forex", "USDMXN", 18.400, 4, 0.0001, 0.0065, [0.0150, 0.0220, 0.0350]],
+  ["Forex", "EURMXN", 21.400, 4, 0.0001, 0.0085, [0.0250, 0.0400, 0.0650]],
+  ["Materias primas", "XAUUSD", 4000.00, 2, 0.1, 1.10, [0.25, 0.35, 0.50]],
+  ["Materias primas", "WTIUSD", 61.00, 2, 0.01, 0.045, [0.03, 0.04, 0.06]],
+  ["Materias primas", "BRENTUSD", 65.00, 2, 0.01, 0.045, [0.03, 0.05, 0.07]],
+  ["Índices", "US30", 47000.0, 1, 1, 14, [1.6, 2.4, 3.6]],
+  ["Índices", "NAS100", 25000.0, 1, 1, 9, [1.0, 1.6, 2.4]],
+  ["Índices", "SPX500", 6800.0, 1, 1, 1.9, [0.35, 0.50, 0.75]],
+  ["Índices", "GER40", 24000.0, 1, 1, 7, [0.9, 1.4, 2.0]],
+  ["Cripto", "BTCUSD", 105000.0, 1, 1, 70, [15.0, 25.0, 45.0]],
+  ["Acciones", "AAPL", 270.00, 2, 0.01, 0.16, [0.01, 0.02, 0.04]],
+  ["Acciones", "MSFT", 520.00, 2, 0.01, 0.26, [0.01, 0.02, 0.04]],
+  ["Acciones", "NVDA", 190.00, 2, 0.01, 0.20, [0.01, 0.02, 0.04]],
+  ["Acciones", "TSLA", 440.00, 2, 0.01, 0.55, [0.01, 0.02, 0.04]],
+  ["Acciones", "AMZN", 230.00, 2, 0.01, 0.15, [0.01, 0.02, 0.04]],
+  ["Acciones", "META", 700.00, 2, 0.01, 0.42, [0.01, 0.02, 0.04]],
+].map(([grupo, s, ref, dec, pip, vol, spreads]) => ({ grupo, s, ref, dec, pip, vol, spreads }));
+const POR_SIMBOLO = Object.fromEntries(SIMBOLOS.map(x => [x.s, x]));
+const esAccion = s => POR_SIMBOLO[s].grupo === "Acciones";
+const esForex = s => POR_SIMBOLO[s].grupo === "Forex";
+
+// Resultado en USD: mismas fórmulas que la Terminal del portal.
+function pnl(s, tipo, entrada, salida, lotes) {
+  const d = tipo === "BUY" ? salida - entrada : entrada - salida;
+  if (esAccion(s)) return d * lotes;
+  if (s.includes("XAU")) return d * 100 * lotes;
+  if (s.includes("BTC")) return d * lotes;
+  if (s.includes("WTI") || s.includes("BRENT")) return d * 1000 * lotes;
+  if (["US30", "SPX500", "NAS100", "GER40"].some(i => s.includes(i))) return d * lotes;
+  if (s.includes("JPY")) return d * 100 * (1000 / salida) * lotes;
+  if (s.includes("MXN")) return d * 10000 * (10 / salida) * lotes;
+  return d * 100000 * lotes;
+}
+const unidadPips = s => esForex(s) ? "pips" : "puntos";
+
+// =====================================================================================================================
+// Motor de precios simulado. Con el mismo código y el mismo minuto, todos los alumnos ven exactamente el mismo precio.
+// Se generan "anclas" por minuto (caminata aleatoria con tendencias, rangos y noticias) y los segundos se rellenan
+// entre ancla y ancla. Todo sale de una función hash: no hay datos guardados ni conexión a internet.
+// =====================================================================================================================
+function hash32(...ns) {
+  let h = 0x811c9dc5;
+  for (const n of ns) { let k = Math.imul((n | 0) ^ 0x9e3779b9, 0x85ebca6b); k ^= k >>> 13; h = Math.imul(h ^ k, 0x01000193); h ^= h >>> 15; }
+  h = Math.imul(h ^ (h >>> 16), 0x7feb352d); h = Math.imul(h ^ (h >>> 15), 0x846ca68b); return (h ^ (h >>> 16)) >>> 0;
+}
+const uni = (...ns) => (hash32(...ns) + 0.5) / 4294967296;
+const normal = (...ns) => Math.sqrt(-2 * Math.log(uni(...ns, 1))) * Math.cos(2 * Math.PI * uni(...ns, 2));
+const textoHash = t => { let h = 7; for (const c of String(t)) h = hash32(h, c.charCodeAt(0)); return h; };
+
+class Motor {
+  constructor(semilla, forzado) { this.semilla = semilla; this.forzado = forzado || null; this.series = {}; }
+  regimen(s, m) {
+    // El régimen cambia cada 20 a 60 minutos (bloques); en modo libre se puede forzar uno.
+    if (this.forzado && m >= (this.desde || 0)) return this.forzado;
+    const bloque = Math.floor(m / 40), r = uni(this.semilla, textoHash(s), bloque, 77);
+    return r < .3 ? "alcista" : r < .6 ? "bajista" : r < .9 ? "rango" : "noticia";
+  }
+  ancla(s, m) {
+    const x = POR_SIMBOLO[s];
+    let serie = this.series[s];
+    if (!serie) {
+      const inicio = x.ref * (1 + (uni(this.semilla, textoHash(s), 1) - .5) * .02);
+      serie = this.series[s] = { a: [inicio], base: inicio };
+    }
+    const a = serie.a;
+    while (a.length <= m + 1) {
+      const k = a.length, p = a[k - 1], reg = this.regimen(s, k);
+      let deriva = 0, vol = x.vol;
+      if (reg === "alcista") deriva = x.vol * .22;
+      if (reg === "bajista") deriva = -x.vol * .22;
+      if (reg === "rango") { deriva = (serie.base - p) * .04; vol *= .8; }
+      if (reg === "noticia") {
+        const fase = k % 40;
+        if (fase === 5) deriva = (uni(this.semilla, textoHash(s), k, 9) < .5 ? -1 : 1) * x.vol * 9;
+        vol *= fase >= 5 && fase < 12 ? 3 : 1.2;
+      }
+      if (reg !== "rango" && k % 40 === 0) serie.base = p;
+      const siguiente = Math.max(x.ref * .2, p + deriva + vol * normal(this.semilla, textoHash(s), k));
+      a.push(siguiente);
+    }
+    return a[m];
+  }
+  precio(s, t) {
+    // t en segundos desde el origen. Entre dos anclas: línea recta más ruido que se anula en los extremos.
+    const m = Math.floor(t / 60), seg = t - m * 60, x = POR_SIMBOLO[s];
+    const a = this.ancla(s, m), b = this.ancla(s, m + 1);
+    const reg = this.regimen(s, m);
+    const amp = x.vol * (reg === "noticia" && m % 40 >= 5 && m % 40 < 12 ? .9 : .38);
+    const ruido = normal(this.semilla, textoHash(s), m, Math.floor(seg), 5) * amp * Math.sqrt(seg * (60 - seg)) / 30;
+    return a + (b - a) * seg / 60 + ruido;
+  }
+  spread(s, t) {
+    // Cambia entre las bandas típicas cada 6 segundos; con noticia se abre más.
+    const x = POR_SIMBOLO[s], m = Math.floor(t / 60), reg = this.regimen(s, m);
+    const banda = x.spreads[Math.floor(uni(this.semilla, textoHash(s), Math.floor(t / 6), 3) * 3)];
+    return banda * (reg === "noticia" && m % 40 >= 5 && m % 40 < 9 ? 2.5 : 1);
+  }
+  cotizacion(s, t) {
+    const x = POR_SIMBOLO[s], bid = this.precio(s, Math.floor(t)), sp = this.spread(s, Math.floor(t));
+    const r = v => Math.round(v * 10 ** x.dec) / 10 ** x.dec;
+    return { bid: r(bid), ask: r(bid + sp), spread: r(sp) };
+  }
+  vela(s, t0, dur) {
+    let o = null, h = -Infinity, l = Infinity, c = null;
+    for (let t = t0; t < t0 + dur; t += Math.max(1, Math.floor(dur / 60))) {
+      const p = this.precio(s, t); if (o === null) o = p; h = Math.max(h, p); l = Math.min(l, p); c = p;
+    }
+    return { t: t0, o, h, l, c };
+  }
+}
+
+// =====================================================================================================================
+// Estado
+// =====================================================================================================================
+const $ = id => document.getElementById(id);
+const fmtUSD = v => (v < 0 ? "-$" : "$") + Math.abs(v).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtP = (s, v) => Number(v).toFixed(POR_SIMBOLO[s].dec);
+const guardarLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const leerLS = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v === null ? d : v; } catch (e) { return d; } };
+
+let modo = leerLS("tp_modo", "clase"), codigo = leerLS("tp_codigo", ""), tf = leerLS("tp_tf", 60), velocidad = 1, escenario = "auto";
+let simbolo = leerLS("tp_simbolo", "EURUSD"), lado = null;
+let motor, origen = 0, tSim = 0, ultimoReal = performance.now(), ultimoRevisado = 0;
+let cuenta = null;
+const DIA = 86400;
+
+function claveCuenta() { return modo === "clase" ? "tp_cuenta_clase_" + (codigo || "-") : "tp_cuenta_libre"; }
+function nuevaCuenta(saldo) { return { saldo: saldo, inicial: saldo, abiertas: [], historial: [] }; }
+function cargarCuenta() { cuenta = leerLS(claveCuenta(), null) || nuevaCuenta(Number($("saldo-inicial").value) || 10000); }
+function guardarCuenta() { guardarLS(claveCuenta(), cuenta); }
+
+function arrancarMotor() {
+  if (modo === "clase") {
+    // Todos parten de la medianoche UTC de AYER con la misma semilla: el reloj real decide el precio de cada segundo.
+    const hoy = Math.floor(Date.now() / 1000 / DIA) * DIA;
+    origen = hoy - DIA;
+    motor = new Motor(textoHash((codigo || "ALEMA").toUpperCase()), null);
+    tSim = Date.now() / 1000 - origen;
+  } else {
+    motor = new Motor(leerLS("tp_semilla_libre", Math.floor(Math.random() * 1e9)), escenario === "auto" ? null : escenario);
+    guardarLS("tp_semilla_libre", motor.semilla);
+    origen = Math.floor(Date.now() / 1000) - DIA;
+    tSim = leerLS("tp_tiempo_libre", DIA);
+    motor.desde = Math.floor(tSim / 60);
+  }
+  ultimoRevisado = Math.floor(tSim);
+  cargarCuenta();
+  velasCache = {};
+}
+
+// =====================================================================================================================
+// Lista de símbolos
+// =====================================================================================================================
+function pintarLista() {
+  let html = "", grupo = "";
+  for (const x of SIMBOLOS) {
+    if (x.grupo !== grupo) { grupo = x.grupo; html += `<div class="grupo-s">${grupo}</div>`; }
+    html += `<button type="button" class="sim" data-s="${x.s}" aria-pressed="${x.s === simbolo}"><b>${x.s}</b><span class="pr" id="l-${x.s}">—</span><small>${x.grupo}</small><small id="ls-${x.s}" style="text-align:right">—</small></button>`;
+  }
+  $("lista").innerHTML = html;
+}
+const previos = {};
+function actualizarLista() {
+  for (const x of SIMBOLOS) {
+    const q = motor.cotizacion(x.s, tSim), el = $("l-" + x.s);
+    if (!el) continue;
+    el.textContent = fmtP(x.s, q.bid);
+    el.className = "pr " + (previos[x.s] === undefined ? "" : q.bid > previos[x.s] ? "sube" : q.bid < previos[x.s] ? "baja" : el.className.replace("pr", "").trim());
+    previos[x.s] = q.bid;
+    $("ls-" + x.s).textContent = (q.spread / x.pip).toFixed(1) + (esForex(x.s) ? " pips" : " pts");
+  }
+}
+
+// =====================================================================================================================
+// Gráfica (dibujada a mano en canvas: no depende de librerías externas)
+// =====================================================================================================================
+const cv = $("cv"), cx = cv.getContext("2d");
+let W = 0, H = 0, dpr = 1, visibles = 90, desplazamiento = 0, velasCache = {}, arrastre = null, lineaArrastre = null, cruz = null;
+const EJE = 74, EJE_T = 22;
+function medir() {
+  const r = $("lienzo").getBoundingClientRect(); dpr = Math.min(window.devicePixelRatio || 1, 2); W = r.width; H = r.height;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function velas(n) {
+  const fin = Math.floor(tSim / tf) * tf, lista = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const t0 = fin - (i + desplazamiento) * tf;
+    if (t0 < 0) continue;
+    const clave = simbolo + "|" + tf + "|" + t0;
+    if (t0 + tf <= tSim) { if (!velasCache[clave]) velasCache[clave] = motor.vela(simbolo, t0, tf); lista.push(velasCache[clave]); }
+    else { const v = motor.vela(simbolo, t0, Math.max(1, Math.floor(tSim) - t0 + 1)); v.c = motor.precio(simbolo, Math.floor(tSim)); v.h = Math.max(v.h, v.c); v.l = Math.min(v.l, v.c); lista.push(v); }
+  }
+  return lista;
+}
+function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+let escala = { y: v => 0, v: y => 0 };
+function dibujar() {
+  if (!motor || !cuenta || !W) return;
+  const x = POR_SIMBOLO[simbolo], col = { up: css("--up"), down: css("--down"), ink: css("--ink"), muted: css("--muted"), grid: css("--rejilla"), azul: css("--azul"), brand: "#FEA621" };
+  cx.clearRect(0, 0, W, H);
+  const lista = velas(visibles), q = motor.cotizacion(simbolo, tSim);
+  if (!lista.length) return;
+  const extras = [q.bid, q.ask];
+  cuenta.abiertas.filter(p => p.s === simbolo).forEach(p => { extras.push(p.entrada); if (p.sl) extras.push(p.sl); if (p.tp) extras.push(p.tp); });
+  const vSL = num($("t-sl").value), vTP = num($("t-tp").value);
+  if (vSL) extras.push(vSL); if (vTP) extras.push(vTP);
+  let hi = Math.max(...lista.map(v => v.h), ...extras), lo = Math.min(...lista.map(v => v.l), ...extras);
+  const pad = (hi - lo) * .08 || x.pip * 10; hi += pad; lo -= pad;
+  const area = H - EJE_T, ancho = (W - EJE) / visibles;
+  escala = { y: v => (hi - v) / (hi - lo) * area, v: y => hi - y / area * (hi - lo) };
+  // rejilla y eje de precios
+  cx.font = "11px Lexend, sans-serif"; cx.textBaseline = "middle"; cx.fillStyle = col.muted; cx.strokeStyle = col.grid; cx.lineWidth = 1;
+  const paso = pasoBonito((hi - lo) / 7);
+  for (let v = Math.ceil(lo / paso) * paso; v < hi; v += paso) {
+    const y = Math.round(escala.y(v)) + .5; cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W - EJE, y); cx.stroke(); cx.fillText(fmtP(simbolo, v), W - EJE + 6, y);
+  }
+  // velas
+  const offset = visibles - lista.length;
+  lista.forEach((v, i) => {
+    const xc = (i + offset + .5) * ancho, sube = v.c >= v.o, c = sube ? col.up : col.down;
+    cx.strokeStyle = cx.fillStyle = c; cx.lineWidth = Math.max(1, Math.min(2, ancho * .12));
+    cx.beginPath(); cx.moveTo(Math.round(xc) + .5, escala.y(v.h)); cx.lineTo(Math.round(xc) + .5, escala.y(v.l)); cx.stroke();
+    const a = escala.y(Math.max(v.o, v.c)), b = escala.y(Math.min(v.o, v.c));
+    cx.fillRect(xc - ancho * .34, a, Math.max(1, ancho * .68), Math.max(1, b - a));
+    if (i % Math.max(1, Math.round(110 / ancho)) === 0) {
+      cx.fillStyle = col.muted; cx.textBaseline = "alphabetic"; cx.textAlign = "center";
+      cx.fillText(horaDe(v.t), xc, H - 6); cx.textAlign = "left"; cx.textBaseline = "middle";
+    }
+  });
+  // líneas de operaciones abiertas
+  cuenta.abiertas.filter(p => p.s === simbolo).forEach(p => {
+    const res = pnl(p.s, p.tipo, p.entrada, p.tipo === "BUY" ? q.bid : q.ask, p.lotes);
+    linea(p.entrada, col.azul, [], `${p.tipo === "BUY" ? "COMPRA" : "VENTA"} ${p.lotes}  ${fmtUSD(res)}`, true);
+    if (p.sl) linea(p.sl, col.down, [6, 4], "SL " + fmtP(simbolo, p.sl), true);
+    if (p.tp) linea(p.tp, col.up, [6, 4], "TP " + fmtP(simbolo, p.tp), true);
+  });
+  // vista previa de la boleta (se pueden arrastrar)
+  if (vSL) linea(vSL, col.down, [2, 4], "SL nuevo", false, .8);
+  if (vTP) linea(vTP, col.up, [2, 4], "TP nuevo", false, .8);
+  // precio actual
+  linea(q.bid, css("--muted"), [1, 3], null, false, .9);
+  etiqueta(q.bid, q.bid >= (lista[lista.length - 1].o) ? col.up : col.down, fmtP(simbolo, q.bid));
+  // cruz
+  if (cruz && !arrastre) {
+    cx.strokeStyle = col.brand; cx.globalAlpha = .45; cx.setLineDash([3, 3]); cx.beginPath();
+    cx.moveTo(0, cruz.y + .5); cx.lineTo(W - EJE, cruz.y + .5); cx.moveTo(cruz.x + .5, 0); cx.lineTo(cruz.x + .5, area); cx.stroke(); cx.setLineDash([]); cx.globalAlpha = 1;
+    etiqueta(escala.v(cruz.y), col.brand, fmtP(simbolo, escala.v(cruz.y)));
+  }
+}
+function linea(v, color, guiones, texto, izq, alfa) {
+  const y = Math.round(escala.y(v)) + .5; cx.save(); cx.globalAlpha = alfa || 1; cx.strokeStyle = color; cx.setLineDash(guiones); cx.lineWidth = 1.4;
+  cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W - EJE, y); cx.stroke(); cx.setLineDash([]);
+  if (texto) { cx.font = "600 11px Lexend, sans-serif"; const w = cx.measureText(texto).width + 12, x0 = izq ? 8 : W - EJE - w - 8;
+    cx.fillStyle = color; cx.fillRect(x0, y - 10, w, 20); cx.fillStyle = "#fff"; cx.textBaseline = "middle"; cx.fillText(texto, x0 + 6, y + 1); }
+  cx.restore(); etiqueta(v, color, fmtP(simbolo, v));
+}
+function etiqueta(v, color, texto) {
+  const y = escala.y(v); cx.fillStyle = color; cx.fillRect(W - EJE + 1, y - 10, EJE - 2, 20);
+  cx.fillStyle = "#fff"; cx.font = "600 11px Lexend, sans-serif"; cx.textBaseline = "middle"; cx.fillText(texto, W - EJE + 6, y + 1);
+}
+function pasoBonito(v) { const e = 10 ** Math.floor(Math.log10(v)), f = v / e; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * e; }
+function horaDe(t) { const d = new Date((origen + t) * 1000); return d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", second: tf < 60 ? "2-digit" : undefined, hour12: false }); }
+
+// Zoom, mover y arrastrar las líneas de SL / TP de la boleta
+const lz = $("lienzo");
+lz.addEventListener("wheel", e => { e.preventDefault(); visibles = Math.max(25, Math.min(240, Math.round(visibles * (e.deltaY > 0 ? 1.12 : .89)))); dibujar(); }, { passive: false });
+lz.addEventListener("pointerdown", e => {
+  const r = lz.getBoundingClientRect(), y = e.clientY - r.top;
+  for (const id of ["t-sl", "t-tp"]) { const v = num($(id).value); if (v && Math.abs(escala.y(v) - y) < 8) { lineaArrastre = id; lz.setPointerCapture(e.pointerId); return; } }
+  arrastre = { x: e.clientX, d: desplazamiento }; lz.setPointerCapture(e.pointerId);
+});
+lz.addEventListener("pointermove", e => {
+  const r = lz.getBoundingClientRect(); cruz = { x: e.clientX - r.left, y: e.clientY - r.top };
+  if (lineaArrastre) { $(lineaArrastre).value = fmtP(simbolo, escala.v(cruz.y)); desdePrecio(lineaArrastre); }
+  else if (arrastre) { const ancho = (W - EJE) / visibles; desplazamiento = Math.max(0, Math.round(arrastre.d + (e.clientX - arrastre.x) / ancho)); }
+  else { const y = cruz.y, cerca = ["t-sl", "t-tp"].some(id => { const v = num($(id).value); return v && Math.abs(escala.y(v) - y) < 8; }); lz.style.cursor = cerca ? "ns-resize" : "crosshair"; }
+  dibujar();
+});
+const soltar = () => { arrastre = null; lineaArrastre = null; };
+lz.addEventListener("pointerup", soltar); lz.addEventListener("pointercancel", soltar);
+lz.addEventListener("pointerleave", () => { cruz = null; dibujar(); });
+$("al-final").onclick = () => { desplazamiento = 0; dibujar(); };
+
+// =====================================================================================================================
+// Boleta y calculadora
+// =====================================================================================================================
+const num = v => { const n = parseFloat(String(v).replace(",", ".")); return isFinite(n) && n > 0 ? n : 0; };
+function precioEntrada() { const q = motor.cotizacion(simbolo, tSim); return lado === "SELL" ? q.bid : q.ask; }
+function desdePrecio(id) {
+  const v = num($(id).value), x = POR_SIMBOLO[simbolo], ent = precioEntrada();
+  $(id + "-p").value = v ? (Math.abs(ent - v) / x.pip).toFixed(1) : "";
+  calcular();
+}
+function desdePips(id) {
+  const p = num($(id + "-p").value), x = POR_SIMBOLO[simbolo], ent = precioEntrada();
+  if (!p || !lado) { if (!lado && p) aviso("Primero elige Comprar o Vender para colocar el SL y el TP en pips.", true); calcular(); return; }
+  const signo = (id === "t-sl") === (lado === "BUY") ? -1 : 1;
+  $(id).value = fmtP(simbolo, ent + signo * p * x.pip);
+  calcular();
+}
+["t-sl", "t-tp"].forEach(id => { $(id).addEventListener("input", () => desdePrecio(id)); $(id + "-p").addEventListener("input", () => desdePips(id)); });
+["t-lote", "t-pct"].forEach(id => $(id).addEventListener("input", calcular));
+function aviso(t, error) { const a = $("t-aviso"); a.textContent = t || ""; a.className = "aviso" + (error ? " error" : ""); }
+function errorLados() {
+  const sl = num($("t-sl").value), tp = num($("t-tp").value), q = motor.cotizacion(simbolo, tSim);
+  if (!lado) return "";
+  if (lado === "BUY") { if (sl && sl >= q.bid) return "En una compra el SL va DEBAJO del precio."; if (tp && tp <= q.ask) return "En una compra el TP va ARRIBA del precio."; }
+  else { if (sl && sl <= q.ask) return "En una venta el SL va ARRIBA del precio."; if (tp && tp >= q.bid) return "En una venta el TP va DEBAJO del precio."; }
+  return "";
+}
+function calcular() {
+  if (!motor || !cuenta) return;
+  const x = POR_SIMBOLO[simbolo], lotes = num($("t-lote").value), sl = num($("t-sl").value), tp = num($("t-tp").value), ent = precioEntrada();
+  const tipo = lado || "BUY", q = motor.cotizacion(simbolo, tSim);
+  const valorPip = Math.abs(pnl(simbolo, "BUY", q.bid, q.bid + x.pip, lotes || 0));
+  $("k-pip").textContent = lotes ? fmtUSD(valorPip) : "—";
+  $("k-lab-pip").textContent = esForex(simbolo) ? "Valor del pip (este lote)" : "Valor del punto (este lote)";
+  const riesgo = sl && lotes && lado ? Math.abs(pnl(simbolo, tipo, ent, sl, lotes)) : 0;
+  const gan = tp && lotes && lado ? Math.abs(pnl(simbolo, tipo, ent, tp, lotes)) : 0;
+  $("k-riesgo").textContent = riesgo ? `${fmtUSD(riesgo)} · ${(riesgo / cuenta.saldo * 100).toFixed(2)}%` : "—";
+  $("k-ganancia").textContent = gan ? `${fmtUSD(gan)} · ${(gan / cuenta.saldo * 100).toFixed(2)}%` : "—";
+  $("k-rr").textContent = riesgo && gan ? `1 : ${(gan / riesgo).toFixed(2)}` : "—";
+  // Lote sugerido para arriesgar el % elegido con este SL
+  const pct = num($("t-pct").value);
+  if (sl && lado && pct) {
+    const porLote = Math.abs(pnl(simbolo, tipo, ent, sl, 1)), objetivo = cuenta.saldo * pct / 100;
+    let l = porLote ? objetivo / porLote : 0;
+    l = esAccion(simbolo) ? Math.floor(l) : Math.floor(l * 100) / 100;
+    $("k-lote").textContent = l > 0 ? (esAccion(simbolo) ? l + " acc." : l.toFixed(2)) : "muy chico";
+    $("k-lote").dataset.v = l > 0 ? l : "";
+  } else { $("k-lote").textContent = "—"; $("k-lote").dataset.v = ""; }
+  const e = errorLados();
+  aviso(e || (!lado ? "Elige Comprar o Vender." : !sl ? "Recomendado: coloca un Stop Loss." : ""), !!e);
+  const b = $("enviar");
+  b.className = "btn enviar " + (lado === "BUY" ? "compra" : lado === "SELL" ? "venta" : "");
+  b.textContent = lado ? `${lado === "BUY" ? "Comprar" : "Vender"} ${esAccion(simbolo) ? (lotes || 0) + " acciones" : (lotes || 0).toFixed(2) + " lotes"} a ${fmtP(simbolo, ent)}` : "Selecciona Comprar o Vender";
+  b.disabled = !lado || !lotes || !!e;
+  dibujar();
+}
+$("usar-lote").onclick = () => { const v = $("k-lote").dataset.v; if (v) { $("t-lote").value = v; calcular(); } };
+$("sugerir").onclick = () => {
+  if (!lado) { aviso("Primero elige Comprar o Vender.", true); return; }
+  // SL a 1.5 veces el movimiento típico de 15 minutos; TP al doble
+  const x = POR_SIMBOLO[simbolo], dist = x.vol * Math.sqrt(15) * 1.5, pips = Math.max(5, Math.round(dist / x.pip));
+  $("t-sl-p").value = pips; desdePips("t-sl"); $("t-tp-p").value = pips * 2; desdePips("t-tp");
+};
+document.querySelector(".lado-compra").addEventListener("click", e => {
+  const b = e.target.closest("[data-lado]"); if (!b) return;
+  lado = b.dataset.lado;
+  document.querySelectorAll("[data-lado]").forEach(z => z.setAttribute("aria-pressed", String(z === b)));
+  ["t-sl", "t-tp"].forEach(id => { if (num($(id + "-p").value)) desdePips(id); });
+  calcular();
+});
+$("enviar").onclick = () => {
+  const lotes = num($("t-lote").value), e = errorLados();
+  if (!lado || !lotes || e) return;
+  if (cuenta.abiertas.length >= 20) { toast("Máximo 20 posiciones abiertas en la práctica."); return; }
+  const p = { id: Date.now() + Math.floor(Math.random() * 1000), s: simbolo, tipo: lado, lotes: esAccion(simbolo) ? Math.max(1, Math.round(lotes)) : Math.round(lotes * 100) / 100,
+    entrada: precioEntrada(), sl: num($("t-sl").value) || null, tp: num($("t-tp").value) || null, t: Math.floor(tSim) };
+  cuenta.abiertas.push(p); guardarCuenta();
+  toast(`✅ ${p.tipo === "BUY" ? "Compra" : "Venta"} de ${p.lotes} ${esAccion(p.s) ? "acciones" : "lotes"} de ${p.s} a ${fmtP(p.s, p.entrada)}`);
+  $("t-sl").value = $("t-tp").value = $("t-sl-p").value = $("t-tp-p").value = "";
+  calcular(); pintarTabla();
+};
+
+// =====================================================================================================================
+// Posiciones: cierre por SL / TP (se revisa cada segundo simulado, aunque la pestaña haya estado en segundo plano)
+// =====================================================================================================================
+function cerrar(p, precio, motivo, t) {
+  const res = Math.round(pnl(p.s, p.tipo, p.entrada, precio, p.lotes) * 100) / 100;
+  cuenta.saldo = Math.round((cuenta.saldo + res) * 100) / 100;
+  cuenta.abiertas = cuenta.abiertas.filter(z => z.id !== p.id);
+  cuenta.historial.unshift({ ...p, salida: precio, res, motivo, tCierre: t });
+  cuenta.historial = cuenta.historial.slice(0, 200);
+  guardarCuenta();
+  toast(`${motivo === "TP" ? "🎯 Take Profit" : motivo === "SL" ? "🛑 Stop Loss" : "✔️ Cerrada"}: ${p.s} ${fmtUSD(res)}`);
+}
+function revisarNiveles() {
+  const hasta = Math.floor(tSim);
+  if (!cuenta.abiertas.length) { ultimoRevisado = hasta; return; }
+  const desde = Math.max(ultimoRevisado + 1, hasta - 3 * DIA);
+  for (let t = desde; t <= hasta; t++) {
+    for (const p of cuenta.abiertas.slice()) {
+      if (t <= p.t) continue;
+      const q = motor.cotizacion(p.s, t);
+      if (p.tipo === "BUY") { if (p.sl && q.bid <= p.sl) cerrar(p, p.sl, "SL", t); else if (p.tp && q.bid >= p.tp) cerrar(p, p.tp, "TP", t); }
+      else { if (p.sl && q.ask >= p.sl) cerrar(p, p.sl, "SL", t); else if (p.tp && q.ask <= p.tp) cerrar(p, p.tp, "TP", t); }
+    }
+    if (!cuenta.abiertas.length) break;
+  }
+  ultimoRevisado = hasta;
+}
+let pestana = "abiertas";
+function pintarTabla() {
+  const e = $("tabla");
+  document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tab === pestana)));
+  if (pestana === "abiertas") {
+    if (!cuenta.abiertas.length) { e.innerHTML = '<p class="vacio">No tienes posiciones abiertas. Elige un símbolo, Comprar o Vender, y coloca tu SL y TP.</p>'; return; }
+    e.innerHTML = `<table><thead><tr><th>Símbolo</th><th>Tipo</th><th>Volumen</th><th>Entrada</th><th>SL</th><th>TP</th><th>Actual</th><th>${"Pips / pts"}</th><th>Resultado</th><th></th></tr></thead><tbody>${
+      cuenta.abiertas.map(p => `<tr><td><b>${p.s}</b></td><td><span class="pill ${p.tipo === "BUY" ? "buy" : "sell"}">${p.tipo === "BUY" ? "COMPRA" : "VENTA"}</span></td>
+        <td>${esAccion(p.s) ? p.lotes + " acc." : p.lotes.toFixed(2)}</td><td>${fmtP(p.s, p.entrada)}</td><td>${p.sl ? fmtP(p.s, p.sl) : "—"}</td><td>${p.tp ? fmtP(p.s, p.tp) : "—"}</td>
+        <td id="a-${p.id}">—</td><td id="pp-${p.id}">—</td><td id="r-${p.id}">—</td><td><button type="button" class="btn mini" data-cerrar="${p.id}">Cerrar</button></td></tr>`).join("")}</tbody></table>`;
+    actualizarTabla();
+  } else {
+    if (!cuenta.historial.length) { e.innerHTML = '<p class="vacio">Aún no cierras operaciones.</p>'; return; }
+    e.innerHTML = `<table><thead><tr><th>Símbolo</th><th>Tipo</th><th>Volumen</th><th>Entrada</th><th>Salida</th><th>Cierre por</th><th>Resultado</th></tr></thead><tbody>${
+      cuenta.historial.map(p => `<tr><td><b>${p.s}</b></td><td><span class="pill ${p.tipo === "BUY" ? "buy" : "sell"}">${p.tipo === "BUY" ? "COMPRA" : "VENTA"}</span></td>
+        <td>${esAccion(p.s) ? p.lotes + " acc." : p.lotes.toFixed(2)}</td><td>${fmtP(p.s, p.entrada)}</td><td>${fmtP(p.s, p.salida)}</td>
+        <td>${p.motivo === "TP" ? "🎯 Take Profit" : p.motivo === "SL" ? "🛑 Stop Loss" : "Manual"}</td><td class="${p.res >= 0 ? "verde" : "rojo"}">${fmtUSD(p.res)}</td></tr>`).join("")}</tbody></table>`;
+  }
+}
+function actualizarTabla() {
+  let flotante = 0;
+  for (const p of cuenta.abiertas) {
+    const q = motor.cotizacion(p.s, tSim), sal = p.tipo === "BUY" ? q.bid : q.ask, r = pnl(p.s, p.tipo, p.entrada, sal, p.lotes);
+    flotante += r;
+    const a = $("a-" + p.id); if (!a) continue;
+    a.textContent = fmtP(p.s, sal);
+    $("pp-" + p.id).textContent = ((p.tipo === "BUY" ? sal - p.entrada : p.entrada - sal) / POR_SIMBOLO[p.s].pip).toFixed(1);
+    const c = $("r-" + p.id); c.textContent = fmtUSD(r); c.className = r >= 0 ? "verde" : "rojo";
+  }
+  const cerradas = cuenta.historial.length, ganadas = cuenta.historial.filter(h => h.res > 0).length;
+  $("c-balance").textContent = fmtUSD(cuenta.saldo);
+  $("c-equidad").textContent = fmtUSD(cuenta.saldo + flotante);
+  $("c-flotante").textContent = fmtUSD(flotante);
+  $("c-flot-caja").className = "dato " + (flotante > 0 ? "verde" : flotante < 0 ? "rojo" : "");
+  $("c-ops").textContent = cerradas;
+  $("c-acierto").textContent = cerradas ? Math.round(ganadas / cerradas * 100) + "%" : "—";
+}
+$("tabla").addEventListener("click", e => {
+  const b = e.target.closest("[data-cerrar]"); if (!b) return;
+  const p = cuenta.abiertas.find(z => String(z.id) === b.dataset.cerrar); if (!p) return;
+  const q = motor.cotizacion(p.s, tSim); cerrar(p, p.tipo === "BUY" ? q.bid : q.ask, "MANUAL", Math.floor(tSim)); pintarTabla();
+});
+$("cerrar-todo").onclick = () => { cuenta.abiertas.slice().forEach(p => { const q = motor.cotizacion(p.s, tSim); cerrar(p, p.tipo === "BUY" ? q.bid : q.ask, "MANUAL", Math.floor(tSim)); }); pintarTabla(); };
+$("reiniciar").onclick = () => { cuenta = nuevaCuenta(Number($("saldo-inicial").value) || 10000); guardarCuenta(); pintarTabla(); calcular(); toast("Cuenta reiniciada."); };
+document.querySelector("[data-tab]").parentElement.addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) { pestana = b.dataset.tab; pintarTabla(); } });
+
+// =====================================================================================================================
+// Modo, símbolo, temporalidad y tema
+// =====================================================================================================================
+function pintarModo() {
+  document.querySelectorAll("[data-modo]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.modo === modo)));
+  $("campo-codigo").hidden = $("unirse").hidden = modo !== "clase";
+  $("campo-escenario").hidden = $("velocidad").hidden = modo !== "libre";
+  document.querySelectorAll("[data-vel]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.vel) === velocidad)));
+  document.querySelectorAll("[data-tf]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.tf) === tf)));
+  $("codigo").value = codigo;
+  $("info-modo").innerHTML = modo === "clase"
+    ? (codigo ? `👥 Clase <b>${codigo.toUpperCase()}</b>: todos los que usen este código ven <b>el mismo mercado al mismo tiempo</b>.` : "Escribe el código que da el mentor y presiona Unirse.")
+    : `🧪 Practica a tu ritmo: elige el escenario, pausa o acelera el mercado.`;
+}
+document.querySelector("[data-modo]").parentElement.addEventListener("click", e => {
+  const b = e.target.closest("[data-modo]"); if (!b || b.dataset.modo === modo) return;
+  if (modo === "libre") guardarLS("tp_tiempo_libre", tSim);
+  modo = b.dataset.modo; guardarLS("tp_modo", modo); velocidad = 1; arrancarMotor(); pintarModo(); pintarTabla(); calcular();
+});
+$("unirse").onclick = () => {
+  codigo = $("codigo").value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "").slice(0, 20); $("codigo").value = codigo;
+  guardarLS("tp_codigo", codigo); arrancarMotor(); pintarModo(); pintarTabla(); calcular();
+  toast(codigo ? `👥 Te uniste a la clase ${codigo}` : "Usando el mercado general (sin código).");
+};
+$("codigo").addEventListener("keydown", e => { if (e.key === "Enter") $("unirse").click(); });
+$("escenario").onchange = () => {
+  escenario = $("escenario").value; motor.forzado = escenario === "auto" ? null : escenario;
+  // El escenario se aplica desde el siguiente minuto: lo ya dibujado no cambia
+  motor.desde = Math.floor(tSim / 60) + 1;
+  for (const s in motor.series) motor.series[s].a.length = Math.min(motor.series[s].a.length, motor.desde + 1);
+  velasCache = {}; toast("Escenario: " + $("escenario").selectedOptions[0].textContent);
+};
+$("velocidad").addEventListener("click", e => { const b = e.target.closest("[data-vel]"); if (b) { velocidad = Number(b.dataset.vel); pintarModo(); } });
+$("temporalidad").addEventListener("click", e => { const b = e.target.closest("[data-tf]"); if (b) { tf = Number(b.dataset.tf); guardarLS("tp_tf", tf); desplazamiento = 0; pintarModo(); dibujar(); } });
+$("lista").addEventListener("click", e => {
+  const b = e.target.closest("[data-s]"); if (!b) return;
+  simbolo = b.dataset.s; guardarLS("tp_simbolo", simbolo); desplazamiento = 0;
+  document.querySelectorAll(".sim").forEach(z => z.setAttribute("aria-pressed", String(z.dataset.s === simbolo)));
+  $("t-sl").value = $("t-tp").value = $("t-sl-p").value = $("t-tp-p").value = "";
+  prepararBoleta(); calcular();
+});
+function prepararBoleta() {
+  const acc = esAccion(simbolo), x = POR_SIMBOLO[simbolo];
+  $("g-titulo").textContent = simbolo; $("t-simbolo").textContent = simbolo;
+  $("t-lab-lote").textContent = acc ? "Acciones" : "Lotes";
+  const l = $("t-lote"); l.step = acc ? "1" : "0.01"; l.min = acc ? "1" : "0.01";
+  if (acc && num(l.value) < 1) l.value = "10"; if (!acc && num(l.value) >= 1 && x.grupo !== "Cripto") l.value = "0.10";
+  if (x.grupo === "Cripto" && num(l.value) > 1) l.value = "0.10";
+  document.querySelectorAll(".u-pips").forEach(s => s.textContent = esForex(simbolo) ? "Pips" : "Puntos");
+  ["t-sl", "t-tp"].forEach(id => $(id).step = String(x.pip));
+}
+function aplicarTema(t) { document.documentElement.dataset.theme = t; guardarLS("tp_tema", t); document.querySelectorAll("[data-tema]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tema === t))); dibujar(); }
+document.querySelectorAll("[data-tema]").forEach(b => b.onclick = () => aplicarTema(b.dataset.tema));
+let reloj;
+function toast(t) { const e = $("toast"); e.textContent = t; e.classList.add("on"); clearTimeout(reloj); reloj = setTimeout(() => e.classList.remove("on"), 2600); }
+
+// =====================================================================================================================
+// Ciclo: avanza el reloj simulado, revisa SL/TP y redibuja (4 veces por segundo)
+// =====================================================================================================================
+let ultimaLista = 0;
+function ciclo() {
+  const ahora = performance.now();
+  if (modo === "clase") tSim = Date.now() / 1000 - origen;
+  else { tSim += (ahora - ultimoReal) / 1000 * velocidad; if (Math.floor(tSim) % 5 === 0) guardarLS("tp_tiempo_libre", tSim); }
+  ultimoReal = ahora;
+  const antes = cuenta.abiertas.length;
+  revisarNiveles();
+  if (cuenta.abiertas.length !== antes) pintarTabla();
+  const q = motor.cotizacion(simbolo, tSim);
+  $("g-bid").textContent = $("t-bid").textContent = fmtP(simbolo, q.bid);
+  $("g-ask").textContent = $("t-ask").textContent = fmtP(simbolo, q.ask);
+  $("g-spread").textContent = (q.spread / POR_SIMBOLO[simbolo].pip).toFixed(1) + " " + unidadPips(simbolo);
+  const d = new Date((origen + tSim) * 1000);
+  $("reloj").textContent = (modo === "libre" && velocidad === 0 ? "⏸ " : "") + d.toLocaleTimeString("es-MX", { hour12: false });
+  if (ahora - ultimaLista > 900) { actualizarLista(); ultimaLista = ahora; }
+  actualizarTabla();
+  if (lado) calcular(); else dibujar();
+}
+
+// Arranque
+const temaGuardado = leerLS("tp_tema", null);
+if (temaGuardado) aplicarTema(temaGuardado); else document.querySelectorAll("[data-tema]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tema === (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"))));
+if (!POR_SIMBOLO[simbolo]) simbolo = "EURUSD";
+if (![15, 60, 300].includes(tf)) tf = 60;
+arrancarMotor(); pintarLista(); pintarModo(); prepararBoleta(); medir(); if (W < 560) visibles = 45; pintarTabla(); calcular(); actualizarLista();
+window.addEventListener("resize", () => { medir(); dibujar(); });
+if ("ResizeObserver" in window) new ResizeObserver(() => { medir(); dibujar(); }).observe(lz);
+setInterval(ciclo, 250);
+document.addEventListener("visibilitychange", () => { ultimoReal = performance.now(); });
+
+// ---- Dentro del Portal ALEMA (componente de Streamlit): el portal elige el tema y la altura se ajusta sola ----
+const enStreamlit = window.parent !== window;
+const aStreamlit = (tipo, datos) => { if (enStreamlit) window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: tipo }, datos || {}), "*"); };
+let ultimaAltura = 0;
+// Se mide el contenido (.app), no la ventana: medir la ventana hacía crecer el marco sin fin.
+const contenido = document.querySelector(".app");
+const altura = () => { const r = contenido.getBoundingClientRect(); const h = Math.ceil(r.bottom + window.scrollY + 12); if (Math.abs(h - ultimaAltura) > 2) { ultimaAltura = h; aStreamlit("streamlit:setFrameHeight", { height: h }); } };
+window.addEventListener("message", ev => {
+  const d = ev.data; if (!d || d.type !== "streamlit:render") return;
+  const a = d.args || {};
+  aplicarTema(a.modo_color === "claro" ? "light" : "dark");
+  altura();
+});
+if ("ResizeObserver" in window) new ResizeObserver(altura).observe(contenido);
+window.addEventListener("resize", altura);
+aStreamlit("streamlit:componentReady", { apiVersion: 1 });
+setTimeout(altura, 300);
+})();
+</script>
+
+</body>
+</html>

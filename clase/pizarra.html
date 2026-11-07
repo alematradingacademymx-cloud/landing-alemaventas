@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pizarra ALEMA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap">
+<style>
+  /* Pizarra para clases: dibujar gráficas, zonas y explicaciones. Todo se guarda solo en este navegador. */
+  :root { --ink: #EEF1F6; --muted: #A3ADBE; --brand: #FEA621; --borde: rgb(255 255 255 / .13); --pista: rgb(255 255 255 / .07);
+    --barra: rgb(16 22 33 / .72); --on: rgb(254 166 33 / .18); }
+  body.claro { --ink: #1A2130; --muted: #5B6476; --borde: rgb(20 30 50 / .14); --pista: rgb(20 30 50 / .05); --barra: rgb(255 255 255 / .8); --on: rgb(254 166 33 / .22); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: transparent; font-family: "Lexend", "Segoe UI", system-ui, sans-serif; color: var(--ink); }
+  #raiz { display: grid; gap: 10px; outline: none; }
+  .barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px; border-radius: 16px; background: var(--barra);
+    border: 1px solid var(--borde); box-shadow: inset 0 1px 0 rgb(255 255 255 / .12); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  .grupo { display: flex; gap: 3px; padding: 3px; border-radius: 11px; background: var(--pista); align-items: center; }
+  .sep { flex: 1 1 0; }
+  button { font: 500 .8rem "Lexend", sans-serif; color: var(--ink); background: transparent; border: 0; border-radius: 8px; padding: 7px 9px; cursor: pointer;
+    display: inline-flex; gap: 5px; align-items: center; white-space: nowrap; line-height: 1; min-height: 32px; }
+  button:hover { background: var(--pista); }
+  button[aria-pressed="true"] { background: var(--on); color: var(--brand); font-weight: 600; box-shadow: inset 0 1px 0 rgb(255 255 255 / .18); }
+  body.claro button[aria-pressed="true"] { color: #8A5300; }
+  button:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+  button[disabled] { opacity: .35; cursor: default; }
+  button .ic { font-size: 1rem; width: 1.1em; text-align: center; }
+  .color { width: 22px; height: 22px; min-height: 0; padding: 0; border-radius: 50%; border: 2px solid transparent; }
+  .color[aria-pressed="true"] { border-color: var(--ink); box-shadow: 0 0 0 2px var(--brand); background: none; }
+  .grosor { width: 30px; justify-content: center; padding: 0; }
+  .grosor i { display: block; border-radius: 99px; background: currentColor; width: 16px; }
+  .prim { background: linear-gradient(180deg, #FFB84A, #FEA621); color: #2B1C02; font-weight: 600; }
+  .prim:hover { background: linear-gradient(180deg, #FFC062, #FEA621); }
+  .peligro { color: #EF5A6F; }
+  .pag { font-variant-numeric: tabular-nums; font-size: .8rem; color: var(--muted); padding: 0 4px; }
+  .lienzo { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--borde); aspect-ratio: 16 / 9; width: 100%;
+    box-shadow: 0 18px 40px -20px rgb(0 0 0 / .6); touch-action: none; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #texto { position: absolute; display: none; min-width: 140px; font: 600 18px "Lexend", sans-serif; background: rgb(0 0 0 / .25); color: #fff;
+    border: 1px dashed var(--brand); border-radius: 6px; padding: 2px 6px; outline: none; z-index: 2; }
+  .ayuda { font-size: .74rem; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; padding: 0 4px; }
+  .ayuda kbd { font: 600 .7rem "Lexend", sans-serif; border: 1px solid var(--borde); border-radius: 4px; padding: 1px 5px; background: var(--pista); }
+  .confirmar { display: none; gap: 6px; align-items: center; font-size: .8rem; }
+  .confirmar.on { display: inline-flex; }
+  /* Pantalla completa: la pizarra ocupa todo y la barra queda arriba */
+  #raiz:fullscreen { background: #0B1018; padding: 10px; grid-template-rows: auto minmax(0, 1fr) auto; height: 100vh; }
+  body.claro #raiz:fullscreen { background: #EEF1F6; }
+  #raiz:fullscreen .lienzo { aspect-ratio: auto; height: 100%; }
+  @media (max-width: 640px) { .ayuda { display: none; } button .tx { display: none; } }
+  @media print { body { display: none !important; } }
+</style>
+</head>
+<body>
+<div id="raiz" tabindex="0">
+  <div class="barra" role="toolbar" aria-label="Herramientas de la pizarra">
+    <div class="grupo" role="group" aria-label="Herramienta">
+      <button type="button" data-h="lapiz" title="Lápiz (P)"><span class="ic">✏️</span><span class="tx">Lápiz</span></button>
+      <button type="button" data-h="marcador" title="Resaltador (M)"><span class="ic">🖍️</span><span class="tx">Resaltar</span></button>
+      <button type="button" data-h="linea" title="Línea recta (L)"><span class="ic">／</span><span class="tx">Línea</span></button>
+      <button type="button" data-h="horizontal" title="Soporte o resistencia (S)"><span class="ic">―</span><span class="tx">Nivel</span></button>
+      <button type="button" data-h="zona" title="Zona (Z)"><span class="ic">▭</span><span class="tx">Zona</span></button>
+      <button type="button" data-h="flecha" title="Flecha (F)"><span class="ic">➜</span><span class="tx">Flecha</span></button>
+      <button type="button" data-h="vela" title="Vela: arrastra de la apertura al cierre (V)"><span class="ic">🕯️</span><span class="tx">Vela</span></button>
+      <button type="button" data-h="texto" title="Texto (T)"><span class="ic">T</span><span class="tx">Texto</span></button>
+      <button type="button" data-h="borrador" title="Borrador: toca un trazo para quitarlo (B)"><span class="ic">⌫</span><span class="tx">Borrar</span></button>
+    </div>
+    <div class="grupo" role="group" aria-label="Color" id="colores"></div>
+    <div class="grupo" role="group" aria-label="Grosor">
+      <button type="button" class="grosor" data-g="2" title="Delgado"><i style="height:2px"></i></button>
+      <button type="button" class="grosor" data-g="4" title="Medio"><i style="height:4px"></i></button>
+      <button type="button" class="grosor" data-g="8" title="Grueso"><i style="height:7px"></i></button>
+    </div>
+    <div class="grupo" role="group" aria-label="Fondo">
+      <button type="button" data-f="oscuro" title="Fondo oscuro">🌙</button>
+      <button type="button" data-f="blanco" title="Fondo blanco">⬜</button>
+      <button type="button" data-f="cuadricula" title="Cuadrícula">▦</button>
+      <button type="button" data-f="grafica" title="Gráfica de velas de ejemplo"><span class="ic">📈</span><span class="tx">Gráfica</span></button>
+      <button type="button" id="nueva-grafica" title="Otra gráfica de ejemplo" hidden>🔄</button>
+    </div>
+    <div class="sep"></div>
+    <div class="grupo">
+      <button type="button" id="deshacer" title="Deshacer (Ctrl+Z)">↶</button>
+      <button type="button" id="rehacer" title="Rehacer (Ctrl+Y)">↷</button>
+    </div>
+    <div class="grupo" aria-label="Hojas">
+      <button type="button" id="ant" title="Hoja anterior">‹</button><span class="pag" id="pag">1 / 1</span><button type="button" id="sig" title="Hoja siguiente">›</button>
+      <button type="button" id="nueva" title="Hoja nueva">＋</button>
+    </div>
+    <button type="button" id="limpiar" class="peligro" title="Borrar todo lo de esta hoja">🗑️ <span class="tx">Limpiar</span></button>
+    <span class="confirmar" id="confirmar">¿Borrar esta hoja? <button type="button" class="prim" id="si-limpiar">Sí</button><button type="button" id="no-limpiar">No</button></span>
+    <button type="button" id="png" title="Guardar la hoja como imagen">⬇️ <span class="tx">PNG</span></button>
+    <button type="button" id="pc" class="prim" title="Pantalla completa (Esc para salir)">⛶ <span class="tx">Pantalla completa</span></button>
+  </div>
+  <div class="lienzo" id="lienzo"><canvas id="fondo"></canvas><canvas id="dibujo"></canvas><input id="texto" type="text" maxlength="80" aria-label="Escribe el texto"></div>
+  <div class="ayuda"><span><kbd>P</kbd> lápiz</span><span><kbd>L</kbd> línea</span><span><kbd>S</kbd> nivel</span><span><kbd>Z</kbd> zona</span><span><kbd>F</kbd> flecha</span><span><kbd>V</kbd> vela</span><span><kbd>T</kbd> texto</span><span><kbd>B</kbd> borrar</span><span><kbd>Ctrl</kbd>+<kbd>Z</kbd> deshacer</span><span>Se guarda sola en este navegador</span></div>
+</div>
+<script>
+(() => {
+  // ---- Comunicación con Streamlit (si está dentro del portal). Sola, también funciona. ----
+  const enStreamlit = window.parent !== window;
+  const aStreamlit = (tipo, datos) => { if (enStreamlit) window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: tipo }, datos || {}), "*"); };
+  const altura = () => aStreamlit("streamlit:setFrameHeight", { height: Math.ceil(document.body.scrollHeight) + 2 });
+
+  const COLORES = ["#FFFFFF", "#FEA621", "#3CCF91", "#EF5A6F", "#4DA3FF", "#B57BFF", "#1A2130"];
+  const VERDE = "#26A69A", ROJO = "#EF5350";
+  const CLAVE = "alema_pizarra_v1";
+  const lienzo = document.getElementById("lienzo"), cf = document.getElementById("fondo"), cd = document.getElementById("dibujo");
+  const xf = cf.getContext("2d"), xd = cd.getContext("2d"), txt = document.getElementById("texto");
+
+  let estado = { hojas: [{ trazos: [], fondo: "oscuro", semilla: 7 }], actual: 0 };
+  try { const g = JSON.parse(localStorage.getItem(CLAVE) || "null"); if (g && Array.isArray(g.hojas) && g.hojas.length) estado = g; } catch (e) {}
+  let herramienta = "lapiz", color = "#FEA621", grosor = 4, historial = [], rehacer = [], actual = null, W = 0, H = 0, dpr = 1;
+  const hoja = () => estado.hojas[estado.actual];
+  const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(estado)); } catch (e) {} };
+
+  // ---- Colores ----
+  const cajaColores = document.getElementById("colores");
+  cajaColores.innerHTML = COLORES.map(c => `<button type="button" class="color" data-c="${c}" title="${c}" style="background:${c}"></button>`).join("");
+
+  // ---- Tamaño ----
+  function medir() {
+    const r = lienzo.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2); W = r.width; H = r.height;
+    [cf, cd].forEach(c => { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); });
+    [xf, xd].forEach(x => x.setTransform(dpr, 0, 0, dpr, 0, 0));
+    pintarFondo(); pintar(); altura();
+  }
+
+  // ---- Fondos ----
+  function aleatorio(semilla) { let s = semilla >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function pintarFondo() {
+    const f = hoja().fondo, oscuro = f !== "blanco";
+    xf.clearRect(0, 0, W, H);
+    xf.fillStyle = oscuro ? "#0F1522" : "#FFFFFF"; xf.fillRect(0, 0, W, H);
+    if (f === "cuadricula" || f === "grafica") {
+      xf.strokeStyle = oscuro ? "rgba(255,255,255,.06)" : "rgba(20,30,50,.08)"; xf.lineWidth = 1;
+      const paso = W / 32;
+      for (let x = paso; x < W; x += paso) { xf.beginPath(); xf.moveTo(Math.round(x) + .5, 0); xf.lineTo(Math.round(x) + .5, H); xf.stroke(); }
+      for (let y = paso; y < H; y += paso) { xf.beginPath(); xf.moveTo(0, Math.round(y) + .5); xf.lineTo(W, Math.round(y) + .5); xf.stroke(); }
+    }
+    if (f === "grafica") {
+      const r = aleatorio(hoja().semilla), n = 64, ancho = W / (n + 4);
+      let p = 100, ps = [];
+      for (let i = 0; i < n; i++) {
+        const tendencia = Math.sin(i / 11 + hoja().semilla) * .55;
+        const o = p, c = o + (r() - .5 + tendencia * .35) * 3.2;
+        const hi = Math.max(o, c) + r() * 1.6, lo = Math.min(o, c) - r() * 1.6;
+        ps.push([o, hi, lo, c]); p = c;
+      }
+      const max = Math.max(...ps.map(v => v[1])), min = Math.min(...ps.map(v => v[2]));
+      const y = v => H * .1 + (max - v) / (max - min) * H * .8;
+      ps.forEach(([o, hi, lo, c], i) => {
+        const x = ancho * (i + 2), sube = c >= o;
+        xf.strokeStyle = xf.fillStyle = sube ? VERDE : ROJO; xf.lineWidth = Math.max(1, ancho * .12);
+        xf.beginPath(); xf.moveTo(x, y(hi)); xf.lineTo(x, y(lo)); xf.stroke();
+        const a = y(Math.max(o, c)), b = y(Math.min(o, c));
+        xf.fillRect(x - ancho * .32, a, ancho * .64, Math.max(1, b - a));
+      });
+      xf.fillStyle = oscuro ? "rgba(255,255,255,.05)" : "rgba(20,30,50,.06)";
+      xf.font = `700 ${Math.round(H * .09)}px Lexend, sans-serif`; xf.textAlign = "center"; xf.fillText("ALEMA", W / 2, H * .55);
+    }
+  }
+
+  // ---- Dibujo ----
+  const P = (px, py) => [px * W, py * H];
+  // El texto crece con la pizarra: se ve igual en pantalla completa y en una ventana chica
+  const tamTexto = g => Math.max(10, Math.round((12 + g * 3) * W / 1100));
+  function flecha(x, a, b, ancho) {
+    const ang = Math.atan2(b[1] - a[1], b[0] - a[0]), l = 10 + ancho * 2.4;
+    x.beginPath(); x.moveTo(a[0], a[1]); x.lineTo(b[0], b[1]); x.stroke();
+    x.beginPath(); x.moveTo(b[0], b[1]);
+    x.lineTo(b[0] - l * Math.cos(ang - .45), b[1] - l * Math.sin(ang - .45));
+    x.lineTo(b[0] - l * Math.cos(ang + .45), b[1] - l * Math.sin(ang + .45)); x.closePath(); x.fill();
+  }
+  function trazo(x, t) {
+    x.save(); x.lineCap = "round"; x.lineJoin = "round"; x.strokeStyle = x.fillStyle = t.c; x.lineWidth = t.g;
+    const a = P(t.p[0][0], t.p[0][1]), b = t.p.length > 1 ? P(t.p[t.p.length - 1][0], t.p[t.p.length - 1][1]) : a;
+    if (t.h === "lapiz" || t.h === "marcador") {
+      if (t.h === "marcador") { x.globalAlpha = .32; x.lineWidth = t.g * 4; }
+      x.beginPath(); x.moveTo(a[0], a[1]);
+      for (let i = 1; i < t.p.length; i++) { const q = P(t.p[i][0], t.p[i][1]); x.lineTo(q[0], q[1]); }
+      if (t.p.length === 1) x.lineTo(a[0] + .1, a[1]);
+      x.stroke();
+    } else if (t.h === "linea") { x.beginPath(); x.moveTo(a[0], a[1]); x.lineTo(b[0], b[1]); x.stroke(); }
+    else if (t.h === "horizontal") {
+      x.setLineDash([10, 6]); x.beginPath(); x.moveTo(0, a[1]); x.lineTo(W, a[1]); x.stroke(); x.setLineDash([]);
+      if (t.t) { x.font = "600 13px Lexend, sans-serif"; const w = x.measureText(t.t).width + 14; x.globalAlpha = .9; x.fillRect(W - w - 8, a[1] - 11, w, 22);
+        x.globalAlpha = 1; x.fillStyle = "#0B1018"; x.textBaseline = "middle"; x.fillText(t.t, W - w - 1, a[1] + 1); }
+    } else if (t.h === "zona") {
+      const xx = Math.min(a[0], b[0]), yy = Math.min(a[1], b[1]), ww = Math.abs(b[0] - a[0]), hh = Math.abs(b[1] - a[1]);
+      x.globalAlpha = .18; x.fillRect(xx, yy, ww, hh); x.globalAlpha = 1; x.lineWidth = Math.max(1.5, t.g / 2); x.strokeRect(xx, yy, ww, hh);
+    } else if (t.h === "flecha") { flecha(x, a, b, t.g); }
+    else if (t.h === "vela") {
+      const sube = b[1] <= a[1], c = sube ? VERDE : ROJO, ancho = Math.max(10, W / 60), cuerpo = Math.abs(b[1] - a[1]);
+      const mecha = Math.max(8, cuerpo * .35);
+      x.strokeStyle = x.fillStyle = c; x.lineWidth = Math.max(1.5, ancho * .14);
+      x.beginPath(); x.moveTo(a[0], Math.min(a[1], b[1]) - mecha); x.lineTo(a[0], Math.max(a[1], b[1]) + mecha); x.stroke();
+      x.fillRect(a[0] - ancho / 2, Math.min(a[1], b[1]), ancho, Math.max(2, cuerpo));
+    } else if (t.h === "texto") {
+      x.font = `600 ${tamTexto(t.g)}px Lexend, sans-serif`; x.textBaseline = "top";
+      x.lineWidth = 4; x.strokeStyle = hoja().fondo === "blanco" ? "rgba(255,255,255,.85)" : "rgba(0,0,0,.55)"; x.strokeText(t.t, a[0], a[1]); x.fillText(t.t, a[0], a[1]);
+    }
+    x.restore();
+  }
+  function pintar() {
+    xd.clearRect(0, 0, W, H);
+    hoja().trazos.forEach(t => trazo(xd, t));
+    if (actual) trazo(xd, actual);
+    document.getElementById("pag").textContent = `${estado.actual + 1} / ${estado.hojas.length}`;
+    document.getElementById("ant").disabled = estado.actual === 0;
+    document.getElementById("sig").disabled = estado.actual === estado.hojas.length - 1;
+    document.getElementById("deshacer").disabled = !historial.length;
+    document.getElementById("rehacer").disabled = !rehacer.length;
+    document.querySelectorAll("[data-f]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === hoja().fondo)));
+    document.getElementById("nueva-grafica").hidden = hoja().fondo !== "grafica";
+  }
+  // Historial de esta hoja (deshacer / rehacer): agregar, borrar un trazo o limpiar la hoja
+  function hacer(op) { aplicar(op); historial.push(op); rehacer = []; guardar(); pintar(); }
+  function aplicar(op) {
+    const ts = hoja().trazos;
+    if (op.op === "add") ts.push(op.t);
+    else if (op.op === "del") ts.splice(op.i, 1);
+    else if (op.op === "clear") ts.length = 0;
+  }
+  function revertir(op) {
+    const ts = hoja().trazos;
+    if (op.op === "add") ts.pop();
+    else if (op.op === "del") ts.splice(op.i, 0, op.t);
+    else if (op.op === "clear") ts.push(...op.ts);
+  }
+  function agregar(t) { hacer({ op: "add", t }); }
+
+  // ---- Borrador: quita el trazo más cercano al punto ----
+  function distSeg(p, a, b) { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy; let u = l ? ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l : 0; u = Math.max(0, Math.min(1, u)); return Math.hypot(p[0] - a[0] - u * dx, p[1] - a[1] - u * dy); }
+  function borrarEn(px, py) {
+    const p = [px * W, py * H], ts = hoja().trazos;
+    for (let i = ts.length - 1; i >= 0; i--) {
+      const t = ts[i], pts = t.p.map(q => P(q[0], q[1])), tol = 10 + t.g;
+      let d = Infinity;
+      if (t.h === "horizontal") d = Math.abs(p[1] - pts[0][1]);
+      else if (t.h === "zona") { const a = pts[0], b = pts[pts.length - 1]; const dentro = p[0] >= Math.min(a[0], b[0]) - tol && p[0] <= Math.max(a[0], b[0]) + tol && p[1] >= Math.min(a[1], b[1]) - tol && p[1] <= Math.max(a[1], b[1]) + tol; d = dentro ? 0 : Infinity; }
+      else if (t.h === "texto") { xd.font = `600 ${tamTexto(t.g)}px Lexend, sans-serif`; const w = xd.measureText(t.t).width; d = (p[0] >= pts[0][0] - 6 && p[0] <= pts[0][0] + w + 6 && p[1] >= pts[0][1] - 6 && p[1] <= pts[0][1] + 4 + tamTexto(t.g)) ? 0 : Infinity; }
+      else if (t.h === "vela") { const a = pts[0], b = pts[pts.length - 1]; d = Math.abs(p[0] - a[0]) < Math.max(12, W / 100) && p[1] >= Math.min(a[1], b[1]) - 20 && p[1] <= Math.max(a[1], b[1]) + 20 ? 0 : Infinity; }
+      else if (pts.length === 1) d = Math.hypot(p[0] - pts[0][0], p[1] - pts[0][1]);
+      else for (let k = 1; k < pts.length; k++) d = Math.min(d, distSeg(p, pts[k - 1], pts[k]));
+      if (d <= tol) { hacer({ op: "del", i, t }); return; }
+    }
+  }
+
+  // ---- Puntero (mouse, pluma o dedo) ----
+  const pos = e => { const r = cd.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; };
+  cd.addEventListener("pointerdown", e => {
+    if (txt.style.display === "block") { fijarTexto(); return; }
+    const p = pos(e);
+    if (herramienta !== "texto") { cd.setPointerCapture(e.pointerId); raiz.focus({ preventScroll: true }); }
+    if (herramienta === "borrador") { borrarEn(p[0], p[1]); actual = { h: "borrador" }; return; }
+    if (herramienta === "texto") { e.preventDefault(); abrirTexto(p); return; }
+    if (herramienta === "horizontal") { actual = { h: "horizontal", c: color, g: grosor, p: [p] }; pintar(); return; }
+    actual = { h: herramienta, c: color, g: grosor, p: [p, p] };
+    if (herramienta === "lapiz" || herramienta === "marcador") actual.p = [p];
+    pintar();
+  });
+  cd.addEventListener("pointermove", e => {
+    if (!actual) return;
+    const p = pos(e);
+    if (actual.h === "borrador") { borrarEn(p[0], p[1]); return; }
+    if (actual.h === "lapiz" || actual.h === "marcador") actual.p.push(p);
+    else if (actual.h === "horizontal") actual.p = [p];
+    else if (actual.h === "vela") actual.p[1] = [actual.p[0][0], p[1]];
+    else actual.p[1] = p;
+    pintar();
+  });
+  const soltar = () => {
+    if (!actual) return;
+    const t = actual; actual = null;
+    if (t.h === "borrador") return;
+    const a = t.p[0], b = t.p[t.p.length - 1];
+    if (["linea", "zona", "flecha", "vela"].includes(t.h) && Math.hypot((b[0] - a[0]) * W, (b[1] - a[1]) * H) < 4) { pintar(); return; }
+    if (t.h === "lapiz" || t.h === "marcador") t.p = t.p.map(q => [Math.round(q[0] * 10000) / 10000, Math.round(q[1] * 10000) / 10000]);
+    agregar(t);
+  };
+  cd.addEventListener("pointerup", soltar); cd.addEventListener("pointercancel", soltar);
+
+  // ---- Texto ----
+  let posTexto = null;
+  function abrirTexto(p) {
+    posTexto = p; txt.value = ""; txt.style.display = "block";
+    txt.style.left = (p[0] * 100) + "%"; txt.style.top = (p[1] * 100) + "%"; txt.style.color = color;
+    txt.style.fontSize = tamTexto(grosor) + "px"; txt.focus(); setTimeout(() => txt.focus(), 0);
+  }
+  function fijarTexto() {
+    const v = txt.value.trim(); txt.style.display = "none";
+    if (v && posTexto) agregar({ h: "texto", c: color, g: grosor, p: [posTexto], t: v });
+    posTexto = null; raiz.focus({ preventScroll: true });
+  }
+  txt.addEventListener("keydown", e => { e.stopPropagation(); if (e.key === "Enter") fijarTexto(); if (e.key === "Escape") { txt.style.display = "none"; posTexto = null; } });
+  txt.addEventListener("blur", () => { if (txt.style.display === "block") fijarTexto(); });
+
+  // ---- Botones ----
+  const raiz = document.getElementById("raiz");
+  function marcar() {
+    document.querySelectorAll("[data-h]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.h === herramienta)));
+    document.querySelectorAll("[data-c]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.c === color)));
+    document.querySelectorAll("[data-g]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.g) === grosor)));
+    cd.style.cursor = herramienta === "texto" ? "text" : herramienta === "borrador" ? "cell" : "crosshair";
+  }
+  document.querySelector(".barra").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.h) { herramienta = b.dataset.h; marcar(); }
+    if (b.dataset.c) { color = b.dataset.c; if (herramienta === "borrador") herramienta = "lapiz"; marcar(); }
+    if (b.dataset.g) { grosor = Number(b.dataset.g); marcar(); }
+    if (b.dataset.f) {
+      hoja().fondo = b.dataset.f;
+      if (b.dataset.f === "blanco" && color === "#FFFFFF") color = "#1A2130";
+      if (b.dataset.f !== "blanco" && color === "#1A2130") color = "#FFFFFF";
+      guardar(); pintarFondo(); pintar(); marcar();
+    }
+    switch (b.id) {
+      case "nueva-grafica": hoja().semilla = Math.floor(Math.random() * 1e6); guardar(); pintarFondo(); break;
+      case "deshacer": deshacer(); break;
+      case "rehacer": if (rehacer.length) { const op = rehacer.pop(); aplicar(op); historial.push(op); guardar(); pintar(); } break;
+      case "ant": if (estado.actual > 0) { estado.actual--; historial = []; rehacer = []; guardar(); pintarFondo(); pintar(); } break;
+      case "sig": if (estado.actual < estado.hojas.length - 1) { estado.actual++; historial = []; rehacer = []; guardar(); pintarFondo(); pintar(); } break;
+      case "nueva": estado.hojas.splice(estado.actual + 1, 0, { trazos: [], fondo: hoja().fondo, semilla: Math.floor(Math.random() * 1e6) }); estado.actual++; historial = []; rehacer = []; guardar(); pintarFondo(); pintar(); break;
+      case "limpiar": document.getElementById("confirmar").classList.add("on"); b.hidden = true; break;
+      case "no-limpiar": cerrarConfirmar(); break;
+      case "si-limpiar": hacer({ op: "clear", ts: hoja().trazos.slice() }); cerrarConfirmar(); break;
+      case "png": descargar(); break;
+      case "pc": pantallaCompleta(); break;
+    }
+  });
+  function cerrarConfirmar() { document.getElementById("confirmar").classList.remove("on"); document.getElementById("limpiar").hidden = false; }
+  function deshacer() { const op = historial.pop(); if (op) { revertir(op); rehacer.push(op); guardar(); pintar(); } }
+  function descargar() {
+    const c = document.createElement("canvas"); c.width = cf.width; c.height = cf.height;
+    const x = c.getContext("2d"); x.drawImage(cf, 0, 0); x.drawImage(cd, 0, 0);
+    const a = document.createElement("a"); a.download = `pizarra-alema-hoja-${estado.actual + 1}.png`; a.href = c.toDataURL("image/png"); a.click();
+  }
+  function pantallaCompleta() {
+    if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); return; }
+    const p = raiz.requestFullscreen ? raiz.requestFullscreen() : (raiz.webkitRequestFullscreen ? raiz.webkitRequestFullscreen() : null);
+    if (p && p.catch) p.catch(() => {});
+  }
+  document.addEventListener("fullscreenchange", () => { document.getElementById("pc").innerHTML = document.fullscreenElement ? "✕ <span class='tx'>Salir</span>" : "⛶ <span class='tx'>Pantalla completa</span>"; setTimeout(medir, 60); });
+  document.addEventListener("keydown", e => {
+    if (e.target === txt) return;
+    const k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && k === "z") { e.preventDefault(); e.shiftKey ? document.getElementById("rehacer").click() : deshacer(); return; }
+    if ((e.ctrlKey || e.metaKey) && k === "y") { e.preventDefault(); document.getElementById("rehacer").click(); return; }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const atajos = { p: "lapiz", m: "marcador", l: "linea", s: "horizontal", z: "zona", f: "flecha", v: "vela", t: "texto", b: "borrador" };
+    if (atajos[k]) { herramienta = atajos[k]; marcar(); }
+    if (k === "arrowright" && estado.actual < estado.hojas.length - 1) document.getElementById("sig").click();
+    if (k === "arrowleft" && estado.actual > 0) document.getElementById("ant").click();
+  });
+
+  // ---- Arranque ----
+  window.addEventListener("resize", medir);
+  if ("ResizeObserver" in window) new ResizeObserver(medir).observe(lienzo);
+  window.addEventListener("message", ev => {
+    const d = ev.data; if (!d || d.type !== "streamlit:render") return;
+    const a = d.args || {};
+    document.body.classList.toggle("claro", a.modo_color === "claro");
+    altura();
+  });
+  marcar(); medir();
+  aStreamlit("streamlit:componentReady", { apiVersion: 1 });
+})();
+</script>
+</body>
+</html>

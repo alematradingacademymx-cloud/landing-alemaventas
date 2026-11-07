@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ALEMA · Clase en vivo</title>
+<link rel="icon" type="image/png" href="../images/alema_iso.png.png">
+<meta name="theme-color" content="#0B1018">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap">
+<style>
+/* Página ligera para dar clase por Zoom: la Terminal de práctica y la Pizarra, sin el portal.
+   Solo la pestaña visible trabaja; la otra queda en pausa y conserva lo que tenía. */
+:root {
+  --fondo: #0B1018; --barra: rgb(16 22 33 / .78); --borde: rgb(255 255 255 / .12); --pista: rgb(255 255 255 / .06); --ink: #EEF1F6;
+  --muted: #9AA4B6; --brand: #FEA621; --on: rgb(254 166 33 / .16); --on-ink: #FEA621; color-scheme: dark;
+  --font: "Lexend", "Segoe UI", system-ui, sans-serif;
+}
+:root[data-tema="light"] {
+  --fondo: #EEF1F6; --barra: rgb(255 255 255 / .82); --borde: rgb(20 30 50 / .12); --pista: rgb(20 30 50 / .05); --ink: #1A2130;
+  --muted: #5B6476; --on: rgb(254 166 33 / .22); --on-ink: #8A5300; color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--fondo); color: var(--ink); font: 14px/1.4 var(--font); min-height: 100vh; }
+body::before { content: ""; position: fixed; inset: -12%; z-index: -1; pointer-events: none; filter: blur(80px); opacity: .8;
+  background: radial-gradient(closest-side, rgb(254 166 33 / .24), transparent) 4% 2% / 50% 50% no-repeat,
+              radial-gradient(closest-side, rgb(59 91 219 / .24), transparent) 98% 30% / 46% 46% no-repeat; }
+.barra { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+  padding: max(10px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  background: var(--barra); border-bottom: 1px solid var(--borde); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.marca { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.marca img { width: 30px; height: auto; }
+.marca b { display: block; font-weight: 700; letter-spacing: .12em; color: var(--brand); line-height: 1; }
+.marca small { display: block; font-size: .72rem; color: var(--muted); margin-top: 2px; }
+.seg { display: inline-flex; gap: 3px; padding: 3px; border-radius: 12px; background: var(--pista); border: 1px solid var(--borde); }
+.seg button, .btn { border: 0; background: transparent; color: var(--muted); font: 500 .86rem var(--font); padding: 8px 14px; border-radius: 9px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--on); color: var(--on-ink); font-weight: 600; }
+.btn { border: 1px solid var(--borde); background: var(--pista); color: var(--ink); padding: 8px 12px; }
+.btn:hover, .seg button:hover { color: var(--ink); }
+:is(.seg button, .btn):focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+kbd { font: 600 .68rem var(--font); border: 1px solid var(--borde); border-radius: 4px; padding: 0 4px; opacity: .7; }
+main { padding: 6px max(8px, env(safe-area-inset-right, 0px)) 24px max(8px, env(safe-area-inset-left, 0px)); }
+.panel { display: block; width: 100%; border: 0; background: transparent; min-height: 400px; }
+.panel[hidden] { display: none; }
+/* La pizarra no declara color-scheme: si el marco usa otro, el navegador le pone fondo blanco detrás */
+#p-pizarra { color-scheme: light; }
+:root[data-tema="light"] .marca img { filter: brightness(.25); }
+#pizarra-env { padding: 10px max(8px, env(safe-area-inset-right, 0px)) 0 max(8px, env(safe-area-inset-left, 0px)); max-width: 1500px; margin: 0 auto; }
+@media (max-width: 560px) { .marca small, kbd { display: none; } .seg button, .btn { padding: 7px 10px; } }
+</style>
+</head>
+<body>
+<header class="barra">
+  <div class="marca"><img src="../images/alema_iso.png.png" alt="ALEMA"><div><b>ALEMA</b><small>Clase en vivo · terminal de práctica y pizarra</small></div></div>
+  <div class="seg" role="tablist" aria-label="Herramienta">
+    <button type="button" role="tab" data-p="terminal" aria-pressed="true" aria-selected="true">📈 Terminal</button>
+    <button type="button" role="tab" data-p="pizarra" aria-pressed="false" aria-selected="false">✏️ Pizarra</button>
+  </div>
+  <div class="seg" role="group" aria-label="Apariencia">
+    <button type="button" data-tema="dark" aria-pressed="true" title="Modo oscuro">🌙</button>
+    <button type="button" data-tema="light" aria-pressed="false" title="Modo claro">☀️</button>
+  </div>
+  <button type="button" class="btn" id="completa" title="Pantalla completa">⛶ Pantalla completa</button>
+</header>
+
+<main>
+  <iframe class="panel" id="p-terminal" src="terminal.html" title="Terminal ALEMA de práctica" allow="fullscreen"></iframe>
+  <div id="pizarra-env"><iframe class="panel" id="p-pizarra" src="pizarra.html" title="Pizarra ALEMA" allow="fullscreen" hidden></iframe></div>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var marcos = { terminal: document.getElementById('p-terminal'), pizarra: document.getElementById('p-pizarra') };
+  var leer = function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
+  var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
+  var tema = leer('clase_tema', 'dark'), actual = leer('clase_panel', 'terminal');
+
+  // Cada herramienta es el mismo componente del portal: se le habla igual que el portal (tema y altura).
+  function avisarTema(marco) {
+    try { marco.contentWindow.postMessage({ type: 'streamlit:render', args: { modo_color: tema === 'light' ? 'claro' : 'oscuro' } }, '*'); } catch (e) {}
+  }
+  function ponerTema(t) {
+    tema = t; guardar('clase_tema', t); root.setAttribute('data-tema', t);
+    document.querySelectorAll('[data-tema]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.tema === t)); });
+    avisarTema(marcos.terminal); avisarTema(marcos.pizarra);
+  }
+  function verPanel(p) {
+    actual = p; guardar('clase_panel', p);
+    Object.keys(marcos).forEach(function (k) { marcos[k].hidden = k !== p; });
+    document.querySelectorAll('[data-p]').forEach(function (b) {
+      var si = b.dataset.p === p; b.setAttribute('aria-pressed', String(si)); b.setAttribute('aria-selected', String(si));
+    });
+    avisarTema(marcos[p]);
+  }
+  window.addEventListener('message', function (ev) {
+    var d = ev.data; if (!d || !d.isStreamlitMessage) return;
+    Object.keys(marcos).forEach(function (k) {
+      var m = marcos[k]; if (ev.source !== m.contentWindow) return;
+      if (d.type === 'streamlit:componentReady') avisarTema(m);
+      if (d.type === 'streamlit:setFrameHeight' && d.height > 0) m.style.height = Math.ceil(d.height) + 'px';
+    });
+  });
+  Object.keys(marcos).forEach(function (k) { marcos[k].addEventListener('load', function () { avisarTema(marcos[k]); }); });
+  document.querySelectorAll('[data-p]').forEach(function (b) { b.addEventListener('click', function () { verPanel(b.dataset.p); }); });
+  document.querySelectorAll('[data-tema]').forEach(function (b) { b.addEventListener('click', function () { ponerTema(b.dataset.tema); }); });
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey && e.key === '1') { e.preventDefault(); verPanel('terminal'); }
+    if (e.altKey && e.key === '2') { e.preventDefault(); verPanel('pizarra'); }
+  });
+  document.getElementById('completa').addEventListener('click', function () {
+    try { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen().catch(function () {}); } catch (e) {}
+  });
+  ponerTema(tema); verPanel(actual);
+})();
+</script>
+</body>
+</html>
