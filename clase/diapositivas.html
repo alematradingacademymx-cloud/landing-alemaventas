@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diapositivas · ALEMA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+/* Diapositivas de clase: abre los PDF desde la computadora del mentor. No se sube nada: solo se dibuja la página
+   que se está viendo (más ligero que cargar todas las páginas como imágenes). */
+:root {
+  --vidrio: rgb(18 24 36 / .62); --borde: rgb(255 255 255 / .12); --brillo: rgb(255 255 255 / .12); --pista: rgb(255 255 255 / .06);
+  --ink: #EEF1F6; --muted: #9AA4B6; --brand: #FEA621; --on: rgb(254 166 33 / .16); --on-ink: #FEA621; --lienzo: #0E1422;
+  --font: "Lexend", "Segoe UI", system-ui, sans-serif; color-scheme: dark;
+}
+body.claro {
+  --vidrio: rgb(255 255 255 / .72); --borde: rgb(20 30 50 / .12); --brillo: rgb(255 255 255 / .9); --pista: rgb(20 30 50 / .05);
+  --ink: #1A2130; --muted: #5B6476; --on: rgb(254 166 33 / .22); --on-ink: #8A5300; --lienzo: #DCE1EA; color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; background: transparent; }
+body { color: var(--ink); font: 14px/1.45 var(--font); }
+.app { max-width: 1500px; margin: 0 auto; padding: 10px 8px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 12px; height: var(--alto, 680px); }
+.app.sin-lista { grid-template-columns: minmax(0, 1fr); }
+.vidrio { background: var(--vidrio); border: 1px solid var(--borde); border-radius: 18px; box-shadow: inset 0 1px 0 var(--brillo); min-width: 0; min-height: 0; }
+.lista { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.lista h3 { margin: 0; font-size: .92rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.lista h3 small { color: var(--muted); font-weight: 400; font-size: .74rem; }
+.archivos { overflow-y: auto; display: grid; gap: 3px; align-content: start; scrollbar-width: thin; }
+.archivo { text-align: left; border: 1px solid transparent; background: transparent; color: var(--ink); font: 500 .84rem var(--font); padding: 8px 10px;
+  border-radius: 10px; cursor: pointer; overflow-wrap: anywhere; }
+.archivo:hover { background: var(--pista); }
+.archivo[aria-current="true"] { background: var(--on); border-color: rgb(254 166 33 / .4); color: var(--on-ink); font-weight: 600; }
+.visor { display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+.barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--borde); }
+.barra .titulo { flex: 1 1 200px; min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn { border: 1px solid var(--borde); background: var(--pista); color: var(--ink); border-radius: 10px; padding: 8px 12px; cursor: pointer; font: 600 .84rem var(--font);
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.btn:hover { border-color: var(--brand); }
+.btn.prim { background: linear-gradient(180deg, #FFB84A, #FEA621); color: #2B1C02; border-color: rgb(255 255 255 / .35); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.pagina { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 74px; text-align: center; }
+.escenario { position: relative; display: grid; place-items: center; background: var(--lienzo); overflow: hidden; min-height: 0; }
+.escenario canvas { max-width: 100%; max-height: 100%; box-shadow: 0 16px 40px -18px rgb(0 0 0 / .7); background: #fff; }
+.vacio { text-align: center; padding: 30px; display: grid; gap: 12px; justify-items: center; max-width: 520px; }
+.vacio b { font-size: 1.1rem; }
+.vacio p { margin: 0; color: var(--muted); }
+.vacio .acciones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.escenario.arrastrando { outline: 3px dashed var(--brand); outline-offset: -10px; }
+.zona { position: absolute; top: 0; bottom: 0; width: 18%; cursor: pointer; }
+.zona.izq { left: 0; } .zona.der { right: 0; }
+.aviso { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); background: rgb(0 0 0 / .7); color: #fff; padding: 6px 12px; border-radius: 10px;
+  font-size: .8rem; opacity: 0; transition: opacity .25s; pointer-events: none; }
+.aviso.on { opacity: 1; }
+/* Pantalla completa: solo la diapositiva, fondo negro */
+.visor:fullscreen { background: #000; border-radius: 0; border: 0; }
+.visor:fullscreen .barra { position: absolute; top: 0; left: 0; right: 0; z-index: 2; background: rgb(0 0 0 / .55); border: 0; color: #fff; opacity: 0; transition: opacity .3s; }
+.visor:fullscreen .barra:hover { opacity: 1; }
+.visor:fullscreen .barra .btn { color: #fff; border-color: rgb(255 255 255 / .2); background: rgb(255 255 255 / .08); }
+.visor:fullscreen .escenario { background: #000; grid-row: 1 / -1; }
+.visor:fullscreen .escenario canvas { box-shadow: none; }
+@media (max-width: 860px) { .app { grid-template-columns: 1fr; height: auto; } .lista { max-height: 220px; } .escenario { min-height: 60vh; } }
+@media (prefers-reduced-motion: reduce) { .aviso { transition: none; } }
+@media print { body { display: none !important; } }
+</style>
+</head>
+<body>
+<div class="app sin-lista" id="app">
+  <section class="vidrio lista" id="lista" hidden aria-label="Archivos de la carpeta">
+    <h3><span id="carpeta">Carpeta</span><small id="cuantos"></small></h3>
+    <div class="archivos" id="archivos"></div>
+  </section>
+
+  <section class="vidrio visor" id="visor" aria-label="Diapositivas">
+    <div class="barra">
+      <button type="button" class="btn" id="b-carpeta" title="Abre tu carpeta de clases (por ejemplo Descargas › Clases nueva imagen)">📂 Abrir carpeta</button>
+      <button type="button" class="btn" id="b-pdf">📄 Abrir PDF</button>
+      <span class="titulo" id="titulo">Ningún archivo abierto</span>
+      <button type="button" class="btn" id="ant" title="Anterior (←)" disabled>‹</button>
+      <span class="pagina" id="pagina">— / —</span>
+      <button type="button" class="btn" id="sig" title="Siguiente (→)" disabled>›</button>
+      <button type="button" class="btn prim" id="completa" title="Pantalla completa (F)" disabled>⛶ Presentar</button>
+    </div>
+    <div class="escenario" id="escenario">
+      <div class="vacio" id="vacio">
+        <b>Abre las diapositivas de tu clase</b>
+        <p>Elige tu carpeta de clases para ver todos tus PDF en la lista, o abre un solo PDF. También puedes arrastrar el archivo aquí.</p>
+        <div class="acciones"><button type="button" class="btn prim" id="v-carpeta">📂 Abrir carpeta</button><button type="button" class="btn" id="v-pdf">📄 Abrir PDF</button></div>
+        <p style="font-size:.78rem">Tus archivos no se suben a ningún lado: se abren solo en esta computadora. Si tu presentación es PowerPoint, guárdala como PDF (Archivo › Exportar › PDF).</p>
+      </div>
+      <canvas id="lienzo" hidden aria-label="Diapositiva"></canvas>
+      <div class="zona izq" id="z-izq" hidden title="Anterior"></div><div class="zona der" id="z-der" hidden title="Siguiente"></div>
+      <div class="aviso" id="aviso"></div>
+    </div>
+  </section>
+</div>
+<input type="file" id="archivo" accept="application/pdf,.pdf" hidden>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var pdf = null, pagina = 1, nombre = "", tarea = null, pendiente = null;
+  var lienzo = $("lienzo"), escenario = $("escenario");
+
+  // PDF.js: el "worker" se arma desde un blob para que funcione aunque la librería venga de otro dominio.
+  if (window.pdfjsLib) {
+    try {
+      var url = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      var blob = new Blob(['importScripts("' + url + '");'], { type: "application/javascript" });
+      pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(URL.createObjectURL(blob));
+    } catch (e) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    }
+  }
+  var leer = function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
+  var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
+  var avisoT;
+  function aviso(t) { var a = $("aviso"); a.textContent = t; a.classList.add("on"); clearTimeout(avisoT); avisoT = setTimeout(function () { a.classList.remove("on"); }, 1400); }
+
+  function pintarControles() {
+    var hay = !!pdf;
+    $("ant").disabled = !hay || pagina <= 1; $("sig").disabled = !hay || pagina >= (pdf ? pdf.numPages : 1); $("completa").disabled = !hay;
+    $("pagina").textContent = hay ? pagina + " / " + pdf.numPages : "— / —";
+    $("vacio").hidden = hay; lienzo.hidden = !hay; $("z-izq").hidden = $("z-der").hidden = !hay;
+  }
+
+  // Solo se dibuja la página visible, al tamaño de la pantalla (nítida y ligera).
+  function dibujar() {
+    if (!pdf) return;
+    if (tarea) { pendiente = pagina; return; }
+    var n = pagina;
+    pdf.getPage(n).then(function (pag) {
+      var r = escenario.getBoundingClientRect(), base = pag.getViewport({ scale: 1 });
+      var esc = Math.min((r.width - 24) / base.width, (r.height - 24) / base.height);
+      var dpr = Math.min(window.devicePixelRatio || 1, 2), vp = pag.getViewport({ scale: Math.max(esc, .1) * dpr });
+      lienzo.width = Math.floor(vp.width); lienzo.height = Math.floor(vp.height);
+      lienzo.style.width = Math.floor(vp.width / dpr) + "px"; lienzo.style.height = Math.floor(vp.height / dpr) + "px";
+      tarea = pag.render({ canvasContext: lienzo.getContext("2d"), viewport: vp });
+      return tarea.promise.then(function () { pag.cleanup(); });
+    }).catch(function () {}).then(function () {
+      tarea = null;
+      if (pendiente !== null) { var p = pendiente; pendiente = null; if (p !== n) dibujar(); }
+    });
+    pintarControles();
+    guardar("diap_pag_" + nombre, String(pagina));
+  }
+  function ir(n) { if (!pdf) return; var nuevo = Math.min(Math.max(1, n), pdf.numPages); if (nuevo !== pagina) { pagina = nuevo; dibujar(); } else if (n > pdf.numPages) { aviso("Última diapositiva"); } else if (n < 1) { aviso("Primera diapositiva"); } }
+
+  function abrirArchivo(archivo) {
+    if (!archivo) return;
+    if (!/\.pdf$/i.test(archivo.name) && archivo.type !== "application/pdf") {
+      aviso(/\.pptx?$/i.test(archivo.name) ? "Guarda tu presentación como PDF para verla aquí" : "Solo se pueden abrir archivos PDF"); return;
+    }
+    if (!window.pdfjsLib) { aviso("No se pudo cargar el lector de PDF: revisa tu conexión a internet"); return; }
+    archivo.arrayBuffer().then(function (datos) {
+      if (pdf) { pdf.destroy(); pdf = null; }
+      return pdfjsLib.getDocument({ data: datos }).promise;
+    }).then(function (doc) {
+      pdf = doc; nombre = archivo.name; $("titulo").textContent = archivo.name.replace(/\.pdf$/i, "");
+      pagina = Math.min(parseInt(leer("diap_pag_" + nombre, "1"), 10) || 1, doc.numPages);
+      document.querySelectorAll(".archivo").forEach(function (b) { b.setAttribute("aria-current", String(b.dataset.n === nombre)); });
+      dibujar(); if (pagina > 1) aviso("Seguiste donde te quedaste: diapositiva " + pagina);
+    }).catch(function () { aviso("No se pudo abrir ese PDF (¿tiene contraseña?)"); });
+  }
+
+  // Carpeta completa (Chrome y Edge): lista los PDF, ordenados por nombre.
+  async function abrirCarpeta() {
+    if (!window.showDirectoryPicker) { aviso("Tu navegador no deja abrir carpetas: usa Abrir PDF"); $("archivo").click(); return; }
+    try {
+      var dir = await window.showDirectoryPicker({ id: "clases-alema", startIn: "downloads" });
+      var lista = [];
+      for await (var entrada of dir.values()) { if (entrada.kind === "file" && /\.pdf$/i.test(entrada.name)) lista.push(entrada); }
+      lista.sort(function (a, b) { return a.name.localeCompare(b.name, "es", { numeric: true }); });
+      $("carpeta").textContent = dir.name; $("cuantos").textContent = lista.length + " PDF";
+      var cont = $("archivos"); cont.innerHTML = "";
+      lista.forEach(function (h) {
+        var b = document.createElement("button"); b.type = "button"; b.className = "archivo"; b.dataset.n = h.name;
+        b.textContent = h.name.replace(/\.pdf$/i, ""); b.setAttribute("aria-current", "false");
+        b.addEventListener("click", function () { h.getFile().then(abrirArchivo); });
+        cont.appendChild(b);
+      });
+      if (!lista.length) cont.innerHTML = '<p style="color:var(--muted);font-size:.84rem;margin:0">No hay PDF en esta carpeta.</p>';
+      $("lista").hidden = false; $("app").classList.remove("sin-lista");
+      setTimeout(dibujar, 50);
+    } catch (e) { /* cancelado */ }
+  }
+
+  $("b-carpeta").onclick = $("v-carpeta").onclick = abrirCarpeta;
+  $("b-pdf").onclick = $("v-pdf").onclick = function () { $("archivo").click(); };
+  $("archivo").addEventListener("change", function () { abrirArchivo(this.files[0]); this.value = ""; });
+  $("ant").onclick = $("z-izq").onclick = function () { ir(pagina - 1); };
+  $("sig").onclick = $("z-der").onclick = function () { ir(pagina + 1); };
+  $("completa").onclick = function () {
+    try { if (document.fullscreenElement) document.exitFullscreen(); else $("visor").requestFullscreen().catch(function () {}); } catch (e) {}
+  };
+  document.addEventListener("fullscreenchange", function () { setTimeout(dibujar, 60); });
+  document.addEventListener("keydown", function (e) {
+    if (!pdf || e.target.tagName === "INPUT") return;
+    var k = e.key;
+    if (k === "ArrowRight" || k === "PageDown" || k === " ") { e.preventDefault(); ir(pagina + 1); }
+    else if (k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); ir(pagina - 1); }
+    else if (k === "Home") { ir(1); } else if (k === "End") { ir(pdf.numPages); }
+    else if (k.toLowerCase() === "f") { $("completa").click(); }
+  });
+  ["dragenter", "dragover"].forEach(function (t) { escenario.addEventListener(t, function (e) { e.preventDefault(); escenario.classList.add("arrastrando"); }); });
+  ["dragleave", "drop"].forEach(function (t) { escenario.addEventListener(t, function (e) { e.preventDefault(); escenario.classList.remove("arrastrando"); }); });
+  escenario.addEventListener("drop", function (e) { var f = e.dataTransfer && e.dataTransfer.files[0]; abrirArchivo(f); });
+  if ("ResizeObserver" in window) { var rt; new ResizeObserver(function () { clearTimeout(rt); rt = setTimeout(dibujar, 120); }).observe(escenario); }
+
+  // ---- Dentro de la página de clase: tema y altura (la página de clase ajusta el marco) ----
+  var dentro = window.parent !== window;
+  var avisar = function (tipo, datos) { if (dentro) window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: tipo }, datos || {}), "*"); };
+  function ajustarAlto() {
+    var alto = 680;
+    try { alto = Math.max(520, window.parent.innerHeight - 90); } catch (e) {}
+    document.documentElement.style.setProperty("--alto", alto + "px");
+    avisar("streamlit:setFrameHeight", { height: alto + 24 });
+  }
+  window.addEventListener("message", function (ev) {
+    var d = ev.data; if (!d || d.type !== "streamlit:render") return;
+    document.body.classList.toggle("claro", (d.args || {}).modo_color === "claro"); ajustarAlto();
+  });
+  try { window.parent.addEventListener("resize", ajustarAlto); } catch (e) {}
+  ajustarAlto(); pintarControles();
+  avisar("streamlit:componentReady", { apiVersion: 1 });
+})();
+</script>
+</body>
+</html>
