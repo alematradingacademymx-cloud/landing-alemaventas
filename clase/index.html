@@ -69,9 +69,9 @@ main { padding: 6px max(8px, env(safe-area-inset-right, 0px)) 24px max(8px, env(
 </header>
 
 <main>
-  <iframe class="panel" id="p-terminal" src="terminal.html?v=3" title="Terminal ALEMA de práctica" allow="fullscreen"></iframe>
+  <iframe class="panel" id="p-terminal" src="terminal.html?v=4" title="Terminal ALEMA de práctica" allow="fullscreen"></iframe>
   <div id="pizarra-env"><iframe class="panel" id="p-pizarra" src="pizarra.html?v=3" title="Pizarra ALEMA" allow="fullscreen" hidden></iframe></div>
-  <iframe class="panel" id="p-pips" src="pips.html?v=3" title="Cómo calcular pips" hidden></iframe>
+  <iframe class="panel" id="p-pips" src="pips.html?v=4" title="Cómo calcular pips" hidden></iframe>
   <iframe class="panel" id="p-diapositivas" src="diapositivas.html?v=3" title="Diapositivas de la clase" allow="fullscreen" hidden></iframe>
 </main>
 
@@ -95,6 +95,7 @@ main { padding: 6px max(8px, env(safe-area-inset-right, 0px)) 24px max(8px, env(
   }
   function verPanel(p) {
     actual = p; guardar('clase_panel', p);
+    try { history.replaceState(null, '', '#' + p); } catch (e) {}
     Object.keys(marcos).forEach(function (k) { marcos[k].hidden = k !== p; });
     document.querySelectorAll('[data-p]').forEach(function (b) {
       var si = b.dataset.p === p; b.setAttribute('aria-pressed', String(si)); b.setAttribute('aria-selected', String(si));
@@ -121,7 +122,12 @@ main { padding: 6px max(8px, env(safe-area-inset-right, 0px)) 24px max(8px, env(
   document.getElementById('completa').addEventListener('click', function () {
     try { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen().catch(function () {}); } catch (e) {}
   });
+  // Links directos para compartir: /clase/#pips, #pizarra, #diapositivas, #terminal y #practicar (Pips › Practicar)
+  var destino = (location.hash || '').replace('#', '');
+  if (destino === 'practicar') { marcos.pips.src = marcos.pips.getAttribute('src') + '&vista=practicar'; actual = 'pips'; }
+  else if (marcos[destino]) { actual = destino; }
   ponerTema(tema); verPanel(actual);
+  window.addEventListener('hashchange', function () { var h = location.hash.replace('#', ''); if (marcos[h] && h !== actual) verPanel(h); });
 })();
 </script>
 </body>
