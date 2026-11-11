@@ -382,41 +382,79 @@ td small { display: block; color: var(--muted); font-size: .76rem; }
   // ---------------------------------------------------------------- Mapa de precios (dónde quedan SL, Bid, Ask y TP)
   window.dibujarMapa = function (o) {
     var caja = $("mapa"); if (!caja) return;
-    var W = 760, H = 168, izq = 70, der = 690, y = 74;
+    var W = 760, H = 196, izq = 70, der = 690, y = 100;
     var vals = [o.sl, o.tp, o.bid, o.ask], lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
     var x = function (v) { return izq + (hi === lo ? .5 : (v - lo) / (hi - lo)) * (der - izq); };
     var f = function (v) { return Number(v).toFixed(o.d); };
     var cierre = o.compra ? o.bid : o.ask, nombreCierre = o.compra ? "BID" : "ASK";
     var hastaSL = Math.abs(cierre - o.sl) / o.pip;
+    // Ancho aproximado de un texto (12 px) y su posición sin salirse del dibujo: así ningún letrero se corta.
+    var ancho = function (txt, negrita) { return String(txt).length * (negrita ? 7.4 : 6.7); };
+    var izqTexto = function (xc, anchor, txt, negrita) {
+      var w = ancho(txt, negrita), l = anchor === "middle" ? xc - w / 2 : anchor === "end" ? xc - w : xc;
+      return Math.max(6, Math.min(l, W - 6 - w));
+    };
+    var texto = function (xc, yy, anchor, txt, estilo, negrita, clase) {
+      return '<text x="' + izqTexto(xc, anchor, txt, negrita) + '" y="' + yy + '" text-anchor="start" data-cx="' + xc + '" data-anchor="' + anchor + '"' + (clase ? ' class="' + clase + '"' : '') +
+        ' style="' + estilo + (negrita ? ';font-weight:700' : '') + '">' + txt + '</text>';
+    };
     var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Mapa de precios de la operación">';
     s += '<line x1="' + (izq - 30) + '" y1="' + y + '" x2="' + (der + 30) + '" y2="' + y + '" style="stroke:var(--borde);stroke-width:2"/>';
     // zona del spread
     s += '<rect x="' + Math.min(x(o.bid), x(o.ask)) + '" y="' + (y - 16) + '" width="' + Math.max(Math.abs(x(o.ask) - x(o.bid)), 3) + '" height="32" rx="4" style="fill:var(--brand);opacity:.28"/>';
-    var marca = function (v, color, arriba, txt1, txt2) {
-      var X = x(v), ty = arriba ? y - 30 : y + 38;
+    // SL y TP: nombre y precio arriba de su raya; si quedan muy juntos, cada uno se recorre hacia su lado.
+    var juntos = Math.abs(x(o.sl) - x(o.tp)) < 90, slIzq = x(o.sl) <= x(o.tp);
+    var marca = function (v, color, txt1, txt2, lado) {
+      var X = x(v), xt = lado === "end" ? X - 5 : lado === "start" ? X + 5 : X;
       return '<line x1="' + X + '" y1="' + (y - 20) + '" x2="' + X + '" y2="' + (y + 20) + '" style="stroke:' + color + ';stroke-width:3"/>' +
-        '<text x="' + X + '" y="' + ty + '" text-anchor="middle" style="fill:' + color + ';font-weight:700">' + txt1 + '</text>' +
-        '<text x="' + X + '" y="' + (ty + 14) + '" text-anchor="middle" class="tenue">' + txt2 + '</text>';
+        texto(xt, y - 40, lado, txt1, "fill:" + color, true) + texto(xt, y - 26, lado, txt2, "", false, "tenue");
     };
-    s += marca(o.sl, "var(--down)", true, "SL", f(o.sl));
-    s += marca(o.tp, "var(--up)", true, "TP", f(o.tp));
-    // Bid abajo y Ask arriba del spread, con la entrada señalada
+    s += marca(o.sl, "var(--down)", "SL", f(o.sl), juntos ? (slIzq ? "end" : "start") : "middle");
+    s += marca(o.tp, "var(--up)", "TP", f(o.tp), juntos ? (slIzq ? "start" : "end") : "middle");
+    // Bid y Ask debajo del spread, con la entrada señalada
     var bx = x(o.bid), ax = x(o.ask);
     s += '<circle cx="' + bx + '" cy="' + y + '" r="5" style="fill:var(--down)"/><circle cx="' + ax + '" cy="' + y + '" r="5" style="fill:var(--up)"/>';
-    s += '<text x="' + bx + '" y="' + (y + 32) + '" text-anchor="' + (o.compra ? "end" : "end") + '" style="fill:var(--down);font-weight:700">BID ' + f(o.bid) + (o.compra ? "" : " ← entrada") + '</text>';
-    s += '<text x="' + ax + '" y="' + (y + 50) + '" text-anchor="start" style="fill:var(--up);font-weight:700">' + (o.compra ? "entrada → " : "") + 'ASK ' + f(o.ask) + '</text>';
-    // distancias
-    var cota = function (a, b, yy, txt, color) {
+    s += texto(bx, y + 36, "end", "BID " + f(o.bid) + (o.compra ? "" : " ← entrada"), "fill:var(--down)", true);
+    s += texto(ax, y + 54, "start", (o.compra ? "entrada → " : "") + "ASK " + f(o.ask), "fill:var(--up)", true);
+    // distancias: si los dos letreros se enciman, el del TP baja a un segundo renglón
+    var cota = function (a, b, yy, txt, color, id) {
       var A = x(a), B = x(b), m = (A + B) / 2;
-      return '<line x1="' + A + '" y1="' + yy + '" x2="' + B + '" y2="' + yy + '" style="stroke:' + color + ';stroke-width:1.5;stroke-dasharray:4 3"/>' +
-        '<text x="' + m + '" y="' + (yy - 5) + '" text-anchor="middle" style="fill:' + color + '">' + txt + '</text>';
+      return '<g' + (id ? ' id="' + id + '"' : '') + '><line x1="' + A + '" y1="' + yy + '" x2="' + B + '" y2="' + yy + '" style="stroke:' + color + ';stroke-width:1.5;stroke-dasharray:4 3"/>' +
+        texto(m, yy - 5, "middle", txt, "fill:" + color, false) + '</g>';
     };
-    s += cota(o.ent, o.sl, 18, o.slp + " pips desde la entrada", "var(--down)");
-    s += cota(o.ent, o.tp, 18, o.tpp + " pips desde la entrada", "var(--up)");
+    var tSL = o.slp + " pips desde la entrada", tTP = o.tpp + " pips desde la entrada";
+    var lSL = izqTexto((x(o.ent) + x(o.sl)) / 2, "middle", tSL), lTP = izqTexto((x(o.ent) + x(o.tp)) / 2, "middle", tTP);
+    var choca = lSL < lTP + ancho(tTP) + 14 && lTP < lSL + ancho(tSL) + 14;
+    s += cota(o.ent, o.sl, 20, tSL, "var(--down)", "cota-sl");
+    s += cota(o.ent, o.tp, choca ? 38 : 20, tTP, "var(--up)", "cota-tp");
     s += cota(cierre, o.sl, H - 8, f1(hastaSL) + " pips desde el " + nombreCierre + " (precio de cierre)", "var(--muted)");
     s += '</svg>';
     caja.innerHTML = s;
+    ajustarMapa(caja, W);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { ajustarMapa(caja, W); });
   };
+  // Con el ancho REAL de cada letrero (ya con la fuente cargada): ninguno se sale del dibujo, y si las dos distancias
+  // (SL y TP) se enciman, la del TP baja a un segundo renglón.
+  function ajustarMapa(caja, W) {
+    var svg = caja.querySelector("svg"); if (!svg) return;
+    var medir = function (t) { try { return t.getComputedTextLength(); } catch (e) { return 0; } };
+    svg.querySelectorAll("text[data-cx]").forEach(function (t) {
+      var w = medir(t); if (!w) return;
+      var xc = parseFloat(t.getAttribute("data-cx")), a = t.getAttribute("data-anchor");
+      var l = a === "middle" ? xc - w / 2 : a === "end" ? xc - w : xc;
+      t.setAttribute("x", Math.max(6, Math.min(l, W - 6 - w)));
+    });
+    var gSL = svg.querySelector("#cota-sl"), gTP = svg.querySelector("#cota-tp");
+    if (!gSL || !gTP) return;
+    var tS = gSL.querySelector("text"), tT = gTP.querySelector("text"), wS = medir(tS), wT = medir(tT);
+    if (!wS || !wT) return;
+    var lS = parseFloat(tS.getAttribute("x")), lT = parseFloat(tT.getAttribute("x"));
+    var yS = parseFloat(gSL.querySelector("line").getAttribute("y1")), lineaT = gTP.querySelector("line"), yT = parseFloat(lineaT.getAttribute("y1"));
+    var choca = lS < lT + wT + 14 && lT < lS + wS + 14, yNueva = choca ? yS + 20 : yS;
+    if (yNueva !== yT) {
+      lineaT.setAttribute("y1", yNueva); lineaT.setAttribute("y2", yNueva); tT.setAttribute("y", yNueva - 5);
+    }
+  }
   function f1(v) { return (Math.round(v * 10) / 10).toFixed(1); }
 
   // ---------------------------------------------------------------- Pestañas Aprender / Practicar
