@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Compra y venta con el Bid y el Ask · ALEMA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap">
+<style>
+/* Página de prueba ALEMA: a la izquierda la gráfica del Bid y el Ask en movimiento; a la derecha las reglas, con la que aplica resaltada. */
+:root {
+  --bg: #EEF1F6; --panel: #FFFFFF; --pista: #F3F5F9; --borde: #DCE1EA; --ink: #1A2130; --muted: #5B6476;
+  --brand: #FEA621; --brand-ink: #8A5300; --ask: #138A59; --bid: #D64545; --grid: #E6EAF0; --banda: rgb(254 166 33 / .18);
+  --font: "Lexend", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0B1018; --panel: #141B27; --pista: #1A2231; --borde: #2A3446; --ink: #EEF1F6; --muted: #9AA4B6;
+  --brand-ink: #FEA621; --ask: #3CCF91; --bid: #F26464; --grid: #212A3A; --banda: rgb(254 166 33 / .16); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0B1018; --panel: #141B27; --pista: #1A2231; --borde: #2A3446; --ink: #EEF1F6; --muted: #9AA4B6;
+  --brand-ink: #FEA621; --ask: #3CCF91; --bid: #F26464; --grid: #212A3A; --banda: rgb(254 166 33 / .16); color-scheme: dark; }
+* { box-sizing: border-box; }
+:root[data-theme="light"] { color-scheme: light; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font); }
+button { font: inherit; color: inherit; }
+.pagina { max-width: 1180px; margin: 0 auto; padding-block: 16px 24px; padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px; }
+.cab h1 { margin: 0; font-size: 1.5rem; font-weight: 600; text-wrap: balance; }
+.cab p { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
+.controles { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.seg { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--panel); border: 1px solid var(--borde); }
+.seg button { border: 0; background: transparent; color: var(--muted); padding: 8px 14px; border-radius: 9px; cursor: pointer; font-weight: 600; font-size: .88rem; }
+.seg button[aria-pressed="true"] { background: var(--brand); color: #2B1C02; }
+.seg button:focus-visible, .btn:focus-visible, input[type=range]:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.btn { border: 1px solid var(--borde); background: var(--panel); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: .88rem; }
+.btn.prim { background: var(--brand); border-color: var(--brand); color: #2B1C02; }
+.cuerpo { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.tarjeta { background: var(--panel); border: 1px solid var(--borde); border-radius: 18px; padding: 16px; min-width: 0; }
+.datos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.dato { background: var(--pista); border-radius: 12px; padding: 8px 10px; min-width: 0; }
+.dato small { display: block; font-size: .72rem; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+.dato b { font-size: 1.02rem; font-variant-numeric: tabular-nums; }
+.dato.bid b { color: var(--bid); } .dato.ask b { color: var(--ask); }
+.pos { color: var(--ask); } .neg { color: var(--bid); }
+.grafica svg { display: block; width: 100%; height: auto; }
+.grafica text { font-family: var(--font); font-size: 12px; fill: var(--ink); font-variant-numeric: tabular-nums; }
+.grafica .tenue { fill: var(--muted); font-size: 11px; }
+.barra { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+.barra input { flex: 1; accent-color: var(--brand); min-width: 0; }
+.estado { margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: var(--pista); border-left: 4px solid var(--muted); font-size: .92rem; min-height: 48px; }
+.estado.tp { border-left-color: var(--ask); } .estado.sl { border-left-color: var(--bid); } .estado.ojo { border-left-color: var(--brand); }
+.reglas h2 { margin: 0 0 4px; font-size: 1.15rem; }
+.reglas > p { margin: 0 0 12px; color: var(--muted); font-size: .88rem; }
+.regla { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 10px; border-radius: 12px; border: 1px solid transparent; transition: background .25s, border-color .25s; }
+.regla + .regla { margin-top: 6px; }
+.regla .n { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font-weight: 700; background: var(--pista); color: var(--muted); }
+.regla b { display: block; font-size: .95rem; }
+.regla span { color: var(--muted); font-size: .86rem; }
+.regla.activa { background: var(--banda); border-color: var(--brand); }
+.regla.activa .n { background: var(--brand); color: #2B1C02; }
+.nota { margin-top: 12px; font-size: .82rem; color: var(--muted); padding: 10px 12px; border-radius: 12px; border: 1px dashed var(--borde); }
+.nota b { color: var(--ink); }
+@media (max-width: 860px) { .cuerpo { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .datos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .regla { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="pagina">
+  <div class="cab">
+    <h1>Compra y venta con el Bid y el Ask</h1>
+    <p>Elige Compra o Venta y un escenario, y dale Reproducir: verás moverse las dos líneas de precio y cuál de ellas cierra tu operación.</p>
+  </div>
+
+  <div class="controles">
+    <div class="seg" role="group" aria-label="Tipo de operación">
+      <button type="button" id="op-buy" data-op="buy" aria-pressed="true">Compra (BUY)</button>
+      <button type="button" id="op-sell" data-op="sell" aria-pressed="false">Venta (SELL)</button>
+    </div>
+    <div class="seg" role="group" aria-label="Escenario">
+      <button type="button" id="esc-tp" data-esc="tp" aria-pressed="true">Llega al TP</button>
+      <button type="button" id="esc-sl" data-esc="sl" aria-pressed="false">Llega al SL</button>
+      <button type="button" id="esc-trampa" data-esc="trampa" aria-pressed="false">Casi llega</button>
+    </div>
+    <button type="button" class="btn prim" id="play">▶ Reproducir</button>
+  </div>
+
+  <div class="cuerpo">
+    <div class="tarjeta">
+      <div class="datos">
+        <div class="dato bid"><small>Bid</small><b id="d-bid">—</b></div>
+        <div class="dato ask"><small>Ask</small><b id="d-ask">—</b></div>
+        <div class="dato"><small>Spread</small><b id="d-spread">3.0 pips</b></div>
+        <div class="dato"><small>Resultado</small><b id="d-res">—</b></div>
+      </div>
+      <div class="grafica" id="grafica"></div>
+      <div class="barra">
+        <label for="tiempo" class="tenue" style="font-size:.8rem;color:var(--muted)">Tiempo</label>
+        <input type="range" id="tiempo" min="0" max="119" value="0">
+      </div>
+      <div class="estado" id="estado" aria-live="polite"></div>
+    </div>
+
+    <div class="tarjeta reglas">
+      <h2 id="r-tit">Compra (BUY)</h2>
+      <p id="r-sub">Ganas si el precio sube.</p>
+      <div class="regla" id="r1"><span class="n">1</span><div><b id="r1-b"></b><span id="r1-s"></span></div></div>
+      <div class="regla" id="r2"><span class="n">2</span><div><b id="r2-b"></b><span id="r2-s"></span></div></div>
+      <div class="regla" id="r3"><span class="n">3</span><div><b id="r3-b"></b><span id="r3-s"></span></div></div>
+      <p class="nota"><b>Ojo con la gráfica.</b> En MetaTrader las velas se dibujan con el <b>BID</b>. En una venta, tu SL y tu TP los toca el ASK, que va unos pips arriba de la vela: por eso a veces te saca el SL sin que la vela lo haya tocado.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var PIP = 0.0001, SP = 3, BASE = 1.16500, N = 120, W = 760, H = 380, IZQ = 14, DER = 600, ARR = 22, ABA = 352;
+  // Recorrido del BID en pips (desde 1.16500) por escenario. El ASK siempre va 3 pips arriba.
+  var RUTAS = {
+    buy:  { tp: [0, -3, 5, 2, 12, 9, 26], sl: [0, 4, 1, -4, -2, -9], trampa: [0, 5, 2, 12, 21, 14, 16] },
+    sell: { tp: [0, 3, -4, -1, -12, -9, -25], sl: [0, -3, 2, 5, 8.6, 10], trampa: [0, -5, -2, -12, -21.6, -14, -16] }
+  };
+  var REGLAS = {
+    buy: { tit: "Compra (BUY)", sub: "Ganas si el precio sube.", r: [
+      ["Entras al ASK: el precio más alto.", "Al comprar pagas el precio de arriba."],
+      ["Cierras al BID: empiezas en −3 pips.", "Al abrir, ya vas en negativo lo que mide el spread."],
+      ["SL abajo y TP arriba: los toca el BID.", "Los dos se activan cuando la línea roja (BID) llega a ellos."]] },
+    sell: { tit: "Venta (SELL)", sub: "Ganas si el precio baja.", r: [
+      ["Entras al BID: el precio más bajo.", "Al vender recibes el precio de abajo."],
+      ["Cierras al ASK: empiezas en −3 pips.", "También empiezas en negativo lo que mide el spread."],
+      ["SL arriba y TP abajo: los toca el ASK.", "Los dos se activan cuando la línea verde (ASK) llega a ellos."]] }
+  };
+  var op = "buy", esc = "tp", bid = [], t = 0, cierre = null, timer = null, aviso = null;
+  var $ = function (id) { return document.getElementById(id); };
+  var F = function (v) { return v.toFixed(5); };
+  var reducido = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function niveles() {
+    var entrada = op === "buy" ? BASE + SP * PIP : BASE;
+    return op === "buy" ? { entrada: entrada, sl: entrada - 10 * PIP, tp: entrada + 20 * PIP }
+                        : { entrada: entrada, sl: entrada + 10 * PIP, tp: entrada - 20 * PIP };
+  }
+  function construir() {
+    var pts = RUTAS[op][esc], a = 1234 + pts.length * 7 + (op === "buy" ? 1 : 2), r = function () { a = (a * 9301 + 49297) % 233280; return a / 233280; };
+    bid = [];
+    for (var i = 0; i < N; i++) {
+      var f = i / (N - 1) * (pts.length - 1), k = Math.min(Math.floor(f), pts.length - 2), u = f - k;
+      var lisa = pts[k] + (pts[k + 1] - pts[k]) * (u * u * (3 - 2 * u));
+      var ruido = (i === 0 || i === N - 1) ? 0 : (r() - .5) * 1.0;
+      bid.push(BASE + (lisa + ruido) * PIP);
+    }
+    // Dónde se cierra: compra con el BID, venta con el ASK. También el primer momento "trampa".
+    var n = niveles(); cierre = null; aviso = null;
+    for (var j = 1; j < N; j++) {
+      var b = bid[j], s = b + SP * PIP;
+      if (op === "buy") {
+        if (b <= n.sl) { cierre = { i: j, tipo: "sl", precio: n.sl }; break; }
+        if (b >= n.tp) { cierre = { i: j, tipo: "tp", precio: n.tp }; break; }
+        if (!aviso && s >= n.tp) aviso = { i: j, linea: "ask" };
+      } else {
+        if (s >= n.sl) { cierre = { i: j, tipo: "sl", precio: n.sl, bidNoToco: b < n.sl }; break; }
+        if (s <= n.tp) { cierre = { i: j, tipo: "tp", precio: n.tp }; break; }
+        if (!aviso && b <= n.tp) aviso = { i: j, linea: "bid" };
+      }
+    }
+    $("tiempo").max = String(cierre ? cierre.i : N - 1);
+  }
+  function resultado(i) {
+    var n = niveles();
+    if (cierre && i >= cierre.i) return (op === "buy" ? cierre.precio - n.entrada : n.entrada - cierre.precio) / PIP;
+    return (op === "buy" ? bid[i] - n.entrada : n.entrada - (bid[i] + SP * PIP)) / PIP;
+  }
+  function dibujar() {
+    var n = niveles(), fin = cierre ? cierre.i : N - 1, i = Math.min(t, fin);
+    var vals = bid.slice(0, fin + 1).concat(bid.slice(0, fin + 1).map(function (v) { return v + SP * PIP; }), [n.sl, n.tp, n.entrada]);
+    var lo = Math.min.apply(null, vals) - 3 * PIP, hi = Math.max.apply(null, vals) + 3 * PIP;
+    var X = function (k) { return IZQ + k / (N - 1) * (DER - IZQ); };
+    var Y = function (v) { return ABA - (v - lo) / (hi - lo) * (ABA - ARR); };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Gráfica del Bid y el Ask con la entrada, el Stop Loss y el Take Profit">';
+    // cuadrícula cada 5 pips
+    var paso = 5 * PIP, g0 = Math.ceil(lo / paso) * paso;
+    for (var g = g0; g <= hi; g += paso) s += '<line x1="' + IZQ + '" x2="' + DER + '" y1="' + Y(g) + '" y2="' + Y(g) + '" style="stroke:var(--grid);stroke-width:1"/>';
+    // niveles
+    var nivel = function (v, color, txt, dash) {
+      return '<line x1="' + IZQ + '" x2="' + (DER + 6) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" style="stroke:' + color + ';stroke-width:1.6' + (dash ? ';stroke-dasharray:6 4' : '') + '"/>' +
+        '<text x="' + (DER + 12) + '" y="' + (Y(v) - 2) + '" style="fill:' + color + ';font-weight:700">' + txt + '</text>' +
+        '<text x="' + (DER + 12) + '" y="' + (Y(v) + 12) + '" class="tenue">' + F(v) + '</text>';
+    };
+    s += nivel(n.tp, "var(--ask)", "TP +20", true);
+    s += nivel(n.sl, "var(--bid)", "SL −10", true);
+    s += nivel(n.entrada, "var(--brand)", "Entrada (" + (op === "buy" ? "ASK" : "BID") + ")", false);
+    // banda del spread y las dos líneas hasta el momento actual
+    var arriba = [], abajo = [];
+    for (var k = 0; k <= i; k++) { arriba.push(X(k) + "," + Y(bid[k] + SP * PIP)); abajo.push(X(k) + "," + Y(bid[k])); }
+    if (i > 0) {
+      s += '<polygon points="' + arriba.concat(abajo.slice().reverse()).join(" ") + '" style="fill:var(--banda)"/>';
+      var cierraCon = op === "buy" ? "bid" : "ask";
+      s += '<polyline points="' + abajo.join(" ") + '" style="fill:none;stroke:var(--bid);stroke-width:' + (cierraCon === "bid" ? 2.6 : 1.4) + ';stroke-linejoin:round"/>';
+      s += '<polyline points="' + arriba.join(" ") + '" style="fill:none;stroke:var(--ask);stroke-width:' + (cierraCon === "ask" ? 2.6 : 1.4) + ';stroke-linejoin:round"/>';
+    }
+    // entrada
+    s += '<circle cx="' + X(0) + '" cy="' + Y(n.entrada) + '" r="6" style="fill:var(--brand);stroke:var(--panel);stroke-width:2"/>';
+    // puntos actuales
+    s += '<circle cx="' + X(i) + '" cy="' + Y(bid[i]) + '" r="4.5" style="fill:var(--bid)"/>';
+    s += '<circle cx="' + X(i) + '" cy="' + Y(bid[i] + SP * PIP) + '" r="4.5" style="fill:var(--ask)"/>';
+    // nombres de las líneas junto al punto actual
+    var etiquetaX = Math.min(X(i) + 8, DER - 40);
+    s += '<text x="' + etiquetaX + '" y="' + (Y(bid[i] + SP * PIP) - 8) + '" style="fill:var(--ask);font-weight:700">ASK</text>';
+    s += '<text x="' + etiquetaX + '" y="' + (Y(bid[i]) + 18) + '" style="fill:var(--bid);font-weight:700">BID</text>';
+    // momento de la trampa
+    if (aviso && i >= aviso.i) {
+      var va = aviso.linea === "ask" ? bid[aviso.i] + SP * PIP : bid[aviso.i];
+      s += '<circle cx="' + X(aviso.i) + '" cy="' + Y(va) + '" r="9" style="fill:none;stroke:var(--brand);stroke-width:2;stroke-dasharray:3 2"/>';
+    }
+    // cierre
+    if (cierre && i >= cierre.i) {
+      var color = cierre.tipo === "tp" ? "var(--ask)" : "var(--bid)";
+      s += '<circle cx="' + X(cierre.i) + '" cy="' + Y(cierre.precio) + '" r="9" style="fill:' + color + ';stroke:var(--panel);stroke-width:3"/>';
+      s += '<text x="' + (X(cierre.i) - 12) + '" y="' + (Y(cierre.precio) + (cierre.precio > n.entrada ? -16 : 26)) + '" text-anchor="end" style="fill:' + color + ';font-weight:700">Cerrada</text>';
+    }
+    s += '<text x="' + IZQ + '" y="' + (H - 6) + '" class="tenue">Cuadrícula cada 5 pips · spread de 3 pips (exagerado para que se vea)</text>';
+    s += '</svg>';
+    $("grafica").innerHTML = s;
+
+    $("d-bid").textContent = F(bid[i]); $("d-ask").textContent = F(bid[i] + SP * PIP);
+    var res = resultado(i), d = $("d-res");
+    d.textContent = (res > 0 ? "+" : res < 0 ? "−" : "") + Math.abs(res).toFixed(1) + " pips"; d.className = res > 0 ? "pos" : res < 0 ? "neg" : "";
+    $("tiempo").value = String(i);
+    estado(i);
+  }
+  function estado(i) {
+    var e = $("estado"), n = niveles(), linea = op === "buy" ? "BID" : "ASK", clase = "", txt, activa = 0;
+    if (i === 0) {
+      txt = op === "buy" ? "Compras al ASK, " + F(n.entrada) + ". Si cerraras ahora, venderías al BID (" + F(BASE) + "): por eso arrancas en −3 pips."
+                         : "Vendes al BID, " + F(n.entrada) + ". Si cerraras ahora, comprarías al ASK (" + F(BASE + SP * PIP) + "): por eso arrancas en −3 pips.";
+      activa = 2;
+    } else if (cierre && i >= cierre.i) {
+      clase = cierre.tipo;
+      if (cierre.tipo === "tp") txt = "El " + linea + " llegó a tu TP (" + F(cierre.precio) + "): la operación se cerró con +20 pips.";
+      else if (cierre.bidNoToco) txt = "El ASK tocó tu SL (" + F(cierre.precio) + ") y te sacó con −10 pips, aunque el BID, que es la línea de tus velas, nunca llegó al SL.";
+      else txt = "El " + linea + " tocó tu SL (" + F(cierre.precio) + "): la operación se cerró con −10 pips.";
+      activa = 3;
+    } else if (aviso && i >= aviso.i) {
+      clase = "ojo"; activa = 3;
+      txt = op === "buy" ? "El ASK ya tocó tu TP, pero en una compra cierras al BID: la operación sigue abierta hasta que el BID llegue a " + F(n.tp) + "."
+                         : "El BID ya pasó tu TP, pero en una venta cierras al ASK: la operación sigue abierta hasta que el ASK llegue a " + F(n.tp) + ".";
+    } else {
+      txt = "Operación abierta. Tu resultado se mide con el " + linea + ", la línea gruesa." + (i === N - 1 ? " Terminó el recorrido sin tocar el SL ni el TP." : "");
+      activa = 2;
+    }
+    e.textContent = txt; e.className = "estado" + (clase ? " " + clase : "");
+    ["r1", "r2", "r3"].forEach(function (id, k) { $(id).classList.toggle("activa", k + 1 === activa || (i === 0 && k === 0)); });
+  }
+  function reglas() {
+    var R = REGLAS[op]; $("r-tit").textContent = R.tit; $("r-sub").textContent = R.sub;
+    R.r.forEach(function (p, k) { $("r" + (k + 1) + "-b").textContent = p[0]; $("r" + (k + 1) + "-s").textContent = p[1]; });
+  }
+  function parar() { if (timer) { clearInterval(timer); timer = null; } $("play").textContent = "▶ Reproducir"; }
+  function reiniciar() { parar(); construir(); reglas(); t = 0; dibujar(); }
+  function reproducir() {
+    if (timer) { parar(); return; }
+    var fin = cierre ? cierre.i : N - 1;
+    if (t >= fin) t = 0;
+    if (reducido) { t = fin; dibujar(); return; }
+    $("play").textContent = "❚❚ Pausa";
+    timer = setInterval(function () { t++; dibujar(); if (t >= fin) parar(); }, 60);
+  }
+  document.querySelectorAll("[data-op]").forEach(function (b) { b.addEventListener("click", function () {
+    op = b.dataset.op; document.querySelectorAll("[data-op]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); reiniciar(); }); });
+  document.querySelectorAll("[data-esc]").forEach(function (b) { b.addEventListener("click", function () {
+    esc = b.dataset.esc; document.querySelectorAll("[data-esc]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); reiniciar(); }); });
+  $("play").addEventListener("click", reproducir);
+  $("tiempo").addEventListener("input", function () { parar(); t = Number(this.value); dibujar(); });
+  // Dentro de la página de clase: recibe el tema (claro/oscuro) y le avisa su altura, igual que las otras pestañas.
+  var dentro = window.parent !== window;
+  var avisar = function (tipo, datos) { if (dentro) window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: tipo }, datos || {}), "*"); };
+  var ultima = 0;
+  function altura() { var h = Math.ceil(document.body.scrollHeight); if (Math.abs(h - ultima) > 2) { ultima = h; avisar("streamlit:setFrameHeight", { height: h }); } }
+  window.addEventListener("message", function (ev) {
+    var dt = ev.data; if (!dt || dt.type !== "streamlit:render") return;
+    document.documentElement.setAttribute("data-theme", (dt.args || {}).modo_color === "claro" ? "light" : "dark"); altura();
+  });
+  if (window.ResizeObserver) new ResizeObserver(altura).observe(document.body);
+  window.addEventListener("resize", altura);
+  reiniciar();
+  // Estado inicial a medio camino para que se vean las dos líneas sin dar Reproducir.
+  t = Math.min(55, cierre ? cierre.i - 1 : N - 1); dibujar();
+  avisar("streamlit:componentReady", { apiVersion: 1 }); altura();
+})();
+</script>
+</body>
+</html>

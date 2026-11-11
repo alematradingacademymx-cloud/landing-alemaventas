@@ -46,7 +46,7 @@ main { padding: 6px max(8px, env(safe-area-inset-right, 0px)) 24px max(8px, env(
 .panel[hidden] { display: none; }
 /* La pizarra no declara color-scheme: si el marco usa otro, el navegador le pone fondo blanco detrás */
 #p-pizarra { color-scheme: light; }
-#p-pips, #p-diapositivas { color-scheme: dark; }
+#p-pips, #p-bidask, #p-diapositivas { color-scheme: dark; }
 :root[data-tema="light"] .marca img { filter: brightness(.25); }
 #pizarra-env { padding: 10px max(8px, env(safe-area-inset-right, 0px)) 0 max(8px, env(safe-area-inset-left, 0px)); max-width: 1500px; margin: 0 auto; }
 @media (max-width: 560px) { .marca small, kbd { display: none; } .seg button, .btn { padding: 7px 10px; } }
@@ -54,11 +54,12 @@ main { padding: 6px max(8px, env(safe-area-inset-right, 0px)) 24px max(8px, env(
 </head>
 <body>
 <header class="barra">
-  <div class="marca"><img src="../images/alema_iso.png.png" alt="ALEMA"><div><b>ALEMA</b><small>Clase en vivo · terminal, pizarra, pips y diapositivas</small></div></div>
+  <div class="marca"><img src="../images/alema_iso.png.png" alt="ALEMA"><div><b>ALEMA</b><small>Clase en vivo · terminal, pizarra, pips, bid y ask y diapositivas</small></div></div>
   <div class="seg" role="tablist" aria-label="Herramienta">
     <button type="button" role="tab" data-p="terminal" aria-pressed="true" aria-selected="true">📈 Terminal</button>
     <button type="button" role="tab" data-p="pizarra" aria-pressed="false" aria-selected="false">✏️ Pizarra</button>
     <button type="button" role="tab" data-p="pips" aria-pressed="false" aria-selected="false">🧮 Pips</button>
+    <button type="button" role="tab" data-p="bidask" aria-pressed="false" aria-selected="false">📊 Bid y Ask</button>
     <button type="button" role="tab" data-p="diapositivas" aria-pressed="false" aria-selected="false">🖼️ Diapositivas</button>
   </div>
   <div class="seg" role="group" aria-label="Apariencia">
@@ -72,17 +73,18 @@ main { padding: 6px max(8px, env(safe-area-inset-right, 0px)) 24px max(8px, env(
   <iframe class="panel" id="p-terminal" src="terminal.html?v=4" title="Terminal ALEMA de práctica" allow="fullscreen"></iframe>
   <div id="pizarra-env"><iframe class="panel" id="p-pizarra" src="pizarra.html?v=3" title="Pizarra ALEMA" allow="fullscreen" hidden></iframe></div>
   <iframe class="panel" id="p-pips" src="pips.html?v=6" title="Cómo calcular pips" hidden></iframe>
+  <iframe class="panel" id="p-bidask" src="bidask.html?v=1" title="Compra y venta con el Bid y el Ask" hidden></iframe>
   <iframe class="panel" id="p-diapositivas" src="diapositivas.html?v=3" title="Diapositivas de la clase" allow="fullscreen" hidden></iframe>
 </main>
 
 <script>
 (function () {
   var root = document.documentElement;
-  var marcos = { terminal: document.getElementById('p-terminal'), pizarra: document.getElementById('p-pizarra'), pips: document.getElementById('p-pips'), diapositivas: document.getElementById('p-diapositivas') };
+  var marcos = { terminal: document.getElementById('p-terminal'), pizarra: document.getElementById('p-pizarra'), pips: document.getElementById('p-pips'), bidask: document.getElementById('p-bidask'), diapositivas: document.getElementById('p-diapositivas') };
   var leer = function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
   var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
   var tema = leer('clase_tema', 'dark'), actual = leer('clase_panel', 'terminal');
-  if (['terminal', 'pizarra', 'pips', 'diapositivas'].indexOf(actual) === -1) actual = 'terminal';
+  if (['terminal', 'pizarra', 'pips', 'bidask', 'diapositivas'].indexOf(actual) === -1) actual = 'terminal';
 
   // Cada herramienta es el mismo componente del portal: se le habla igual que el portal (tema y altura).
   function avisarTema(marco) {
@@ -118,11 +120,12 @@ main { padding: 6px max(8px, env(safe-area-inset-right, 0px)) 24px max(8px, env(
     if (e.altKey && e.key === '2') { e.preventDefault(); verPanel('pizarra'); }
     if (e.altKey && e.key === '3') { e.preventDefault(); verPanel('pips'); }
     if (e.altKey && e.key === '4') { e.preventDefault(); verPanel('diapositivas'); }
+    if (e.altKey && e.key === '5') { e.preventDefault(); verPanel('bidask'); }
   });
   document.getElementById('completa').addEventListener('click', function () {
     try { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen().catch(function () {}); } catch (e) {}
   });
-  // Links directos para compartir: /clase/#pips, #pizarra, #diapositivas, #terminal y #practicar (Pips › Practicar)
+  // Links directos para compartir: /clase/#pips, #bidask, #pizarra, #diapositivas, #terminal y #practicar (Pips › Practicar)
   var destino = (location.hash || '').replace('#', '');
   if (destino === 'practicar') { marcos.pips.src = marcos.pips.getAttribute('src') + '&vista=practicar'; actual = 'pips'; }
   else if (marcos[destino]) { actual = destino; }
