@@ -342,3 +342,8 @@ body.temario-abierto { overflow: hidden; }
 }
 @media (hover: none), (max-width: 820px) { .temario-overlay { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgb(4 7 14 / .9); } }
 @media print { .temario-overlay { display: none !important; } }
+
+/* Pase Técnico de Admisión (misma tarjeta que la masterclass, con letra chica al final) */
+.pase h3 { margin: 12px 0 14px; font-size: 1.32rem; }
+.pase .lista li { font-size: .92rem; line-height: 1.5; }
+.letra-chica { margin: 14px 0 0; font-size: .74rem; line-height: 1.5; color: var(--tenue); opacity: .85; max-width: 60ch; }

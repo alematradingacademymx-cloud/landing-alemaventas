@@ -18,7 +18,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="images/alema_iso.png.png">
     <meta name="theme-color" content="#070B13">
-    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="style.css?v=7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -116,6 +116,28 @@
                         <li>Plataforma: Zoom · 50–60 min</li>
                     </ul>
                     <a href="#" id="boton-grupo-vip" target="_blank" rel="noopener" class="btn btn-oro" onclick="rastrear('track', 'Lead', { content_name: 'Masterclass 26 oct' })">Ingresa al Grupo VIP</a>
+                </div>
+            </article>
+        </section>
+
+        <!-- PASE TÉCNICO DE ADMISIÓN: se oculta sola después de data-expira (UTC; 16 nov 06:00 UTC = fin del 15 nov en CDMX). Para extenderla, cambia la fecha; para quitarla, borra esta sección. -->
+        <section class="contenedor seccion" id="pase-tecnico" data-expira="2026-11-16T06:00:00Z" hidden>
+            <div class="cabeza"><span class="eti">Semana de Admisión</span><h2>Pase Técnico de Admisión</h2>
+                <p>Tu primer paso en ALEMA: dos sesiones en vivo con tu mentor y una semana de práctica en nuestro portal.</p></div>
+            <article class="vidrio brilla seminario pase">
+                <img src="images/pase-tecnico-admision.jpg" alt="Pase Técnico de Admisión: 2 sesiones técnicas en vivo y 7 días de Terminal de práctica ALEMA por $192 MXN hasta el 15 de noviembre">
+                <div>
+                    <span class="insignia">Precio especial · solo hasta el 15 de nov.</span>
+                    <h3>2 sesiones en vivo + 7 días de práctica</h3>
+                    <ul class="lista">
+                        <li>2 sesiones técnicas en vivo de 40 minutos, uno a uno con tu mentor: veremos los conceptos básicos del trading y la gestión del riesgo.</li>
+                        <li>Una forma práctica de conocer nuestro portal de alumnos y nuestro modelo educativo.</li>
+                        <li>7 días de acceso a la Terminal ALEMA de práctica.</li>
+                        <li>Bono de regalo: Manual del Trader (Básico) y Guía de Acción del Precio en PDF.</li>
+                    </ul>
+                    <div class="precio"><del>$918 MXN</del><b>$192 MXN</b><span class="ahorro">Ahorras $726</span></div>
+                    <a href="#" class="btn btn-oro" onclick="abrirWhatsAppConsulta('Pase'); return false;">💬 Quiero mi Pase · elegir horario</a>
+                    <p class="letra-chica">Las sesiones del Pase son una introducción al trading: no son un curso ni un módulo completo del Programa Académico.</p>
                 </div>
             </article>
         </section>
@@ -399,6 +421,7 @@
         const MENSAJES_CONSULTA = {
             "Beca": "¡Hola! 👋 Me interesa el Programa de Becas de ALEMA. ¿Cómo puedo solicitar la evaluación?",
             "Informes": "¡Hola! 👋 Quiero más información del Programa Académico Especializado de ALEMA.",
+            "Pase": "¡Hola! 👋 Quiero mi Pase Técnico de Admisión ($192 MXN). ¿Qué horarios tienen disponibles para mis sesiones?",
         };
 
         const TITULOS_MODAL = {
@@ -476,6 +499,17 @@
             seccion.hidden = false;
         }
         iniciarSeminario();
+
+        // Pase Técnico de Admisión: se muestra hasta su data-expira y después se quita sola (con ?preview se sigue viendo).
+        function iniciarPase() {
+            const seccion = document.getElementById('pase-tecnico');
+            if (!seccion) return;
+            const expirado = Date.now() > new Date(seccion.dataset.expira).getTime();
+            const vistaPrevia = new URLSearchParams(location.search).has('preview');
+            if (expirado && !vistaPrevia) { seccion.remove(); return; }
+            seccion.hidden = false;
+        }
+        iniciarPase();
 
         function abrirWhatsAppConsulta(tipoConsulta) {
             rastrear('track', 'Contact', { content_name: tipoConsulta });
