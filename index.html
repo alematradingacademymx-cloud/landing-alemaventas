@@ -18,7 +18,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="images/alema_iso.png.png">
     <meta name="theme-color" content="#070B13">
-    <link rel="stylesheet" href="style.css?v=8">
+    <link rel="stylesheet" href="style.css?v=9">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -75,6 +75,7 @@
                     <a href="app/" class="btn btn-oro">🔑 Ingresar al Portal</a>
                     <a href="#programa" class="btn btn-vidrio">Ver programa académico</a>
                 </div>
+                <div class="contador" id="contador-alumnos" data-meta="1500"><b>+1,500</b><span><strong>alumnos</strong> han estudiado<br>con ALEMA este año</span></div>
                 <ul class="confianza">
                     <li><span>💳</span>Paga con transferencia o con Clip</li>
                     <li><span>🔐</span>Tu propio acceso al Portal de Alumnos</li>
@@ -210,6 +211,43 @@
                     </div>
                 </div>
             </article>
+        </section>
+
+        <!-- OPINIONES DE ALUMNOS (comentarios reales, publicados con autorización de cada alumno) -->
+        <section class="contenedor seccion" id="opiniones">
+            <div class="cabeza"><span class="eti">Opiniones reales</span><h2>Lo que dicen nuestros alumnos</h2>
+                <p>Comentarios de algunos alumnos este año.</p></div>
+            <div class="opiniones">
+                <article class="vidrio brilla opinion">
+                    <div class="quien"><span class="avatar">CT</span><b>Carlos Torres</b></div>
+                    <blockquote>excelente academia, los mentores explican todo con calma y paciencia, mis resutados han sido visibles</blockquote>
+                </article>
+                <article class="vidrio brilla opinion">
+                    <div class="quien"><span class="avatar">KG</span><b>Karla Gutierrez</b></div>
+                    <blockquote>La academia es una de las mejores en donde he estado, y en poco tiempo empece a operar de manera eficiente.</blockquote>
+                </article>
+                <article class="vidrio brilla opinion">
+                    <div class="quien"><span class="avatar">EL</span><b>Eduardo Luna</b></div>
+                    <blockquote>Academia recomendable y lo mejor son los costos, son muy accesibles este es mi tercer año con ellos.</blockquote>
+                </article>
+                <article class="vidrio brilla opinion">
+                    <div class="quien"><span class="avatar">A</span><b>Allison</b></div>
+                    <blockquote>El sistema que tienen es muy accesible tomo mis clases en los horarios en los que tengo libre. super recomendable.</blockquote>
+                </article>
+                <article class="vidrio brilla opinion">
+                    <div class="quien"><span class="avatar">GM</span><b>Gilberto Marquez</b></div>
+                    <blockquote>Si quieren una academia real que te enseñan bien Alema es la mejor.</blockquote>
+                </article>
+                <article class="vidrio brilla opinion">
+                    <div class="quien"><span class="avatar">NA</span><b>Nayeli Alvarez</b></div>
+                    <blockquote>Alema ha sido la unica academia que me ha enseñado de manera real, las guias y los materiales muy eficientes.</blockquote>
+                </article>
+                <article class="vidrio brilla opinion">
+                    <div class="quien"><span class="avatar">MH</span><b>Memo Hurtz</b></div>
+                    <blockquote>La terminal alema es una locura ninguna academia tiene las herramientas que Alema tiene.</blockquote>
+                </article>
+            </div>
+            <p class="opiniones-pie">Comentarios publicados con autorización de cada alumno. Los resultados dependen de cada persona.</p>
         </section>
 
         <!-- TERMINAL PROP FIRM -->
@@ -518,6 +556,16 @@
     </script>
 
     <script>
+        // Contador de alumnos de la portada: sube de 0 al número de data-meta (para actualizarlo, cambia data-meta y el texto).
+        (function () {
+            var el = document.getElementById('contador-alumnos'); if (!el) return;
+            var b = el.querySelector('b'), meta = Number(el.dataset.meta), t0 = null;
+            if (!meta || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            function paso(t) { if (!t0) t0 = t; var p = Math.min((t - t0) / 1400, 1), v = Math.round(meta * (1 - Math.pow(1 - p, 3)));
+                b.textContent = '+' + v.toLocaleString('en-US'); if (p < 1) requestAnimationFrame(paso); }
+            b.textContent = '+0'; requestAnimationFrame(paso);
+        })();
+
         // Luz que sigue al puntero en cada bloque de vidrio.
         document.querySelectorAll('.brilla').forEach(function (el) {
             el.addEventListener('pointermove', function (e) {
