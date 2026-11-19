@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin · ALEMA Trading Lab</title>
+<meta name="theme-color" content="#070B13">
+<link rel="icon" type="image/png" sizes="32x32" href="../icono-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Panel de administración de ALEMA Trading Lab. Los datos vienen del Apps Script (hoja "ALEMA Trading Lab · Base de datos"). */
+:root { --fondo: #070B13; --tinta: #E9EDF4; --tenue: #98A2B3; --ambar: #FEA621; --naranja: #FF7A1A; --verde: #2BD49A; --rojo: #F45B69; --azul: #5AA9FF; --morado: #B79CFF;
+  --vidrio: rgb(255 255 255 / .045); --vidrio-alto: rgb(255 255 255 / .085); --borde: rgb(255 255 255 / .10); --brillo: rgb(255 255 255 / .16);
+  --letra: "Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --mono: "JetBrains Mono", ui-monospace, Consolas, monospace; color-scheme: dark; }
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body { margin: 0; background: radial-gradient(800px 420px at 15% -5%, rgb(254 166 33 / .10), transparent 65%), var(--fondo); color: var(--tinta); font: 15px/1.5 var(--letra); }
+button, input, select { font: inherit; color: inherit; }
+.pag { max-width: 1120px; margin-inline: auto; padding: 18px max(16px, env(safe-area-inset-left, 0px)) 48px; display: grid; gap: 16px; }
+.vidrio { background: linear-gradient(180deg, var(--vidrio-alto), var(--vidrio)); border: 1px solid var(--borde); border-radius: 20px; box-shadow: inset 0 1px 0 var(--brillo); }
+.btn { border: 0; border-radius: 12px; padding: 9px 14px; min-height: 40px; font-weight: 700; background: linear-gradient(135deg, #FFB547, var(--naranja)); color: #1A1204; cursor: pointer; }
+.btn.sec { background: rgb(255 255 255 / .07); color: var(--tinta); border: 1px solid var(--borde); font-weight: 600; }
+.btn.ok { background: var(--verde); color: #04130D; } .btn.no { background: rgb(244 91 105 / .14); color: var(--rojo); border: 1px solid rgb(244 91 105 / .4); }
+.btn:disabled { opacity: .45; cursor: default; }
+/* acceso */
+.acceso { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+.acc { width: 100%; max-width: 380px; padding: 26px 22px; display: grid; gap: 14px; text-align: center; }
+.acc .logo { width: 56px; height: 56px; border-radius: 16px; margin: 0 auto; display: grid; place-items: center; font-weight: 800; font-size: 1.5rem; background: linear-gradient(135deg, #FFB547, var(--naranja)); color: #1A1204; }
+.acc h1 { margin: 0; font-size: 1.25rem; } .acc p { margin: 0; color: var(--tenue); font-size: .86rem; }
+.acc label { display: grid; gap: 4px; text-align: left; font-size: .78rem; font-weight: 600; color: var(--tenue); }
+input, select { width: 100%; background: rgb(0 0 0 / .3); border: 1px solid var(--borde); border-radius: 12px; padding: 10px 12px; min-height: 44px; font-size: 16px; }
+/* cabecera */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 16px; }
+.marca { display: flex; align-items: center; gap: 10px; } .marca .logo { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; font-weight: 800; background: linear-gradient(135deg, #FFB547, var(--naranja)); color: #1A1204; }
+.marca b { display: block; line-height: 1.1; } .marca small { color: var(--tenue); font-size: .75rem; }
+.tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { flex: none; border: 1px solid var(--borde); background: rgb(255 255 255 / .04); border-radius: 999px; padding: 8px 14px; cursor: pointer; font-weight: 600; color: var(--tenue); display: inline-flex; gap: 6px; align-items: center; }
+.tabs button[aria-selected="true"] { background: var(--ambar); color: #1A1204; border-color: transparent; }
+.tabs .n { min-width: 20px; height: 20px; border-radius: 999px; padding: 0 6px; display: inline-grid; place-items: center; font-size: .72rem; background: var(--rojo); color: #fff; }
+.tabs button[aria-selected="true"] .n { background: #1A1204; color: var(--ambar); }
+/* resumen */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.kpi { padding: 16px; display: grid; gap: 4px; }
+.kpi small { color: var(--tenue); font-size: .76rem; font-weight: 600; } .kpi b { font-family: var(--mono); font-size: 1.7rem; line-height: 1.1; } .kpi span { color: var(--tenue); font-size: .78rem; }
+.kpi.alerta b { color: var(--ambar); }
+.panel { padding: 18px; display: grid; gap: 14px; }
+.panel h2 { margin: 0; font-size: 1.05rem; } .panel > p { margin: 0; color: var(--tenue); font-size: .86rem; }
+.filtros { display: flex; gap: 8px; flex-wrap: wrap; } .filtros input { flex: 1 1 220px; } .filtros select { flex: 0 1 180px; }
+/* tarjetas de registros */
+.lista { display: grid; gap: 10px; }
+.reg { padding: 14px; border-radius: 16px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 14px; align-items: center; }
+.reg .info { display: grid; gap: 3px; min-width: 0; }
+.reg .t { font-weight: 700; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.reg .d { color: var(--tenue); font-size: .8rem; overflow-wrap: anywhere; }
+.reg .acc-r { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.chip { font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--borde); white-space: nowrap; }
+.chip.pend { color: var(--ambar); border-color: rgb(254 166 33 / .45); } .chip.ok { color: var(--verde); border-color: rgb(43 212 154 / .45); }
+.chip.no { color: var(--rojo); border-color: rgb(244 91 105 / .45); } .chip.gris { color: var(--tenue); }
+.chip.pro { color: var(--morado); border-color: rgb(183 156 255 / .45); } .chip.bas { color: var(--azul); border-color: rgb(90 169 255 / .45); }
+.mono { font-family: var(--mono); }
+.vacio { text-align: center; color: var(--tenue); padding: 24px; font-size: .9rem; }
+@media (max-width: 620px) { .reg { grid-template-columns: 1fr; } .reg .acc-r { justify-content: stretch; } .reg .acc-r .btn { flex: 1; } }
+/* ventana */
+.velo { position: fixed; inset: 0; background: rgb(3 5 10 / .7); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 16px; z-index: 10; }
+.modal { width: 100%; max-width: 440px; padding: 20px; display: grid; gap: 12px; }
+.modal h3 { margin: 0; } .modal p { margin: 0; color: var(--tenue); font-size: .9rem; }
+.modal .acciones { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+.det { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; font-size: .86rem; } .det dt { color: var(--tenue); } .det dd { margin: 0; overflow-wrap: anywhere; }
+.aviso { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: #10251D; border: 1px solid rgb(43 212 154 / .5); color: var(--tinta); padding: 10px 16px; border-radius: 12px; font-size: .88rem; z-index: 20; max-width: calc(100% - 32px); }
+.nota { color: var(--tenue); font-size: .78rem; text-align: center; }
+.err { margin: 0; color: var(--rojo); font-size: .84rem; }
+.cargando { opacity: .55; pointer-events: none; }
+</style>
+</head>
+<body>
+<section class="acceso" id="acceso">
+  <form class="acc vidrio" id="f_acc">
+    <div class="logo">A</div>
+    <h1>Admin · ALEMA Trading Lab</h1>
+    <p>Panel para activar paquetes, validar códigos y entregar recompensas.</p>
+    <label>Clave de administrador<input id="clave" type="password" autocomplete="current-password" placeholder="Escribe tu clave"></label>
+    <button class="btn" type="submit">Entrar</button>
+    <p class="err" id="acc_err" hidden></p>
+  </form>
+</section>
+
+<main class="pag" id="app" hidden>
+  <header class="top vidrio">
+    <div class="marca"><span class="logo">A</span><div><b>Admin · Trading Lab</b><small>alematradingacademy.com.mx/lab/admin</small></div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sec" type="button" id="b_actualizar">Actualizar</button><a class="btn sec" id="b_hoja" href="#" target="_blank" rel="noopener" style="display:inline-grid;place-items:center;text-decoration:none">Abrir hoja ↗</a><button class="btn sec" type="button" id="salir">Salir</button></div>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="resumen">Resumen</button>
+    <button role="tab" aria-selected="false" data-tab="pagos">Pagos <span class="n" id="n_pagos"></span></button>
+    <button role="tab" aria-selected="false" data-tab="codigos">Códigos $990 <span class="n" id="n_codigos"></span></button>
+    <button role="tab" aria-selected="false" data-tab="canjes">Canjes <span class="n" id="n_canjes"></span></button>
+    <button role="tab" aria-selected="false" data-tab="usuarios">Usuarios</button>
+  </nav>
+
+  <section data-panel="resumen" class="lista">
+    <div class="kpis" id="kpis"></div>
+    <div class="panel vidrio"><h2>Pendientes de hoy</h2><div class="lista" id="pend_hoy"></div></div>
+  </section>
+
+  <section data-panel="pagos" class="panel vidrio" hidden>
+    <h2>Pagos por validar</h2>
+    <p>Cuando llegue el comprobante por WhatsApp, revisa el monto en Clip y activa el paquete. Se activa por 1 mes y el alumno recibe sus créditos al momento.</p>
+    <div class="filtros"><input id="q_pagos" placeholder="Buscar por usuario o ID"><select id="f_pagos"><option value="Pendiente">Pendientes</option><option value="Activado">Activados</option><option value="Rechazado">Rechazados</option><option value="">Todos</option></select></div>
+    <div class="lista" id="l_pagos"></div>
+  </section>
+
+  <section data-panel="codigos" class="panel vidrio" hidden>
+    <h2>Códigos de $990</h2>
+    <p>Cuando el alumno canjee su código por WhatsApp, búscalo aquí y márcalo como canjeado. Queda como alumno del Programa y se le abre la Etapa 2 completa.</p>
+    <div class="filtros"><input id="q_codigos" placeholder="Buscar código, usuario o folio"><select id="f_codigos"><option value="Vigente">Vigentes</option><option value="Canjeado">Canjeados</option><option value="Vencido">Vencidos</option><option value="">Todos</option></select></div>
+    <div class="lista" id="l_codigos"></div>
+  </section>
+
+  <section data-panel="canjes" class="panel vidrio" hidden>
+    <h2>Canjes de recompensas</h2>
+    <p>Recompensas que los alumnos pidieron con sus 🪙. Envía el material a su correo o agenda la sesión y márcalo como entregado.</p>
+    <div class="filtros"><input id="q_canjes" placeholder="Buscar por usuario o recompensa"><select id="f_canjes"><option value="Pendiente">Pendientes</option><option value="Entregado">Entregados</option><option value="">Todos</option></select></div>
+    <div class="lista" id="l_canjes"></div>
+  </section>
+
+  <section data-panel="usuarios" class="panel vidrio" hidden>
+    <h2>Usuarios</h2>
+    <p>Consulta el avance de cada alumno, cambia su plan a mano o bloquea una cuenta.</p>
+    <div class="filtros"><input id="q_usuarios" placeholder="Buscar por usuario, nombre o correo"><select id="f_usuarios"><option value="">Todos los planes</option><option>Gratis</option><option>Básico</option><option>Pro</option></select></div>
+    <div class="lista" id="l_usuarios"></div>
+  </section>
+</main>
+
+<div class="velo" id="velo" hidden><div class="modal vidrio" role="dialog" aria-modal="true" aria-labelledby="m_t"><h3 id="m_t"></h3><div id="m_c"></div><div class="acciones" id="m_acc"></div></div></div>
+<div class="aviso" id="aviso" hidden></div>
+<script>
+const API = "https://script.google.com/macros/s/AKfycbwhJRzfvx5IaeDmqgYYLMChkMvB9HBqG--LlX8tXSzq9f9MTkb0t3Vx9OLE0h1RDHxKpg/exec";
+const $ = id => document.getElementById(id);
+const leer = k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
+const guardar = (k, v) => { try { v === null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) {} };
+let TK = leer("alab_admin"), USU = [], PAG = [], COD = [], CAN = [];
+const hoy = () => new Date();
+const fd = v => v ? new Date(v) : null;
+const fecha = d => d ? d.toLocaleDateString("es-MX", { day: "2-digit", month: "short" }) : "—";
+const fechaH = d => d ? fecha(d) + " " + d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" }) : "—";
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+async function api(accion, datos) {
+  document.body.classList.add("cargando");
+  try {
+    const r = await fetch(API, { method: "POST", body: JSON.stringify(Object.assign({ accion, token: TK }, datos || {})) });
+    const j = await r.json();
+    if (j.salir) { salir(); throw new Error(j.error); }
+    if (j.ok && j.usuarios) cargar(j);
+    return j;
+  } finally { document.body.classList.remove("cargando"); }
+}
+function cargar(j) {
+  USU = j.usuarios.map(x => Object.assign(x, { vence: fd(x.vence), reg: fd(x.reg), ultimo: fd(x.ultimo) }));
+  PAG = j.pagos.map(x => Object.assign(x, { fecha: fd(x.fecha), desde: fd(x.desde), hasta: fd(x.hasta) })).reverse();
+  COD = j.codigos.map(x => Object.assign(x, { em: fd(x.em), vence: fd(x.vence), canjeado: fd(x.canjeado) })).reverse();
+  CAN = j.canjes.map(x => Object.assign(x, { fecha: fd(x.fecha), entregado: fd(x.entregado) })).reverse();
+  if (j.hoja) $("b_hoja").href = j.hoja;
+  pintar();
+}
+// Acción con confirmación del servidor
+function hacer(accion, datos, ok) { return api(accion, datos).then(j => { if (j.ok) { cerrar(); aviso(ok); } else aviso("⚠️ " + (j.error || "No se pudo completar.")); })
+  .catch(err => aviso("⚠️ " + (err.message || "Sin conexión. Intenta de nuevo."))); }
+
+const PAQ = { "Básico": "Paquete Básico", "Pro": "Paquete Pro", "Mentor": "Pase Mentor Lab" };
+const usu = u => USU.find(x => x.u === u) || { n: u, c: "" };
+const chip = e => `<span class="chip ${{ Pendiente: "pend", Vigente: "pend", Activado: "ok", Canjeado: "ok", Entregado: "ok", Activo: "ok", Rechazado: "no", Vencido: "gris", Bloqueado: "no" }[e] || "gris"}">${esc(e)}</span>`;
+const chipPlan = p => `<span class="chip ${p === "Pro" ? "pro" : p === "Básico" ? "bas" : "gris"}">${esc(p)}</span>`;
+
+function aviso(t) { const a = $("aviso"); a.textContent = t; a.hidden = false; clearTimeout(aviso.t); aviso.t = setTimeout(() => a.hidden = true, 3200); }
+function ventana(t, html, botones) { $("m_t").textContent = t; $("m_c").innerHTML = html; const acc = $("m_acc"); acc.innerHTML = "";
+  botones.forEach(([txt, fn, cls]) => { const b = document.createElement("button"); b.type = "button"; b.className = "btn " + (cls || ""); b.textContent = txt; b.addEventListener("click", fn); acc.appendChild(b); }); $("velo").hidden = false; }
+const cerrar = () => $("velo").hidden = true;
+$("velo").addEventListener("click", e => { if (e.target === $("velo")) cerrar(); });
+
+function contar() {
+  const p = PAG.filter(x => x.estado === "Pendiente").length, c = COD.filter(x => x.estado === "Vigente").length, k = CAN.filter(x => x.estado === "Pendiente").length;
+  $("n_pagos").textContent = p; $("n_pagos").hidden = !p; $("n_codigos").textContent = c; $("n_codigos").hidden = !c; $("n_canjes").textContent = k; $("n_canjes").hidden = !k; return { p, c, k };
+}
+function pintarResumen() {
+  const { p, c, k } = contar(), pago = USU.filter(x => x.plan !== "Gratis").length, nuevos = USU.filter(x => x.reg && (hoy() - x.reg) / 864e5 < 7).length;
+  const ini = new Date(hoy().getFullYear(), hoy().getMonth(), 1);
+  const ingresos = PAG.filter(x => x.estado === "Activado" && x.desde && x.desde >= ini).reduce((s, x) => s + x.monto, 0);
+  $("kpis").innerHTML = [["Usuarios", USU.length, `${nuevos} ${nuevos === 1 ? "nuevo" : "nuevos"} esta semana`],
+    ["Con paquete", pago, `${USU.filter(x => x.prog).length} en el Programa`], ["Pagos por validar", p, "en WhatsApp", p ? "alerta" : ""],
+    ["Códigos vigentes", c, "por canjear", c ? "alerta" : ""], ["Canjes por entregar", k, "recompensas", k ? "alerta" : ""], ["Activado este mes", "$" + ingresos.toLocaleString("es-MX"), "MXN en paquetes"]]
+    .map(([t, v, s, cl]) => `<div class="kpi vidrio ${cl || ""}"><small>${t}</small><b>${v}</b><span>${s}</span></div>`).join("");
+  const items = [...PAG.filter(x => x.estado === "Pendiente").map(x => ({ tab: "pagos", t: `💳 ${esc(PAQ[x.paq] || x.paq)} · $${x.monto}`, d: `${esc(usu(x.u).n)} (${esc(x.u)}) · ${fechaH(x.fecha)}` })),
+    ...COD.filter(x => x.estado === "Vigente").map(x => ({ tab: "codigos", t: `🎓 ${esc(x.cod)}`, d: `${esc(usu(x.u).n)} · vence ${fecha(x.vence)}` })),
+    ...CAN.filter(x => x.estado === "Pendiente").map(x => ({ tab: "canjes", t: `🎁 ${esc(x.r)}`, d: `${esc(usu(x.u).n)} (${esc(x.u)}) · ${fechaH(x.fecha)}` }))];
+  $("pend_hoy").innerHTML = items.length ? items.map(i => `<div class="reg"><div class="info"><span class="t">${i.t}</span><span class="d">${i.d}</span></div><div class="acc-r"><button class="btn sec" type="button" data-ir="${i.tab}">Ver</button></div></div>`).join("") : `<div class="vacio">¡Todo al día! No hay pendientes.</div>`;
+}
+const busca = (q, ...c) => !q || c.join(" ").toLowerCase().includes(q.toLowerCase());
+const plural = e => ({ Pendiente: "pendientes", Activado: "activados", Rechazado: "rechazados", Vigente: "vigentes", Canjeado: "canjeados", Vencido: "vencidos", Entregado: "entregados" }[e] || "");
+function pintarPagos() {
+  const q = $("q_pagos").value, e = $("f_pagos").value, l = PAG.filter(x => (!e || x.estado === e) && busca(q, x.u, x.id, usu(x.u).n));
+  $("l_pagos").innerHTML = l.length ? l.map(x => { const us = usu(x.u);
+    return `<div class="reg"><div class="info"><span class="t">${esc(PAQ[x.paq] || x.paq)} · $${x.monto} MXN ${chip(x.estado)}</span><span class="d">${esc(us.n)} · <span class="mono">${esc(x.u)}</span> · ${esc(us.c)}</span><span class="d">ID <span class="mono">${esc(x.id)}</span> · avisó ${fechaH(x.fecha)}${x.hasta ? " · activo hasta " + fecha(x.hasta) : ""}${x.notas ? " · " + esc(x.notas) : ""}</span></div>
+    <div class="acc-r">${x.estado === "Pendiente" ? `<button class="btn no" type="button" data-rechazar="${esc(x.id)}">Rechazar</button><button class="btn ok" type="button" data-activar="${esc(x.id)}">Activar</button>` : ""}</div></div>`; }).join("") : `<div class="vacio">No hay pagos ${plural(e)}.</div>`;
+}
+function pintarCodigos() {
+  const q = $("q_codigos").value, e = $("f_codigos").value, l = COD.filter(x => (!e || x.estado === e) && busca(q, x.cod, x.u, x.folio, usu(x.u).n));
+  $("l_codigos").innerHTML = l.length ? l.map(x => `<div class="reg"><div class="info"><span class="t"><span class="mono">${esc(x.cod)}</span> ${chip(x.estado)}</span><span class="d">${esc(usu(x.u).n)} · <span class="mono">${esc(x.u)}</span> · folio <span class="mono">${esc(x.folio)}</span></span><span class="d">${esc(x.ben)} · emitido ${fecha(x.em)} · vence ${fecha(x.vence)}${x.canjeado ? " · canjeado " + fecha(x.canjeado) : ""}</span></div>
+    <div class="acc-r">${x.estado === "Vigente" ? `<button class="btn ok" type="button" data-canjeado="${esc(x.cod)}">Marcar canjeado</button>` : ""}</div></div>`).join("") : `<div class="vacio">No hay códigos ${plural(e)}.</div>`;
+}
+function pintarCanjes() {
+  const q = $("q_canjes").value, e = $("f_canjes").value, l = CAN.filter(x => (!e || x.estado === e) && busca(q, x.u, x.r, usu(x.u).n));
+  $("l_canjes").innerHTML = l.length ? l.map(x => { const us = usu(x.u);
+    return `<div class="reg"><div class="info"><span class="t">🎁 ${esc(x.r)} ${chip(x.estado)}</span><span class="d">${esc(us.n)} · <span class="mono">${esc(x.u)}</span> · ${esc(us.c)}</span><span class="d">${x.pts} 🪙 · nivel ${esc(x.nivel)} · ${fechaH(x.fecha)}${x.entregado ? " · entregado " + fecha(x.entregado) : ""}</span></div>
+    <div class="acc-r">${x.estado === "Pendiente" ? `<button class="btn ok" type="button" data-entregado="${esc(x.id)}">Marcar entregado</button>` : ""}</div></div>`; }).join("") : `<div class="vacio">No hay canjes ${plural(e)}.</div>`;
+}
+function pintarUsuarios() {
+  const q = $("q_usuarios").value, p = $("f_usuarios").value, l = USU.filter(x => (!p || x.plan === p) && busca(q, x.u, x.n, x.c));
+  $("l_usuarios").innerHTML = l.length ? l.map(x => `<div class="reg"><div class="info"><span class="t">${esc(x.n)} ${chipPlan(x.plan)}${x.prog ? '<span class="chip ok">Programa</span>' : ""}${x.estado === "Bloqueado" ? chip("Bloqueado") : ""}</span><span class="d"><span class="mono">${esc(x.u)}</span> · ${esc(x.c)}</span>
+    <span class="d">Etapa 1: ${x.e1}/30 · Etapa 2: ${x.e2}/20 · 🪙 ${x.pts} · 🔥 ${x.racha} días${x.vence && x.plan !== "Gratis" ? " · vence " + fecha(x.vence) : ""}</span></div>
+    <div class="acc-r"><button class="btn sec" type="button" data-usuario="${esc(x.u)}">Administrar</button></div></div>`).join("") : `<div class="vacio">${USU.length ? "No se encontraron usuarios." : "Todavía no hay usuarios registrados."}</div>`;
+}
+function pintar() { contar(); pintarResumen(); pintarPagos(); pintarCodigos(); pintarCanjes(); pintarUsuarios(); }
+["q_pagos", "f_pagos"].forEach(id => $(id).addEventListener("input", pintarPagos)); ["q_codigos", "f_codigos"].forEach(id => $(id).addEventListener("input", pintarCodigos));
+["q_canjes", "f_canjes"].forEach(id => $(id).addEventListener("input", pintarCanjes)); ["q_usuarios", "f_usuarios"].forEach(id => $(id).addEventListener("input", pintarUsuarios));
+
+function ir(tab) { document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab ? "true" : "false"));
+  document.querySelectorAll("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== tab); scrollTo(0, 0); }
+document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => ir(b.dataset.tab)));
+
+document.addEventListener("click", e => {
+  const t = e.target, irB = t.closest("[data-ir]"); if (irB) return ir(irB.dataset.ir);
+  const a = t.closest("[data-activar]");
+  if (a) { const x = PAG.find(p => p.id === a.dataset.activar), us = usu(x.u), h = new Date(); h.setMonth(h.getMonth() + 1);
+    return ventana(`¿Activar ${PAQ[x.paq] || x.paq}?`, `<dl class="det"><dt>Alumno</dt><dd>${esc(us.n)} (${esc(x.u)})</dd><dt>Monto</dt><dd>$${x.monto} MXN</dd><dt>Vigencia</dt><dd>1 mes, hasta ${fecha(h)}</dd></dl><p style="margin-top:10px">Confirma que el pago aparece en Clip antes de activarlo.</p>`,
+      [["Cancelar", cerrar, "sec"], ["Sí, activar", () => hacer("admin_pago", { id: x.id, decision: "activar" }, `✓ ${PAQ[x.paq] || x.paq} activado para ${us.n}`), "ok"]]); }
+  const r = t.closest("[data-rechazar]");
+  if (r) { const x = PAG.find(p => p.id === r.dataset.rechazar);
+    return ventana("¿Rechazar este pago?", `<p>Úsalo si el pago no aparece en Clip o el comprobante no coincide. Escribe el motivo para tu control:</p><input id="motivo" placeholder="Ej. el pago no aparece en Clip" style="margin-top:10px">`,
+      [["Cancelar", cerrar, "sec"], ["Rechazar", () => hacer("admin_pago", { id: x.id, decision: "rechazar", motivo: $("motivo").value }, "Pago marcado como rechazado"), "no"]]); }
+  const c = t.closest("[data-canjeado]");
+  if (c) { const x = COD.find(k => k.cod === c.dataset.canjeado), us = usu(x.u);
+    return ventana("¿Marcar código como canjeado?", `<dl class="det"><dt>Código</dt><dd class="mono">${esc(x.cod)}</dd><dt>Alumno</dt><dd>${esc(us.n)} (${esc(x.u)})</dd><dt>Beneficio</dt><dd>${esc(x.ben)}</dd></dl><p style="margin-top:10px">El alumno queda como alumno del Programa y se le abre la Etapa 2 completa.</p>`,
+      [["Cancelar", cerrar, "sec"], ["Sí, canjeado", () => hacer("admin_codigo", { codigo: x.cod }, `✓ Código ${x.cod} canjeado`), "ok"]]); }
+  const k = t.closest("[data-entregado]");
+  if (k) { const x = CAN.find(j => j.id === k.dataset.entregado);
+    return ventana("¿Marcar como entregado?", `<p>"${esc(x.r)}" para ${esc(usu(x.u).n)} (${esc(usu(x.u).c)}).</p>`, [["Cancelar", cerrar, "sec"], ["Sí, entregado", () => hacer("admin_canje", { id: x.id }, `✓ "${x.r}" marcado como entregado`), "ok"]]); }
+  const u = t.closest("[data-usuario]");
+  if (u) { const x = USU.find(j => j.u === u.dataset.usuario);
+    return ventana(x.n, `<dl class="det"><dt>Usuario</dt><dd class="mono">${esc(x.u)}</dd><dt>Correo</dt><dd>${esc(x.c)}</dd><dt>Registro</dt><dd>${fecha(x.reg)}</dd><dt>Último acceso</dt><dd>${fechaH(x.ultimo)}</dd><dt>Avance</dt><dd>Etapa 1: ${x.e1}/30 · Etapa 2: ${x.e2}/20</dd><dt>Puntos</dt><dd>${x.pts} 🪙 (${x.gan} ganados)</dd><dt>Racha</dt><dd>🔥 ${x.racha} días</dd><dt>Programa</dt><dd>${x.prog ? "Sí" : "No"}</dd></dl>
+      <label style="display:grid;gap:4px;margin-top:12px;font-size:.78rem;color:var(--tenue);font-weight:600">Plan (Básico y Pro quedan por 1 mes)<select id="m_plan">${["Gratis", "Básico", "Pro"].map(p => `<option ${p === x.plan ? "selected" : ""}>${p}</option>`).join("")}</select></label>`,
+      [[x.estado === "Bloqueado" ? "Desbloquear" : "Bloquear", () => { const nuevo = x.estado === "Bloqueado" ? "Activo" : "Bloqueado"; hacer("admin_usuario", { usuario: x.u, estado: nuevo }, `Cuenta ${nuevo === "Bloqueado" ? "bloqueada" : "desbloqueada"}`); }, "no"],
+       ["Cancelar", cerrar, "sec"], ["Guardar plan", () => { const p = $("m_plan").value; if (p === x.plan) return cerrar(); hacer("admin_usuario", { usuario: x.u, plan: p }, `Plan de ${x.n}: ${p}`); }, "ok"]]); }
+});
+function entrar() { $("acceso").hidden = true; $("app").hidden = false; }
+function salir() { TK = null; guardar("alab_admin", null); $("app").hidden = true; $("acceso").hidden = false; $("clave").value = ""; cerrar(); }
+$("f_acc").addEventListener("submit", async e => { e.preventDefault(); $("acc_err").hidden = true; const b = e.target.querySelector("button");
+  if (!$("clave").value) { $("acc_err").textContent = "Escribe tu clave."; $("acc_err").hidden = false; return; }
+  b.disabled = true; b.textContent = "Entrando…";
+  try { const j = await api("admin_login", { clave: $("clave").value });
+    if (!j.ok) { $("acc_err").textContent = j.error; $("acc_err").hidden = false; return; }
+    TK = j.token; guardar("alab_admin", TK); $("clave").value = ""; const d = await api("admin_datos"); if (d.ok) entrar(); }
+  catch (err) { $("acc_err").textContent = "No se pudo conectar. Intenta de nuevo."; $("acc_err").hidden = false; }
+  finally { b.disabled = false; b.textContent = "Entrar"; } });
+$("salir").addEventListener("click", salir);
+$("b_actualizar").addEventListener("click", () => api("admin_datos").then(j => { if (j.ok) aviso("Datos actualizados"); }).catch(() => aviso("⚠️ Sin conexión.")));
+if (TK) api("admin_datos").then(j => { if (j.ok) entrar(); }).catch(() => {});
+</script>
+</body>
+</html>
