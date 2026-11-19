@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ALEMA Trading Lab</title>
+<meta name="description" content="Aprende a operar practicando, gratis: terminal con precios simulados, ruta de aprendizaje y recompensas de ALEMA Trading Academy.">
+<meta name="theme-color" content="#070B13">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* ALEMA Trading Lab: app gratuita de práctica estilo "Duolingo de trading". Terminal con precios simulados, Ruta con vidas,
+   Recompensas por niveles, Paquetes y Acuerdo de responsabilidad. El avance se guarda en el servidor (Apps Script). */
+:root {
+  --fondo: #070B13; --tinta: #E9EDF4; --tenue: #98A2B3; --ambar: #FEA621; --naranja: #FF7A1A; --verde: #2BD49A; --rojo: #F45B69; --azul: #5AA9FF; --rosa: #FF5C8A;
+  --vidrio: rgb(255 255 255 / .045); --vidrio-alto: rgb(255 255 255 / .085); --borde: rgb(255 255 255 / .10); --brillo: rgb(255 255 255 / .16);
+  --letra: "Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: radial-gradient(800px 420px at 15% -5%, rgb(254 166 33 / .10), transparent 65%), radial-gradient(700px 400px at 100% 100%, rgb(255 122 26 / .06), transparent 65%), var(--fondo); color: var(--tinta); font: 15px/1.55 var(--letra); }
+button, input, select { font: inherit; color: inherit; }
+:is(button, a, input, select, summary):focus-visible { outline: 2px solid var(--ambar); outline-offset: 2px; }
+.pag { max-width: 1180px; margin-inline: auto; padding-block: 18px 150px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px; }
+.vidrio { background: linear-gradient(180deg, var(--vidrio-alto), var(--vidrio)); border: 1px solid var(--borde); border-radius: 18px; box-shadow: inset 0 1px 0 var(--brillo), 0 24px 60px -30px rgb(0 0 0 / .85); }
+.btn { border: 0; border-radius: 12px; min-height: 44px; padding: 0 18px; font-weight: 700; cursor: pointer; color: #1A1204; background: linear-gradient(135deg, var(--ambar), var(--naranja)); box-shadow: 0 10px 24px -14px var(--ambar); white-space: nowrap; }
+.btn.sec { background: none; color: var(--tinta); border: 1px solid var(--borde); box-shadow: none; }
+.btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.btn.hecho { background: rgb(43 212 154 / .14); color: var(--verde); border: 1px solid rgb(43 212 154 / .45); opacity: 1; }
+
+/* barra superior */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px 18px; flex-wrap: wrap; padding: 12px 16px; }
+.marca { display: flex; align-items: center; gap: 10px; }
+.marca .logo { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; color: #1A1204; background: linear-gradient(135deg, var(--ambar), var(--naranja)); }
+.marca b { display: block; letter-spacing: .14em; color: var(--ambar); font-size: .9rem; line-height: 1.1; }
+.marca small { color: var(--tenue); font-size: .7rem; }
+.stats { display: flex; gap: 8px; flex-wrap: wrap; }
+.stat { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: rgb(0 0 0 / .25); border: 1px solid var(--borde); font-family: var(--mono); font-weight: 600; font-size: .9rem; }
+.stat .e { font-family: var(--letra); }
+.stat.c { color: var(--azul); } .stat.v { color: var(--rosa); } .stat.p { color: var(--ambar); } .stat.r { color: var(--naranja); }
+.stat.bump { animation: bump .4s ease; }
+@keyframes bump { 40% { transform: scale(1.15); } }
+
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; padding: 5px; border-radius: 14px; background: rgb(255 255 255 / .03); border: 1px solid var(--borde); }
+.tabs button { border: 0; background: none; color: var(--tenue); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: .86rem; }
+.tabs button[aria-selected="true"] { background: var(--ambar); color: #1A1204; }
+.tabs button.bloq { color: #6B7588; }
+.tabs button.bloq[aria-selected="true"] { color: #1A1204; }
+
+/* contenido bloqueado */
+.bloqueo { position: relative; display: grid; border-radius: 18px; overflow: hidden; min-height: 420px; }
+.bloqueo > * { grid-area: 1 / 1; }
+.bloqueo .fondo { filter: blur(7px) saturate(.7); opacity: .55; pointer-events: none; padding: 22px; display: grid; gap: 14px; align-content: start; }
+.bloqueo .fondo div { border-radius: 14px; background: rgb(255 255 255 / .06); border: 1px solid var(--borde); }
+.bloqueo .aviso-b { position: relative; place-self: center; max-width: 420px; margin: 20px; padding: 26px 24px; text-align: center; display: grid; gap: 12px; justify-items: center; }
+.bloqueo .candado { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; font-size: 1.5rem; background: rgb(254 166 33 / .12); border: 1px solid rgb(254 166 33 / .4); }
+.bloqueo h3 { margin: 0; } .bloqueo p { margin: 0; color: var(--tenue); font-size: .9rem; }
+
+/* terminal */
+.zona { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.term { overflow: hidden; }
+.t-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--borde); }
+.t-cab select { background: rgb(0 0 0 / .3); border: 1px solid var(--borde); border-radius: 10px; padding: 6px 10px; font-weight: 600; }
+.precio { font-family: var(--mono); font-weight: 600; font-size: 1.05rem; }
+.precio small { color: var(--tenue); font-weight: 500; font-size: .75rem; margin-left: 8px; }
+.t-cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 250px; }
+canvas { display: block; width: 100%; height: 330px; }
+.orden { border-left: 1px solid var(--borde); padding: 14px; display: grid; gap: 10px; align-content: start; }
+.orden label { font-size: .75rem; color: var(--tenue); font-weight: 600; display: grid; gap: 4px; }
+.orden input { width: 100%; background: rgb(0 0 0 / .3); border: 1px solid var(--borde); border-radius: 10px; padding: 8px 10px; font-family: var(--mono); }
+.orden input.malo { border-color: var(--rojo); }
+.lados { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.comprar, .vender { border: 0; border-radius: 12px; min-height: 46px; font-weight: 800; cursor: pointer; }
+.comprar { background: var(--verde); color: #04140D; } .vender { background: var(--rojo); color: #1A0508; }
+.comprar:disabled, .vender:disabled { opacity: .4; cursor: not-allowed; }
+.calc { font-size: .76rem; color: var(--tenue); background: rgb(0 0 0 / .22); border: 1px dashed var(--borde); border-radius: 10px; padding: 8px 10px; display: grid; gap: 2px; }
+.calc b { color: var(--tinta); font-family: var(--mono); font-weight: 600; }
+.costo { text-align: center; font-size: .75rem; color: var(--tenue); } .costo b { color: var(--azul); }
+.err { margin: 0; color: var(--rojo); font-size: .78rem; }
+.pos { border-top: 1px solid var(--borde); }
+.pos h3 { margin: 0; padding: 12px 16px 6px; font-size: .85rem; color: var(--tenue); }
+.pos table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+.pos td, .pos th { padding: 8px 14px; text-align: left; border-top: 1px solid var(--borde); white-space: nowrap; }
+.pos th { font-size: .7rem; color: var(--tenue); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-top: 0; }
+.pos .num { font-family: var(--mono); } .pos .g { color: var(--verde); } .pos .l { color: var(--rojo); }
+.pos .vacio { color: var(--tenue); text-align: center; padding: 16px; }
+.pos button { border: 1px solid var(--borde); background: none; border-radius: 8px; padding: 3px 10px; cursor: pointer; font-size: .78rem; }
+.tabla-x { overflow-x: auto; }
+.sin { margin: 12px 16px; padding: 12px 14px; border-radius: 12px; font-size: .86rem; background: rgb(90 169 255 / .08); border: 1px solid rgb(90 169 255 / .35); display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.lado { display: grid; gap: 16px; }
+.caja { padding: 16px; display: grid; gap: 12px; }
+.caja h2 { margin: 0; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.caja h2 small { color: var(--tenue); font-weight: 500; font-size: .75rem; }
+.mision { display: grid; gap: 6px; }
+.mision .fila { display: flex; justify-content: space-between; gap: 8px; font-size: .85rem; }
+.mision .fila span:last-child { font-family: var(--mono); color: var(--ambar); font-weight: 600; white-space: nowrap; }
+.barra { height: 10px; border-radius: 10px; background: rgb(255 255 255 / .08); overflow: hidden; }
+.barra i { display: block; height: 100%; width: 0; border-radius: 10px; background: linear-gradient(90deg, var(--ambar), var(--naranja)); transition: width .4s; }
+.mision.hecha .barra i { background: var(--verde); }
+.mision.hecha .fila span:first-child::before { content: "✓ "; color: var(--verde); font-weight: 800; }
+.racha-sem { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; font-size: .72rem; color: var(--tenue); }
+.racha-sem i { display: grid; place-items: center; height: 30px; border-radius: 50%; font-style: normal; background: rgb(255 255 255 / .06); margin-bottom: 3px; }
+.racha-sem i.on { background: linear-gradient(135deg, var(--ambar), var(--naranja)); color: #1A1204; font-weight: 800; }
+.mini { font-size: .8rem; color: var(--tenue); margin: 0; }
+.activos { display: flex; flex-wrap: wrap; gap: 6px; }
+.activos span { font-size: .78rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--borde); }
+.activos .on { color: var(--verde); border-color: rgb(43 212 154 / .45); } .activos .off { color: #6B7588; }
+
+/* ruta */
+.ruta { padding: 22px 18px 30px; display: grid; gap: 26px; justify-items: center; background-image: radial-gradient(rgb(255 255 255 / .05) 1px, transparent 1.5px); background-size: 22px 22px; }
+.unidad { --c1: #FEA621; --c2: #FF7A1A; width: 100%; max-width: 560px; padding: 14px 16px; border-radius: 18px; background: linear-gradient(135deg, var(--c1), var(--c2)); color: #14100A; display: flex; justify-content: space-between; gap: 10px; align-items: center; box-shadow: 0 6px 0 rgb(0 0 0 / .3); }
+.unidad .u-ico { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-size: 1.4rem; background: rgb(255 255 255 / .28); flex: none; }
+.unidad .u-txt { flex: 1; min-width: 0; }
+.unidad small { font-weight: 800; letter-spacing: .1em; font-size: .7rem; display: block; opacity: .8; }
+.unidad b { font-size: 1.02rem; display: block; line-height: 1.25; }
+.unidad .vidas { font-family: var(--mono); font-weight: 700; background: rgb(0 0 0 / .18); border-radius: 999px; padding: 4px 12px; white-space: nowrap; }
+.unidad.cerrada { filter: grayscale(.85) brightness(.6); }
+.camino { display: grid; gap: 14px; justify-items: center; }
+.paso { display: grid; justify-items: center; position: relative; }
+.camino .paso:nth-child(4n+2) { transform: translateX(-60px); } .camino .paso:nth-child(4n+4) { transform: translateX(60px); }
+.nodo { width: 72px; height: 72px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; font-size: 1.6rem; box-shadow: 0 7px 0 rgb(0 0 0 / .35); transition: transform .15s; }
+.nodo:active { transform: translateY(4px); box-shadow: 0 3px 0 rgb(0 0 0 / .35); }
+.nodo.hecho { background: var(--verde); color: #04140D; }
+.nodo.actual { background: linear-gradient(135deg, var(--c1, #FEA621), var(--c2, #FF7A1A)); color: #1A1204; outline: 5px solid rgb(254 166 33 / .25); animation: latido 1.8s ease-in-out infinite; }
+@keyframes latido { 50% { transform: scale(1.06); } }
+.nodo.bloq { background: #222A38; color: #5B6577; cursor: not-allowed; }
+.nodo.eval { background: linear-gradient(135deg, #8B5CF6, #5AA9FF); color: #fff; }
+.nodo.cofre { background: #2A2236; font-size: 1.8rem; } .nodo.cofre.listo { background: linear-gradient(135deg, #FFD36E, #FEA621); }
+.puntos-r { display: flex; gap: 4px; justify-content: center; margin-top: 8px; }
+.puntos-r i { width: 8px; height: 8px; border-radius: 50%; background: rgb(255 255 255 / .14); }
+.puntos-r i.on { background: var(--verde); }
+.aqui { position: absolute; left: calc(50% + 46px); top: -6px; display: flex; align-items: center; gap: 4px; pointer-events: none; }
+.aqui svg { width: 46px; height: 46px; animation: flota 2.4s ease-in-out infinite; }
+.aqui span { font-size: .72rem; font-weight: 800; color: #1A1204; background: var(--ambar); padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+@keyframes flota { 50% { transform: translateY(-5px); } }
+.seccion-t { font-size: .78rem; font-weight: 700; letter-spacing: .12em; color: var(--tenue); text-transform: uppercase; }
+.nodo-et { font-size: .78rem; color: var(--tenue); text-align: center; margin-top: 12px; max-width: 170px; }
+
+/* recompensas */
+.panel { padding: 22px; display: grid; gap: 16px; }
+.panel h2 { margin: 0; font-size: 1.1rem; }
+.panel > p { margin: -8px 0 0; color: var(--tenue); font-size: .9rem; }
+.nivel-cab { display: grid; gap: 8px; padding: 14px 16px; border-radius: 14px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); }
+.nivel-cab .fila { display: flex; justify-content: space-between; gap: 8px; font-size: .88rem; flex-wrap: wrap; }
+.nivel-cab b { color: var(--ambar); }
+.nivel { display: grid; gap: 10px; }
+.nivel h3 { margin: 0; font-size: .9rem; display: flex; gap: 8px; align-items: center; }
+.nivel h3 small { color: var(--tenue); font-weight: 500; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
+.premio, .paquete { padding: 16px; border-radius: 16px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); display: grid; gap: 8px; grid-template-rows: auto auto 1fr auto auto; position: relative; }
+.premio .tipo { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--tenue); }
+.premio p { margin: 0; color: var(--tenue); font-size: .83rem; }
+.premio .pts { font-family: var(--mono); color: var(--ambar); font-weight: 600; }
+.premio .btn, .paquete .btn { width: 100%; }
+.nivel.cerrado .premio { opacity: .55; }
+.paquete { grid-template-rows: auto auto 1fr auto auto; padding: 20px 18px; }
+.clip { display: block; text-align: center; color: var(--tenue); font-size: .74rem; } .pase .clip { font-weight: 400; letter-spacing: 0; color: var(--tenue); font-size: .74rem; } .pase-acc { display: grid; gap: 6px; } .pase .pase-pr { display: inline; color: var(--tinta); font-family: var(--mono); }
+@media (max-width: 520px) { .pase-acc { width: 100%; } }
+.paquete.pro { border: 1px solid transparent; background: linear-gradient(rgb(12 16 26), rgb(12 16 26)) padding-box, linear-gradient(150deg, var(--ambar), rgb(255 255 255 / .1) 45%, var(--naranja)) border-box; }
+.sello { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); padding: 3px 12px; border-radius: 999px; background: linear-gradient(135deg, var(--ambar), var(--naranja)); color: #1A1204; font-size: .68rem; font-weight: 800; letter-spacing: .1em; white-space: nowrap; }
+.paquete h3 { margin: 0; font-size: .85rem; letter-spacing: .2em; color: var(--ambar); }
+.paquete .pr { font-family: var(--mono); font-size: 1.8rem; font-weight: 600; line-height: 1; }
+.paquete .pr small { font-size: .82rem; color: var(--tenue); font-weight: 500; }
+.paquete ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; align-content: start; }
+.paquete li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; font-size: .86rem; color: var(--tenue); }
+.paquete li::before { content: "✓"; color: var(--verde); font-weight: 700; }
+.paquete li b { color: var(--tinta); }
+
+.pase { display: flex; align-items: center; justify-content: space-between; gap: 14px 20px; flex-wrap: wrap; padding: 18px 20px; border-color: rgb(139 92 246 / .45); }
+.pase small { display: block; font-size: .7rem; font-weight: 700; letter-spacing: .12em; color: #B79CFF; }
+.pase b { display: block; } .pase span { color: var(--tenue); font-size: .86rem; }
+.nodo-et small { color: #6B7588; }
+
+/* meta final y certificado */
+.final { width: 100%; max-width: 620px; display: grid; gap: 16px; justify-items: center; }
+.meta { width: 100%; padding: 18px; border-radius: 18px; text-align: center; display: grid; gap: 10px; justify-items: center; background: linear-gradient(160deg, rgb(255 211 110 / .14), rgb(254 166 33 / .04)); border: 1px solid rgb(255 211 110 / .45); }
+.meta .trofeo { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; font-size: 2.2rem; background: linear-gradient(135deg, #FFD36E, #FEA621); box-shadow: 0 7px 0 rgb(0 0 0 / .35); border: 0; cursor: pointer; }
+.meta .trofeo.bloq { filter: grayscale(1) brightness(.5); }
+.meta h3 { margin: 0; } .meta p { margin: 0; color: var(--tenue); font-size: .88rem; max-width: 46ch; }
+.meta .demo { font-size: .75rem; color: var(--tenue); background: none; border: 1px dashed var(--borde); border-radius: 10px; padding: 6px 10px; cursor: pointer; }
+.cert-caja { width: 100%; padding: 18px; display: grid; gap: 12px; }
+.cert-caja canvas { width: 100%; height: auto; aspect-ratio: 1.414 / 1; border-radius: 12px; display: block; }
+.cert-form { display: grid; gap: 8px; }
+.cert-form label { font-size: .78rem; color: var(--tenue); font-weight: 600; display: grid; gap: 4px; }
+.cert-form input { background: rgb(0 0 0 / .3); border: 1px solid var(--borde); border-radius: 12px; padding: 11px 13px; font-size: 16px; }
+.codigo { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 14px 16px; border-radius: 14px; background: rgb(43 212 154 / .08); border: 1px dashed rgb(43 212 154 / .55); }
+.codigo b { font-family: var(--mono); font-size: 1.05rem; letter-spacing: .06em; color: var(--verde); }
+.codigo span { font-size: .84rem; color: var(--tenue); display: block; }
+.etapa2 { width: 100%; padding: 16px 18px; border-radius: 18px; display: flex; gap: 14px; align-items: center; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); }
+.etapa2 .e-ico { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 1.5rem; background: #222A38; flex: none; }
+.etapa2 > div > b { display: block; } .e2pago { margin-block: 6px 14px; flex-wrap: wrap; border-color: rgb(254 166 33 / .35); } .e2pago > div { flex: 1 1 200px; } .e2pago .e-ico { background: rgb(254 166 33 / .14); }
+@media (max-width: 520px) { .e2pago { flex-direction: column; text-align: center; } .e2pago > div { flex: none; } .e2pago .btn { width: 100%; } } .etapa2 span { color: var(--tenue); font-size: .84rem; } .etapa2 span b { color: var(--tinta); }
+
+/* acuerdo de responsabilidad */
+.acuerdo { padding: 0; }
+.acuerdo summary { cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: .88rem; color: var(--tenue); list-style: none; display: flex; justify-content: space-between; gap: 10px; }
+.acuerdo summary::-webkit-details-marker { display: none; }
+.acuerdo summary::after { content: "▾"; }
+.acuerdo[open] summary::after { content: "▴"; }
+.acuerdo .txt { padding: 0 18px 18px; display: grid; gap: 8px; font-size: .8rem; color: var(--tenue); }
+.acuerdo .txt p { margin: 0; }
+
+/* acceso */
+.acceso { min-height: 100vh; display: grid; place-items: center; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.acc-caja { width: 100%; max-width: 420px; padding: 26px 24px; display: grid; gap: 14px; }
+.acc-cab { display: flex; align-items: center; gap: 12px; }
+.acc-cab svg { width: 64px; height: 64px; flex: none; }
+.acc-cab h1 { margin: 0; font-size: 1.25rem; } .acc-cab p { margin: 2px 0 0; color: var(--tenue); font-size: .86rem; }
+.acc-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 12px; background: rgb(0 0 0 / .25); border: 1px solid var(--borde); }
+.acc-tabs button { border: 0; background: none; padding: 8px; border-radius: 9px; cursor: pointer; font-weight: 600; color: var(--tenue); }
+.acc-tabs button[aria-pressed="true"] { background: var(--ambar); color: #1A1204; }
+.acc-caja form { display: grid; gap: 10px; }
+.acc-caja label { display: grid; gap: 4px; font-size: .78rem; color: var(--tenue); font-weight: 600; }
+.acc-caja input { width: 100%; background: rgb(0 0 0 / .3); border: 1px solid var(--borde); border-radius: 12px; padding: 11px 13px; min-height: 46px; font-size: 16px; }
+.acc-caja .btn { width: 100%; }
+.acc-nota { font-size: .76rem; color: var(--tenue); text-align: center; margin: 0; }
+.usuario { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: var(--tenue); }
+.usuario button { border: 1px solid var(--borde); background: none; border-radius: 10px; padding: 5px 10px; cursor: pointer; font-size: .78rem; }
+
+/* mascota */
+.guia { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 25; display: flex; align-items: flex-end; gap: 8px; max-width: min(360px, calc(100vw - 32px)); pointer-events: none; }
+.burbuja { pointer-events: auto; padding: 10px 14px; border-radius: 16px 16px 4px 16px; background: #141B29; border: 1px solid var(--borde); box-shadow: 0 20px 40px -20px #000; font-size: .86rem; font-weight: 600; }
+.burbuja.bien { border-color: rgb(43 212 154 / .55); } .burbuja.mal { border-color: rgb(244 91 105 / .55); }
+.mascota { flex: none; width: 76px; height: 76px; pointer-events: auto; }
+.mascota.salta { animation: salta .5s ease; }
+@keyframes salta { 30% { transform: translateY(-10px) rotate(-4deg); } 60% { transform: translateY(0) rotate(3deg); } }
+
+/* ventana */
+.velo { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; background: rgb(4 7 14 / .72); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.modal { width: 100%; max-width: 460px; padding: 22px; display: grid; gap: 12px; max-height: 90vh; overflow-y: auto; }
+.modal .mcab { display: flex; align-items: center; gap: 12px; }
+.modal .mcab svg { width: 56px; height: 56px; flex: none; }
+.modal h3 { margin: 0; }
+.modal p { margin: 0; color: var(--tenue); font-size: .92rem; }
+.opciones { display: grid; gap: 8px; }
+.opciones button { text-align: left; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--borde); background: rgb(0 0 0 / .25); cursor: pointer; font-weight: 600; }
+.opciones button.bien { border-color: var(--verde); background: rgb(43 212 154 / .12); }
+.opciones button.mal { border-color: var(--rojo); background: rgb(244 91 105 / .1); }
+.acciones { display: flex; gap: 8px; flex-wrap: wrap; } .acciones .btn { flex: 1 1 auto; }
+
+@media (max-width: 980px) { .zona { grid-template-columns: 1fr; } }
+@media (max-width: 680px) {
+  .t-cuerpo { grid-template-columns: 1fr; } .orden { border-left: 0; border-top: 1px solid var(--borde); }
+  canvas { height: 230px; } .grid3 { grid-template-columns: 1fr; }
+  .tabs button { flex: 1 1 auto; padding: 8px 10px; }
+  .camino .paso:nth-child(4n+2) { transform: translateX(-36px); } .camino .paso:nth-child(4n+4) { transform: translateX(36px); }
+  .aqui span { display: none; }
+  .mascota { width: 60px; height: 60px; }
+}
+@media (prefers-reduced-motion: reduce) { .stat.bump, .mascota.salta, .nodo.actual, .aqui svg { animation: none; } .barra i { transition: none; } }
+[hidden] { display: none !important; }
+.trampa { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.acc-caja label.acepto { display: flex; align-items: flex-start; gap: 10px; font-weight: 500; font-size: .82rem; line-height: 1.4; }
+.acc-caja label.acepto input { width: 18px; height: 18px; min-height: 0; padding: 0; margin-top: 1px; flex: none; accent-color: var(--ambar); }
+.acepto button { background: none; border: 0; padding: 0; color: var(--ambar); text-decoration: underline; cursor: pointer; font: inherit; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="toro" viewBox="0 0 100 100">
+    <path d="M18 30 C6 26 4 12 10 8 C12 18 20 22 28 24Z" fill="#F3E3C3"/><path d="M82 30 C94 26 96 12 90 8 C88 18 80 22 72 24Z" fill="#F3E3C3"/>
+    <ellipse cx="50" cy="52" rx="34" ry="32" fill="#C8662B"/><ellipse cx="22" cy="40" rx="9" ry="6" fill="#A44F1F" transform="rotate(-25 22 40)"/><ellipse cx="78" cy="40" rx="9" ry="6" fill="#A44F1F" transform="rotate(25 78 40)"/>
+    <ellipse cx="50" cy="70" rx="22" ry="15" fill="#F2B98A"/><ellipse cx="42" cy="70" rx="3" ry="4" fill="#7A3A16"/><ellipse cx="58" cy="70" rx="3" ry="4" fill="#7A3A16"/>
+    <circle cx="38" cy="47" r="5" fill="#1A1204"/><circle cx="62" cy="47" r="5" fill="#1A1204"/><circle cx="39.5" cy="45.5" r="1.6" fill="#fff"/><circle cx="63.5" cy="45.5" r="1.6" fill="#fff"/>
+  </symbol>
+  <symbol id="oso" viewBox="0 0 100 100">
+    <circle cx="24" cy="26" r="11" fill="#6B4A33"/><circle cx="76" cy="26" r="11" fill="#6B4A33"/><circle cx="24" cy="26" r="5" fill="#C99A72"/><circle cx="76" cy="26" r="5" fill="#C99A72"/>
+    <ellipse cx="50" cy="54" rx="34" ry="32" fill="#86603F"/><ellipse cx="50" cy="68" rx="17" ry="13" fill="#D9B48C"/><ellipse cx="50" cy="62" rx="6" ry="4.5" fill="#2A1A0E"/>
+    <circle cx="37" cy="48" r="5" fill="#1A1204"/><circle cx="63" cy="48" r="5" fill="#1A1204"/><circle cx="38.5" cy="46.5" r="1.6" fill="#fff"/><circle cx="64.5" cy="46.5" r="1.6" fill="#fff"/>
+  </symbol>
+</defs></svg>
+
+<section class="acceso" id="acceso">
+  <div class="acc-caja vidrio">
+    <div class="acc-cab"><svg><use href="#toro"/></svg><div><h1>ALEMA Trading Lab</h1><p>Aprende a operar practicando, gratis.</p></div></div>
+    <div class="acc-tabs"><button type="button" aria-pressed="true" data-acc="entrar">Iniciar sesión</button><button type="button" aria-pressed="false" data-acc="registro">Crear cuenta gratis</button></div>
+    <form id="f_entrar">
+      <label>Usuario o correo<input id="e_usr" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+      <label>Contraseña<input id="e_pass" type="password" autocomplete="current-password"></label>
+      <button class="btn" type="submit">Entrar</button>
+    </form>
+    <form id="f_registro" hidden>
+      <label>Nombre<input id="r_nom" autocomplete="name" placeholder="Tu nombre"></label>
+      <label>Correo<input id="r_mail" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com"></label>
+      <label>Usuario<input id="r_usr" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Elige un usuario"></label>
+      <label>Contraseña<input id="r_pass" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres"></label>
+      <input id="r_web" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label class="acepto"><input type="checkbox" id="r_acepta"><span>Acepto el <button type="button" id="ver_acuerdo">acuerdo de responsabilidad</button>.</span></label>
+      <button class="btn" type="submit">Crear mi cuenta gratis</button>
+    </form>
+    <p class="acc-nota" id="acc_cargando" hidden>Cargando tu cuenta…</p>
+    <p class="err" id="acc_err" hidden></p>
+    <p class="acc-nota">Tu avance (créditos, vidas, puntos, racha, lecciones y recompensas) se guarda en tu cuenta.</p>
+  </div>
+</section>
+
+<main class="pag" id="app" hidden>
+  <header class="top vidrio">
+    <div class="marca"><span class="logo">A</span><div><b>ALEMA</b><small>Trading Lab · <span id="u_nom"></span></small></div></div>
+    <div class="stats">
+      <span class="stat c" id="s_cred" title="Créditos de hoy"><span class="e">⚡</span><span id="v_cred">10</span><span id="v_max">/10</span></span>
+      <span class="stat v" id="s_vid" title="Vidas de la Ruta"><span class="e">❤️</span><span id="v_vid">5</span></span>
+      <span class="stat p" id="s_pts" title="ALEMA Puntos"><span class="e">🪙</span><span id="v_pts">0</span></span>
+      <span class="stat r" title="Racha de días"><span class="e">🔥</span><span id="v_racha">0</span></span>
+      <span class="usuario"><button type="button" id="salir">Salir</button></span>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Secciones">
+    <button role="tab" aria-selected="true" data-tab="terminal">Terminal</button>
+    <button role="tab" aria-selected="false" data-tab="ruta">Ruta de aprendizaje</button>
+    <button role="tab" aria-selected="false" data-tab="recompensas">Recompensas</button>
+    <button role="tab" aria-selected="false" data-tab="paquetes">Paquetes</button>
+    <button role="tab" aria-selected="false" data-tab="clases">Clases y biblioteca ↗</button>
+  </div>
+
+  <!-- TERMINAL -->
+  <section data-panel="terminal" class="zona">
+    <div class="term vidrio">
+      <div class="t-cab">
+        <select id="par" aria-label="Instrumento">
+          <option value="EURUSD">EURUSD</option><option value="GBPUSD">GBPUSD</option><option value="USDJPY">USDJPY</option>
+          <option value="XAUUSD">🔒 XAUUSD (Oro)</option><option value="NAS100">🔒 NAS100 (Índice)</option>
+        </select>
+        <span class="precio" id="precio">—</span>
+      </div>
+      <div class="t-cuerpo">
+        <canvas id="grafica"></canvas>
+        <div class="orden">
+          <label>Lotes<input type="number" id="lotes" value="0.01" min="0.01" max="0.10" step="0.01"></label>
+          <label>Stop loss (precio)<input type="text" id="sl" inputmode="decimal" placeholder="Calcula y escribe el precio"></label>
+          <label>Take profit (precio)<input type="text" id="tp" inputmode="decimal" placeholder="Calcula y escribe el precio"></label>
+          <div class="calc" id="calc"><span>Escribe tu stop loss y take profit para ver tu riesgo.</span></div>
+          <p class="err" id="err" hidden></p>
+          <div class="lados"><button class="comprar" id="b_comprar" type="button">Comprar</button><button class="vender" id="b_vender" type="button">Vender</button></div>
+          <div class="costo">Cada operación usa <b>⚡ 1 crédito</b></div>
+        </div>
+      </div>
+      <div class="sin" id="sin_cred" hidden><span>⚡ <b>Se acabaron tus créditos de hoy.</b> <span id="sin_txt">Mañana recibes 10 más.</span></span><button class="btn sec" type="button" data-ir="paquetes" style="min-height:36px">Ver paquetes</button></div>
+      <div class="pos"><h3>Posiciones abiertas</h3>
+        <div class="tabla-x"><table><thead><tr><th>Par</th><th>Tipo</th><th>Lotes</th><th>Entrada</th><th>SL</th><th>TP</th><th>Resultado</th><th></th></tr></thead><tbody id="posiciones"></tbody></table></div>
+      </div>
+    </div>
+    <aside class="lado">
+      <div class="caja vidrio">
+        <h2>Misiones de hoy <small>se renuevan a las 00:00</small></h2>
+        <div class="mision" id="m1"><div class="fila"><span>Abre 3 operaciones con stop loss</span><span>+15 🪙</span></div><div class="barra"><i></i></div></div>
+        <div class="mision" id="m2"><div class="fila"><span>Abre 1 operación con riesgo/beneficio 1:2</span><span>+15 🪙</span></div><div class="barra"><i></i></div></div>
+        <div class="mision" id="m3"><div class="fila"><span>Completa 1 lección de la ruta</span><span>+15 🪙</span></div><div class="barra"><i></i></div></div>
+      </div>
+      <div class="caja vidrio">
+        <h2>Tu racha <small id="racha_txt">🔥 0 días</small></h2>
+        <div class="racha-sem" id="racha_sem"></div>
+        <p class="mini">Llega a 7 días y gana <b style="color:var(--ambar)">+30 🪙</b> y <b style="color:var(--azul)">+5 ⚡</b>.</p>
+      </div>
+      <div class="caja vidrio">
+        <h2>Tus activos</h2>
+        <div class="activos" id="activos"></div>
+        <p class="mini">Desbloquea Oro e Índices aprobando su evaluación de 10 preguntas en la Ruta, o con el paquete Básico.</p>
+      </div>
+    </aside>
+  </section>
+
+  <!-- RUTA -->
+  <section data-panel="ruta" class="ruta vidrio" id="ruta" hidden>
+    <div id="ruta1" style="display:grid;gap:26px;justify-items:center;width:100%"></div>
+    <div class="seccion-t">Desbloquea activos</div>
+    <div class="camino" id="evals"></div>
+    <div id="unidades" style="display:grid;gap:26px;justify-items:center;width:100%"></div>
+    <div class="final" id="final"></div>
+  </section>
+
+  <!-- RECOMPENSAS -->
+  <section data-panel="recompensas" class="panel vidrio" hidden>
+    <h2>Recompensas</h2>
+    <p>Cambia tus 🪙 ALEMA Puntos por material educativo oficial de ALEMA. Subes de nivel con los puntos que ganas.</p>
+    <div class="nivel-cab"><div class="fila"><span>Tu nivel: <b id="nv_nombre">Bronce</b></span><span id="nv_txt"></span></div><div class="barra"><i id="nv_barra"></i></div></div>
+    <div id="niveles"></div>
+  </section>
+
+  <!-- PAQUETES -->
+  <section data-panel="paquetes" class="panel vidrio" hidden>
+    <h2>Paquetes</h2>
+    <p>Créditos de consumo para la Terminal y la Ruta, más clases. Pagas con Clip y tu paquete se activa al validar tu comprobante por WhatsApp.</p>
+    <div class="grid3">
+      <div class="paquete"><h3>GRATIS</h3><div class="pr">$0</div><ul><li><span><b>⚡ 10 créditos</b> al día</span></li><li><span>Forex, misiones, racha y ruta</span></li><li><span>Recompensas canjeables</span></li></ul><button class="btn sec" type="button" disabled data-plan-btn="Gratis">Tu plan actual</button><small class="clip" aria-hidden="true" style="visibility:hidden">·</small></div>
+      <div class="paquete"><h3>BÁSICO</h3><div class="pr">$199 <small>MXN / mes</small></div><ul><li><span><b>⚡ 40 créditos</b> al día</span></li><li><span><b>Vidas ilimitadas</b> en la Ruta</span></li><li><span><b>Desbloquea Oro e Índices</b> sin evaluación</span></li><li><span><b>Etapa 2 completa</b> de la Ruta</span></li><li><span><b>Módulo básico:</b> 3 sesiones 1 a 1 con mentor al mes</span></li></ul><button class="btn" type="button" data-plan="Básico" data-plan-btn="Básico">Elegir Básico</button><small class="clip">🔒 Pago seguro con Clip</small></div>
+      <div class="paquete pro"><span class="sello">MÁS COMPLETO</span><h3>PRO</h3><div class="pr">$499 <small>MXN / mes</small></div><ul><li><span><b>⚡ Créditos ilimitados</b> y vidas ilimitadas</span></li><li><span>Todos los activos</span></li><li><span><b>Etapa 2 completa</b> de la Ruta</span></li><li><span>Módulo educativo completo</span></li><li><span><b>1 asesoría 1 a 1</b> con mentor al mes</span></li><li><span>Acceso a la <b>Prop Firm</b></span></li></ul><button class="btn" type="button" data-plan="Pro" data-plan-btn="Pro">Elegir Pro</button><small class="clip">🔒 Pago seguro con Clip</small></div>
+    </div>
+    <div class="pase vidrio"><div><small>PASE MENTOR LAB</small><b>2 sesiones 1 a 1 con mentor + 2 guías de regalo</b><span><b class="pase-pr">$120 MXN / mes</b> · Las sesiones se agendan en la fecha que indique tu mentor.</span></div><div class="pase-acc"><button class="btn" type="button" data-pase>Conocer el Pase</button><small class="clip">🔒 Pago seguro con Clip</small></div></div>
+  </section>
+
+  <!-- CLASES: llevan a la landing de ALEMA -->
+  <section data-panel="clases" class="bloqueo vidrio" hidden>
+    <div class="fondo"><div style="height:80px"></div><div style="height:80px"></div><div style="height:80px"></div><div style="height:80px"></div></div>
+    <div class="aviso-b vidrio"><div class="candado">🎓</div><h3>Clases y biblioteca</h3><p>Las clases en vivo 1 a 1 con mentor, las evaluaciones y la biblioteca de guías son parte del Programa Académico. Conoce el programa y sus costos en nuestra página.</p><a class="btn" href="https://alematradingacademy.com.mx/" target="_blank" rel="noopener" style="display:inline-grid;place-items:center;text-decoration:none">Conocer el Programa Académico ↗</a></div>
+  </section>
+
+  <details class="acuerdo vidrio">
+    <summary>Acuerdo de responsabilidad</summary>
+    <div class="txt">
+      <p>La Terminal de aprendizaje de ALEMA Trading Academy es una herramienta <b>educativa</b> que usa precios simulados. No se opera dinero real, no se abren cuentas en ningún bróker y no se obtienen ganancias ni pérdidas reales.</p>
+      <p>Los créditos son créditos de consumo para usar las herramientas del plan de aprendizaje (Terminal y Ruta educativa). El pago de un paquete no fondea ninguna cuenta ni es una inversión.</p>
+      <p>Los ALEMA Puntos se ganan con hábitos de aprendizaje y solo se canjean por material educativo oficial de ALEMA. No tienen valor en efectivo, no son transferibles y no se cambian por dinero. No es necesario comprar para ganar recompensas.</p>
+      <p>El contenido no es asesoría de inversión. Operar en los mercados financieros reales implica riesgo de pérdida.</p>
+    </div>
+  </details>
+</main>
+
+<div class="guia" aria-live="polite"><div class="burbuja" id="burbuja">¡Hola! Soy el Toro. Calcula tu stop loss y take profit antes de operar.</div><svg class="mascota" id="mascota"><use href="#toro"/></svg></div>
+
+<div class="velo" id="velo" hidden><div class="modal vidrio" role="dialog" aria-modal="true" aria-labelledby="m_t">
+  <div class="mcab"><svg id="m_masc"><use href="#toro"/></svg><div><h3 id="m_t"></h3><p id="m_p"></p></div></div>
+  <div class="opciones" id="m_ops"></div><div class="acciones" id="m_acc"></div>
+</div></div>
+<script>
+/* ALEMA Trading Lab · app real. El avance se guarda en el servidor (Apps Script + Google Sheets). */
+const API = "https://script.google.com/macros/s/AKfycbwhJRzfvx5IaeDmqgYYLMChkMvB9HBqG--LlX8tXSzq9f9MTkb0t3Vx9OLE0h1RDHxKpg/exec";
+const $ = id => document.getElementById(id);
+const guardarLocal = (k, v) => { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} };
+const leerLocal = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+let TK = leerLocal("alab_tk"), EST = null;
+
+/* ---------- estado (lo manda el servidor) ---------- */
+let cred = 0, credMax = 10, ilimitado = false, vidas = 5, vidasInf = false, pts = 0, ganados = 0, racha = 0, plan = "Gratis", programa = false, nId = 1, posiciones = [];
+const mis = { m1: [0, 3, 15], m2: [0, 1, 15], m3: [0, 1, 15] };
+let TOPE_SL = 5, bonosSL = 0, VIDA_COSTO = 2;
+let canjeados = new Set(), activos = new Set(["EURUSD", "GBPUSD", "USDJPY"]), cofres = new Set(), examenes = new Set();
+let e1 = { esferas: 0, rondas: 0, total: 0 }, e2 = { esferas: 0, rondas: 0, total: 0, abierta: false, completa: false };
+let cert1 = null, cert2 = null, PAGOS = {}, WHATSAPP_ALEMA = "528136462129";
+let REG = { evalPreg: 10, evalOk: 7, ex1Preg: 20, ex1Ok: 14, ex2Preg: 25, ex2Ok: 18 };
+
+// Las peticiones van en fila para que el servidor las reciba en orden y la pantalla no muestre un estado viejo.
+let cola = Promise.resolve();
+function api(accion, datos) { const p = cola.then(() => llamar(accion, datos)); cola = p.catch(() => {}); return p; }
+async function llamar(accion, datos) {
+  const r = await fetch(API, { method: "POST", body: JSON.stringify(Object.assign({ accion, token: TK }, datos || {})) });
+  const j = await r.json();
+  if (j.salir) { cerrarSesion(); throw new Error(j.error); }
+  if (j.estado) aplicar(j.estado);
+  (j.avisos || []).forEach((a, i) => setTimeout(() => guia("bien", a), 400 + i * 1600));
+  return j;
+}
+// Para acciones que ya se mostraron en pantalla: si falla la red, se avisa y se vuelve a pedir el estado.
+function enviar(accion, datos) { return api(accion, datos).then(j => { if (!j.ok && j.error) guia("mal", j.error); return j; })
+  .catch(() => { guia("mal", "No se pudo guardar. Revisa tu conexión."); return { ok: false }; }); }
+
+function aplicar(s) {
+  EST = s; plan = s.plan; programa = s.programa; ilimitado = s.ilimitado;
+  credMax = ilimitado ? Infinity : plan === "Básico" ? 40 : 10; cred = ilimitado ? Infinity : s.creditos;
+  vidasInf = s.vidas < 0; vidas = vidasInf ? Infinity : s.vidas;
+  pts = s.puntos; ganados = s.ganados; racha = s.racha; TOPE_SL = s.topeSL; bonosSL = s.slHoy;
+  mis.m1[0] = s.misiones.m1 || 0; mis.m2[0] = s.misiones.m2 || 0; mis.m3[0] = s.misiones.m3 || 0;
+  activos = new Set(s.activos); cofres = new Set(s.cofres); examenes = new Set(s.examenes.map(String)); canjeados = new Set(s.canjeados);
+  e1 = s.etapa1; e2 = s.etapa2; cert1 = s.cert1; cert2 = s.cert2; REG = s.reglas; VIDA_COSTO = s.reglas.vidaCosto;
+  PAGOS = s.pagos || {}; if (PAGOS.whatsapp) WHATSAPP_ALEMA = PAGOS.whatsapp;
+  $("u_nom").textContent = s.usuario;
+  pintarTodo();
+}
+function pintarTodo() { pintar(); pintarActivos(); pintarRuta(); pintarRacha(); pintarPlan(); }
+
+/* ---------- mascota ---------- */
+function guia(tipo, txt) {
+  const m = $("mascota"); m.querySelector("use").setAttribute("href", tipo === "mal" ? "#oso" : "#toro");
+  m.classList.remove("salta"); void m.offsetWidth; m.classList.add("salta");
+  const b = $("burbuja"); b.className = "burbuja " + (tipo || ""); b.textContent = txt;
+}
+
+/* ---------- precios simulados ---------- */
+const PARES = {
+  EURUSD: { p: 1.0864, d: 5, pip: 0.0001, vol: 0.00018 }, GBPUSD: { p: 1.2711, d: 5, pip: 0.0001, vol: 0.00022 },
+  USDJPY: { p: 151.42, d: 3, pip: 0.01, vol: 0.02 }, XAUUSD: { p: 2385.4, d: 2, pip: 0.1, vol: 0.45 }, NAS100: { p: 18420.5, d: 1, pip: 1, vol: 4 }
+};
+let par = "EURUSD", velas = [];
+let semilla = Date.now() % 233280; const azar = () => (semilla = (semilla * 9301 + 49297) % 233280) / 233280;
+function iniciarVelas() { const c = PARES[par]; velas = []; let p = c.p;
+  for (let i = 0; i < 70; i++) { const a = p, cl = a + (azar() - .48) * c.vol * 4; velas.push({ a, c: cl, h: Math.max(a, cl) + azar() * c.vol * 2, l: Math.min(a, cl) - azar() * c.vol * 2 }); p = cl; } }
+const precio = () => velas[velas.length - 1].c;
+const fmt = (x, p = par) => (+x).toFixed(PARES[p].d);
+const usdPip = (p, l) => 10 * (l / 0.1) * (p === "XAUUSD" ? 1 : p === "NAS100" ? 0.1 : 1);
+function dibujar() {
+  const cv = $("grafica"), ctx = cv.getContext("2d"), r = devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight; if (!w) return;
+  cv.width = w * r; cv.height = h * r; ctx.setTransform(r, 0, 0, r, 0, 0); ctx.clearRect(0, 0, w, h);
+  const n = Math.min(velas.length, Math.floor(w / 9)), vs = velas.slice(-n);
+  let max = Math.max(...vs.map(v => v.h)), min = Math.min(...vs.map(v => v.l));
+  const vis = posiciones.filter(p => p.par === par); vis.forEach(p => [p.e, p.sl, p.tp].forEach(x => { if (x) { max = Math.max(max, x); min = Math.min(min, x); } }));
+  const y = v => 12 + (max - v) / (max - min || 1) * (h - 24), paso = (w - 64) / n;
+  ctx.strokeStyle = "rgba(255,255,255,.06)"; for (let k = 1; k < 5; k++) { const gy = Math.round(h * k / 5) + .5; ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
+  vs.forEach((v, i) => { const x = i * paso + paso / 2, col = v.c >= v.a ? "#2BD49A" : "#F45B69"; ctx.strokeStyle = col; ctx.fillStyle = col;
+    ctx.beginPath(); ctx.moveTo(Math.round(x) + .5, y(v.h)); ctx.lineTo(Math.round(x) + .5, y(v.l)); ctx.stroke();
+    ctx.fillRect(x - paso * .32, Math.min(y(v.a), y(v.c)), paso * .64, Math.max(1.5, Math.abs(y(v.a) - y(v.c)))); });
+  const linea = (val, col, txt) => { const yy = y(val); ctx.setLineDash([5, 4]); ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(w - 64, yy); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = col; ctx.fillRect(w - 62, yy - 9, 60, 18); ctx.fillStyle = "#0B0F18"; ctx.font = "600 10px JetBrains Mono, monospace"; ctx.fillText(txt, w - 59, yy + 4); };
+  vis.forEach(p => { linea(p.e, "#98A2B3", "ENT"); if (p.sl) linea(p.sl, "#F45B69", "SL"); if (p.tp) linea(p.tp, "#2BD49A", "TP"); });
+  linea(precio(), "#FEA621", fmt(precio()).slice(-7));
+}
+function avanzar() { const c = PARES[par], v = velas[velas.length - 1];
+  v.c += (azar() - .49) * c.vol; v.h = Math.max(v.h, v.c); v.l = Math.min(v.l, v.c);
+  if (azar() < .1) { velas.push({ a: v.c, c: v.c, h: v.c, l: v.c }); velas.shift(); }
+  $("precio").innerHTML = fmt(precio()) + "<small>precio simulado</small>"; revisar(); pintarPos(); if (!$("app").hidden) dibujar(); }
+
+/* ---------- calculadora en vivo ---------- */
+const num = id => { const v = parseFloat(String($(id).value).replace(",", ".")); return isNaN(v) ? null : v; };
+function calcular() {
+  const sl = num("sl"), tp = num("tp"), e = precio(), c = PARES[par], l = +$("lotes").value || 0.01;
+  if (sl === null && tp === null) { $("calc").innerHTML = "<span>Escribe tu stop loss y take profit para ver tu riesgo.</span>"; return; }
+  const ps = sl !== null ? Math.abs(e - sl) / c.pip : null, pt = tp !== null ? Math.abs(tp - e) / c.pip : null;
+  $("calc").innerHTML = (ps !== null ? `<span>Stop loss a <b>${ps.toFixed(1)} pips</b> · arriesgas <b>$${(ps * usdPip(par, l)).toFixed(2)}</b></span>` : "") +
+    (pt !== null ? `<span>Take profit a <b>${pt.toFixed(1)} pips</b></span>` : "") +
+    (ps && pt ? `<span>Riesgo/beneficio <b>1:${(pt / ps).toFixed(1)}</b></span>` : "");
+}
+["sl", "tp", "lotes"].forEach(id => $(id).addEventListener("input", () => { $(id).classList.remove("malo"); $("err").hidden = true; calcular(); }));
+
+/* ---------- operaciones ---------- */
+function resultado(p) { const act = p.par === par ? precio() : p.e; return (p.t === "Compra" ? act - p.e : p.e - act) / PARES[p.par].pip * usdPip(p.par, p.l); }
+function error(txt, campo) { $("err").textContent = txt; $("err").hidden = false; if (campo) $(campo).classList.add("malo"); guia("mal", txt); }
+function abrir(t) {
+  if (cred <= 0) return;
+  const e = precio(), sl = num("sl"), tp = num("tp"), compra = t === "Compra", l = Math.min(0.10, Math.max(0.01, +$("lotes").value || 0.01));
+  if (sl !== null && (compra ? sl >= e : sl <= e)) return error(`En una ${t.toLowerCase()} el stop loss va ${compra ? "debajo" : "arriba"} del precio de entrada (${fmt(e)}).`, "sl");
+  if (tp !== null && (compra ? tp <= e : tp >= e)) return error(`En una ${t.toLowerCase()} el take profit va ${compra ? "arriba" : "debajo"} del precio de entrada (${fmt(e)}).`, "tp");
+  $("err").hidden = true;
+  posiciones.push({ id: nId++, par, t, l, e, sl, tp }); if (!ilimitado) cred--; pulso("s_cred");
+  const rb2 = sl !== null && tp !== null && Math.abs(tp - e) / Math.abs(e - sl) >= 2;
+  if (sl !== null) { const bono = bonosSL < TOPE_SL; if (bono) { bonosSL++; pts += 5; ganados += 5; pulso("s_pts"); }
+    const extra = bono ? " +5 🪙" : ` (ya juntaste los ${TOPE_SL} bonos de stop loss de hoy)`;
+    if (rb2) guia("bien", "¡Excelente! Stop loss y riesgo/beneficio 1:2 o más." + extra);
+    else guia("bien", "¡Bien! Pusiste stop loss." + extra + " Prueba un take profit al doble de distancia."); }
+  else guia("mal", "Operaste sin stop loss… así no ganas 🪙 y puedes perder de más.");
+  $("sl").value = ""; $("tp").value = ""; calcular(); pintar();
+  enviar("operar", { sl: sl !== null, rb2 });
+}
+function cerrar(id, motivo) { const p = posiciones.find(x => x.id === id); if (!p) return; const r = resultado(p);
+  posiciones = posiciones.filter(x => x.id !== id);
+  if (motivo === "TP") guia("bien", `¡Tu take profit se cumplió! ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD de práctica.`);
+  else if (motivo === "SL") guia("mal", `Se activó tu stop loss: perdiste solo lo que planeaste (${r.toFixed(2)} USD de práctica).`);
+  else guia(r >= 0 ? "bien" : "mal", `Cerraste ${p.par} con ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD de práctica.`);
+  pintar(); }
+function revisar() { posiciones.filter(p => p.par === par).forEach(p => { const a = precio(), c = p.t === "Compra";
+  if (p.sl && (c ? a <= p.sl : a >= p.sl)) cerrar(p.id, "SL"); else if (p.tp && (c ? a >= p.tp : a <= p.tp)) cerrar(p.id, "TP"); }); }
+function pintarPos() { const tb = $("posiciones");
+  if (!posiciones.length) { tb.innerHTML = '<tr><td colspan="8" class="vacio">Abre una operación para empezar.</td></tr>'; return; }
+  tb.innerHTML = posiciones.map(p => { const r = resultado(p); return `<tr><td>${p.par}</td><td>${p.t}</td><td class="num">${p.l.toFixed(2)}</td><td class="num">${fmt(p.e, p.par)}</td><td class="num">${p.sl ? fmt(p.sl, p.par) : "—"}</td><td class="num">${p.tp ? fmt(p.tp, p.par) : "—"}</td><td class="num ${r >= 0 ? "g" : "l"}">${r >= 0 ? "+" : ""}${r.toFixed(2)}</td><td><button type="button" data-cerrar="${p.id}">Cerrar</button></td></tr>`; }).join(""); }
+$("posiciones").addEventListener("click", e => { const b = e.target.closest("[data-cerrar]"); if (b) cerrar(+b.dataset.cerrar); });
+$("b_comprar").addEventListener("click", () => abrir("Compra"));
+$("b_vender").addEventListener("click", () => abrir("Venta"));
+$("par").addEventListener("change", e => { const v = e.target.value;
+  if (!activos.has(v)) { e.target.value = par; return ofrecerEval(v); }
+  par = v; iniciarVelas(); $("precio").innerHTML = fmt(precio()) + "<small>precio simulado</small>"; calcular(); dibujar(); });
+function pintarActivos() { const todos = Object.keys(PARES);
+  $("activos").innerHTML = todos.map(a => `<span class="${activos.has(a) ? "on" : "off"}">${activos.has(a) ? "✓" : "🔒"} ${a}</span>`).join("");
+  [...$("par").options].forEach(o => { o.textContent = (activos.has(o.value) ? "" : "🔒 ") + o.value + (o.value === "XAUUSD" ? " (Oro)" : o.value === "NAS100" ? " (Índice)" : ""); }); }
+function pulso(id) { const el = $(id); el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+
+/* ---------- racha ---------- */
+function pintarRacha() {
+  $("v_racha").textContent = racha; $("racha_txt").textContent = `🔥 ${racha} ${racha === 1 ? "día" : "días"}`;
+  const ult = EST && EST.ultimaRacha ? new Date(EST.ultimaRacha + "T12:00:00") : null, hoy = new Date(); hoy.setHours(12, 0, 0, 0);
+  const lunes = new Date(hoy); lunes.setDate(hoy.getDate() - ((hoy.getDay() + 6) % 7));
+  const dias = ["L", "M", "M", "J", "V", "S", "D"].map((l, i) => { const d = new Date(lunes); d.setDate(lunes.getDate() + i);
+    const on = ult && racha > 0 && d <= ult && (ult - d) / 864e5 < racha; return `<div><i class="${on ? "on" : ""}">${on ? "✓" : "·"}</i>${l}</div>`; });
+  $("racha_sem").innerHTML = dias.join("");
+}
+
+/* ---------- ruta ---------- */
+// Etapa 1: 6 unidades × 5 esferas. Cada esfera tiene de 3 a 5 rondas de 3 preguntas (el servidor decide cuántas).
+// Los bancos de preguntas de las unidades 2 a 6 se agregan en BANCOS1 (índice de esfera 0 a 29).
+const ETAPA1 = [
+  ["🚀", "Tus primeras operaciones", ["Qué es una vela", "Soporte y resistencia", "Cómo calcular tu stop loss", "Take profit y riesgo/beneficio", "Tamaño de lote y riesgo"], "#FEA621", "#FF7A1A", ["🕯", "📏", "🛡", "🎯", "⚖"]],
+  ["📈", "Leer el mercado", ["Tendencias", "Estructura de máximos y mínimos", "Líneas de tendencia", "Canales", "Marcos de tiempo"], "#5AA9FF", "#3B7BE0"],
+  ["🕯", "Patrones de velas", ["Martillo y estrella fugaz", "Envolventes", "Doji", "Pin bar", "Confirmación"], "#2BD49A", "#1FA37A"],
+  ["🛡", "Gestión del riesgo", ["% de riesgo por operación", "Cálculo de lote", "Riesgo/beneficio", "Pérdida diaria", "Rachas de pérdidas"], "#FF7A9C", "#E0446B"],
+  ["🧠", "Psicología del trader", ["Miedo y codicia", "Sobreoperar", "Operar por revancha", "Disciplina", "Trading Journal"], "#B79CFF", "#8B5CF6"],
+  ["🗺", "Tu plan de trading", ["Horarios y sesiones", "Noticias", "Reglas de entrada", "Reglas de salida", "Tu plan completo"], "#FFD36E", "#FEA621"]];
+const ETAPA2 = [
+  ["📊", "Indicadores", ["Medias móviles", "RSI", "MACD", "Bandas de Bollinger", "Combinar indicadores"], "#5AA9FF", "#3B7BE0"],
+  ["♟", "Estrategias", ["Ruptura", "Retroceso", "Rango", "Seguir la tendencia", "Backtesting"], "#2BD49A", "#1FA37A"],
+  ["📰", "Noticias y fundamentales", ["Calendario económico", "Tasas de interés", "Inflación y empleo", "Operar alrededor de noticias", "Sesiones del mercado"], "#FF7A9C", "#E0446B"],
+  ["🏛", "Operativa profesional", ["Diario avanzado", "Tus estadísticas", "Varias posiciones a la vez", "Revisión semanal", "Tu sistema de trading"], "#B79CFF", "#8B5CF6"]];
+const BANCOS1 = {
+  0: [["¿Qué indica una vela verde (alcista)?", ["El precio cerró más arriba de donde abrió", "El precio cerró más abajo de donde abrió", "No hubo movimiento"], 0],
+    ["La mecha superior de una vela muestra…", ["El precio más alto que alcanzó", "El precio de apertura", "El volumen"], 0],
+    ["El cuerpo de la vela es la distancia entre…", ["La apertura y el cierre", "El máximo y el mínimo", "Dos velas"], 0],
+    ["En una gráfica de 1 hora, cada vela representa…", ["1 hora de precio", "1 minuto", "1 día"], 0],
+    ["Una vela roja (bajista) indica que el precio…", ["Cerró más abajo de donde abrió", "Cerró más arriba", "Se quedó igual"], 0]],
+  1: [["Un soporte es una zona donde el precio…", ["Suele detener su caída", "Siempre sube sin parar", "Nunca regresa"], 0],
+    ["Una resistencia es una zona donde el precio…", ["Suele detener su subida", "Siempre rompe hacia arriba", "No tiene importancia"], 0],
+    ["Cuando un soporte se rompe, a menudo se convierte en…", ["Resistencia", "Tendencia", "Spread"], 0],
+    ["Una zona es más fuerte cuando el precio…", ["La ha respetado varias veces", "La tocó una sola vez", "Nunca la tocó"], 0],
+    ["¿Para qué te sirven soporte y resistencia?", ["Para ubicar entradas, stop loss y take profit", "Para elegir el color de las velas", "Para nada"], 0]],
+  2: [["Compras EURUSD en 1.0860 y quieres arriesgar 20 pips. ¿Dónde va tu stop loss?", ["1.0840", "1.0880", "1.0860"], 0],
+    ["Vendes EURUSD en 1.0900 con 15 pips de stop loss. ¿Dónde va?", ["1.0915", "1.0885", "1.0900"], 0],
+    ["En una compra, el stop loss va…", ["Debajo del precio de entrada", "Arriba del precio de entrada", "En el mismo precio"], 0],
+    ["En EURUSD, 1 pip equivale a…", ["0.0001 en el precio", "0.01 en el precio", "1 en el precio"], 0],
+    ["Un buen lugar para el stop loss en una compra es…", ["Un poco debajo de un soporte", "Justo encima de una resistencia", "Donde caiga"], 0]],
+  3: [["Con stop loss a 20 pips, ¿a cuántos pips va tu take profit para un 1:2?", ["40 pips", "20 pips", "10 pips"], 0],
+    ["Riesgo/beneficio 1:3 significa que…", ["Buscas ganar 3 veces lo que arriesgas", "Arriesgas 3 veces lo que ganas", "Ganas siempre"], 0],
+    ["Compras en 1.0860 con stop en 1.0840. ¿Dónde va el take profit para 1:2?", ["1.0900", "1.0880", "1.0870"], 0],
+    ["Con riesgo/beneficio 1:2, ¿qué porcentaje de aciertos necesitas para no perder?", ["Alrededor de 34 %", "90 %", "100 %"], 0],
+    ["En una venta, el take profit va…", ["Debajo del precio de entrada", "Arriba del precio de entrada", "En el stop loss"], 0]],
+  4: [["Si duplicas los lotes con el mismo stop loss, tu pérdida posible…", ["Se duplica", "Se reduce a la mitad", "No cambia"], 0],
+    ["En EURUSD, con 0.10 lotes cada pip vale aproximadamente…", ["1 USD", "10 USD", "0.01 USD"], 0],
+    ["Una regla común es arriesgar por operación…", ["1 % a 2 % de tu cuenta", "50 % de tu cuenta", "Toda tu cuenta"], 0],
+    ["Con cuenta de 1,000 USD y 1 % de riesgo, puedes perder por operación hasta…", ["10 USD", "100 USD", "1 USD"], 0],
+    ["Si tu stop loss es más amplio, para arriesgar lo mismo debes…", ["Usar menos lotes", "Usar más lotes", "Quitar el stop"], 0]]
+};
+const BANCOS2 = {
+  0: [["Una media móvil muestra…", ["El precio promedio de las últimas velas", "El precio más alto del día", "El volumen"], 0],
+    ["Si el precio está arriba de la media móvil de 200, la tendencia de fondo suele ser…", ["Alcista", "Bajista", "Lateral siempre"], 0],
+    ["Una media móvil corta (por ejemplo 20) reacciona…", ["Más rápido al precio", "Más lento", "Igual que una de 200"], 0],
+    ["Un cruce de la media corta hacia arriba de la larga suele leerse como…", ["Señal alcista", "Señal bajista", "Nada"], 0],
+    ["Las medias móviles funcionan mejor en mercados…", ["Con tendencia", "Sin movimiento", "Cerrados"], 0]]
+};
+const EVALS = [{ e: "XAUUSD", i: "🥇", t: "Evaluación: Oro (XAUUSD)" }, { e: "NAS100", i: "📈", t: "Evaluación: Índices (NAS100)" }];
+const EVAL = {
+  XAUUSD: [
+    ["¿En qué se cotiza el XAUUSD?", ["En dólares por onza troy de oro", "En euros por gramo", "En puntos de índice"], 0],
+    ["Un lote estándar de oro equivale a…", ["100 onzas", "1 onza", "100,000 onzas"], 0],
+    ["Con 1 lote, si el oro se mueve 1 USD, tu resultado cambia…", ["100 USD", "1 USD", "10 USD"], 0],
+    ["Con 0.01 lotes, si el oro se mueve 1 USD, tu resultado cambia…", ["1 USD", "100 USD", "0.01 USD"], 0],
+    ["El oro suele considerarse un activo…", ["Refugio en momentos de incertidumbre", "Sin relación con la economía", "De renta fija"], 0],
+    ["Cuando el dólar se fortalece, el oro tiende a…", ["Bajar", "Subir siempre", "Quedarse igual"], 0],
+    ["Cuando suben las tasas de interés reales, el oro tiende a…", ["Tener presión a la baja", "Subir con fuerza siempre", "No moverse"], 0],
+    ["¿Qué noticias suelen mover fuerte al oro?", ["Inflación y empleo de EE. UU.", "Resultados de una tienda local", "El clima"], 0],
+    ["Comparado con EURUSD, el oro suele ser…", ["Más volátil: stop más amplio y lote más pequeño", "Menos volátil: puedes usar más lotes", "Igual de volátil"], 0],
+    ["El oro se opera…", ["Casi 24 horas de domingo en la noche a viernes, con una pausa diaria", "Solo fines de semana", "Solo 2 horas al día"], 0]],
+  NAS100: [
+    ["¿Qué es el NAS100?", ["Un índice de 100 de las mayores empresas no financieras del Nasdaq", "Un par de divisas", "Una materia prima"], 0],
+    ["¿Qué sector tiene más peso en el NAS100?", ["Tecnología", "Agricultura", "Minería"], 0],
+    ["El precio del NAS100 se mide en…", ["Puntos", "Pips de divisa", "Onzas"], 0],
+    ["¿Cuándo suele moverse más el NAS100?", ["En la apertura de la bolsa de Nueva York", "A medianoche de México", "Los domingos"], 0],
+    ["Los resultados trimestrales de las grandes tecnológicas…", ["Pueden mover mucho el índice", "No le afectan", "Solo afectan al oro"], 0],
+    ["Si la Reserva Federal sube tasas, las tecnológicas suelen…", ["Tener presión a la baja", "Subir siempre", "No moverse"], 0],
+    ["Un gap es…", ["Un hueco de precio entre un cierre y la siguiente apertura", "Un tipo de orden", "Una comisión"], 0],
+    ["Comparado con EURUSD, el NAS100 suele ser…", ["Más volátil: lote más pequeño y stop más amplio", "Menos volátil", "Igual"], 0],
+    ["Un índice como el NAS100 sube cuando…", ["Suben las empresas con más peso en él", "Sube el oro", "Baja el volumen"], 0],
+    ["Antes de operar un índice conviene revisar…", ["El calendario de noticias y resultados", "Solo el color de la vela", "Nada"], 0]]
+};
+const mezcla = a => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map(x => x[1]);
+const CORAZON = () => vidasInf ? "❤️ ∞" : "❤️ " + vidas;
+
+function camino(etapa, unidades, est, desde) {
+  return unidades.map(([ico, t, esf, c1, c2, icos], u) => {
+    const ini = u * 5, abierta = est.esferas >= ini && (etapa === 1 || ini < 5 || e2.completa);
+    const pago = etapa === 2 && ini >= 5 && !e2.completa;
+    let h = (etapa === 2 && u === 1 && !e2.completa ? E2PAGO : "") +
+      `<div class="unidad ${abierta ? "" : "cerrada"}" style="--c1:${c1};--c2:${c2}"><span class="u-ico">${ico}</span><div class="u-txt"><small>UNIDAD ${u + desde} · 5 ESFERAS</small><b>${t}</b></div><span class="vidas${abierta && !pago ? " vidas-ruta" : ""}">${pago ? "💎" : abierta ? CORAZON() : "🔒"}</span></div>
+      <div class="camino">` + esf.map((n, i) => { const k = ini + i, e = k < est.esferas ? "hecho" : k === est.esferas && !pago ? "actual" : "bloq";
+        const dots = e === "actual" && est.total ? `<div class="puntos-r">${Array.from({ length: est.total }, (_, j) => `<i class="${j < est.rondas ? "on" : ""}"></i>`).join("")}</div>` : "";
+        const aqui = e === "actual" ? `<div class="aqui"><svg><use href="#toro"/></svg><span>¡Aquí vas!</span></div>` : "";
+        return `<div class="paso">${aqui}<button class="nodo ${e}" type="button" data-esf="${etapa}:${k}" aria-label="${n}" style="--c1:${c1};--c2:${c2}">${e === "hecho" ? "✓" : e === "bloq" ? "🔒" : (icos ? icos[i] : ico)}</button>${dots}<div class="nodo-et">${n}</div></div>`; }).join("");
+    if (etapa === 1) { const listo = est.esferas >= ini + 5, ab = cofres.has(u);
+      h += `<div class="paso"><button class="nodo cofre ${listo && !ab ? "listo" : ""}" type="button" data-cofre="${u}" aria-label="Cofre de la unidad">${ab ? "📭" : "🎁"}</button><div class="nodo-et">${ab ? "Cofre abierto" : "Cofre de la unidad · +20 🪙"}</div></div>`; }
+    return h + `</div>`;
+  }).join("");
+}
+function pintarRuta() {
+  $("ruta1").innerHTML = camino(1, ETAPA1.slice(0, 1), e1, 1);
+  $("evals").innerHTML = EVALS.map(v => { const ok = activos.has(v.e);
+    return `<div class="paso"><button class="nodo ${ok ? "hecho" : "eval"}" type="button" data-eval="${v.e}" aria-label="${v.t}">${ok ? "✓" : v.i}</button><div class="nodo-et">${v.t}<br><small>${ok ? "aprobada" : REG.evalPreg + " preguntas · aprueba con " + REG.evalOk}</small></div></div>`; }).join("");
+  // unidades 2 a 6 (las esferas siguen numeradas desde la 5)
+  $("unidades").innerHTML = camino(1, ETAPA1, e1, 1).split('<div class="unidad').slice(2).map(x => '<div class="unidad' + x).join("");
+  pintarFinal();
+}
+function pintarFinal() {
+  const rutaCompleta = e1.esferas >= 30, ok1 = examenes.has("1");
+  let h = `<div class="meta"><button class="trofeo ${rutaCompleta ? "" : "bloq"}" type="button" data-examen="1" aria-label="Examen final">${ok1 ? "🏆" : "🎓"}</button>
+    <h3>${ok1 ? "¡Ruta completada!" : "Examen final"}</h3>
+    <p>${ok1 ? "Aprobaste el examen final de ALEMA Trading Lab." : rutaCompleta ? `${REG.ex1Preg} preguntas de las 6 unidades. Apruebas con ${REG.ex1Ok}. Al aprobar recibes tu certificado y un código de descuento.` : "Termina las 6 unidades para presentar el examen final y ganar tu certificado."}</p>
+    ${rutaCompleta && !ok1 ? '<button class="btn" type="button" data-examen="1">Presentar examen final</button>' : ""}</div>`;
+  if (ok1) h += cajaCert(1, cert1);
+  if (!cert1) h += `<div class="etapa2"><span class="e-ico">🔒</span><div><b>Etapa 2 · Ruta avanzada</b><span>Indicadores, estrategias, noticias y operativa profesional. <b>Al generar tu certificado se abre gratis la Unidad 7.</b> Las unidades 8 a 10 se abren con paquete Básico o Pro, o vienen incluidas si entras al Programa. Al terminarla ganas el <b>Certificado 2</b> y un código de <b>2 meses del Programa a $990 MXN</b> cada uno.</span></div></div>`;
+  else {
+    const fin2 = e2.esferas >= 20, ok2 = examenes.has("2");
+    h += `<div class="seccion-t" style="margin-top:6px">🔓 Etapa 2 · Ruta avanzada</div>` + camino(2, ETAPA2, e2, 7) +
+      `<div class="meta"><button class="trofeo ${fin2 && e2.completa ? "" : "bloq"}" type="button" data-examen="2" aria-label="Examen final 2">${ok2 ? "🏆" : "🎓"}</button><h3>${ok2 ? "¡Etapa 2 completada!" : "Examen final 2"}</h3>
+      <p>${ok2 ? "Aprobaste el examen final 2." : `Al terminar la Etapa 2 presentas el examen final 2: <b>${REG.ex2Preg} preguntas</b>, apruebas con <b>${REG.ex2Ok}</b>. Ganas el <b>Certificado 2</b> y un código de <b>2 meses del Programa a $990 MXN</b> cada uno.`}</p>
+      ${fin2 && e2.completa && !ok2 ? '<button class="btn" type="button" data-examen="2">Presentar examen final 2</button>' : ""}</div>`;
+    if (ok2) h += cajaCert(2, cert2);
+  }
+  $("final").innerHTML = h;
+  if (cert1) dibujarCert(1, cert1); if (cert2) dibujarCert(2, cert2);
+}
+function cajaCert(et, c) {
+  const benef = et === 1 ? "Primer mes del Programa Académico por $990 MXN" : "2 meses del Programa Académico a $990 MXN cada uno";
+  return `<div class="cert-caja vidrio">` + (c ? `<canvas id="cert${et}" width="1414" height="1000"></canvas>
+    <div class="acciones"><button class="btn" type="button" data-descargar="${et}">Descargar certificado</button></div>
+    <div class="codigo"><div><span>Tu código por el esfuerzo · un solo uso</span><b>${c.codigo}</b><span>${benef}. Válido 5 días, hasta el ${c.vence}.${c.estadoCodigo && c.estadoCodigo !== "Vigente" ? ` · <b>${c.estadoCodigo}</b>` : ""}</span></div><div class="acciones"><a class="btn" href="${waCanje(et, c)}" target="_blank" rel="noopener" style="display:inline-grid;place-items:center;text-decoration:none">Canjear ahora por WhatsApp</a><button class="btn sec" type="button" data-copiar="${c.codigo}">Copiar código</button></div></div>
+    <p class="mini">Ya generaste tu certificado. Solo se emite uno por cuenta.</p>` :
+    `<h3 style="margin:0">Genera tu certificado</h3><p class="mini">Escribe tu nombre completo tal como quieres que aparezca. Solo se genera <b>un certificado por cuenta</b> y después no se puede cambiar.</p>
+    <div class="cert-form"><label>Nombre completo<input id="cert_nom${et}" autocomplete="name" placeholder="Ej. Carlos Ramírez López"></label><p class="err" id="cert_err${et}" hidden></p>
+    <button class="btn" type="button" data-gencert="${et}">Generar mi certificado</button></div>`) + `</div>`;
+}
+function waCanje(et, c) { c = c || cert1; et = et || 1; if (!c) return `https://wa.me/${WHATSAPP_ALEMA}`;
+  const t = `Hola, terminé la Etapa ${et} de ALEMA Trading Lab y quiero canjear mi código ${c.codigo} (folio ${c.folio}) ${et === 1 ? "para mi primer mes del Programa Académico a $990" : "para 2 meses del Programa Académico a $990 cada uno"}. Mi nombre es ${c.nombre}.`;
+  return `https://wa.me/${WHATSAPP_ALEMA}?text=${encodeURIComponent(t)}`; }
+const E2PAGO = `<div class="etapa2 e2pago"><span class="e-ico">💎</span><div><b>Unidades 8 a 10 · con paquete</b><span>Se abren con el paquete <b>Básico</b> o <b>Pro</b>, o vienen <b>incluidas</b> si entras al Programa con tu código de $990.</span></div><button class="btn" type="button" data-e2pago>Ver opciones</button></div>`;
+function e2Pago() {
+  ventana("bien", "💎 Unidades 8 a 10 con paquete", "La Unidad 7 es gratis por tu certificado. Para seguir con Estrategias, Noticias y Operativa profesional elige el paquete Básico o Pro, o canjea tu código de $990 y entra al Programa: ahí la Etapa 2 completa viene incluida.", [
+    ["Ver paquetes", () => { cerrarV(); ir("paquetes"); }], ["Canjear mi código por WhatsApp", () => { cerrarV(); abrirUrl(waCanje(1, cert1)); }], ["Ahora no", cerrarV, "sec"]]);
+}
+function dibujarCert(et, c) {
+  const cv = $("cert" + et); if (!cv) return; const x = cv.getContext("2d"), W = 1414, H = 1000;
+  const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, "#0D1320"); g.addColorStop(1, "#070B13"); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.strokeStyle = "#FEA621"; x.lineWidth = 6; x.strokeRect(40, 40, W - 80, H - 80); x.strokeStyle = "rgba(254,166,33,.35)"; x.lineWidth = 2; x.strokeRect(60, 60, W - 120, H - 120);
+  x.textAlign = "center"; x.fillStyle = "#FEA621"; x.font = "800 34px Lexend, sans-serif"; x.fillText("ALEMA TRADING ACADEMY", W / 2, 170);
+  x.fillStyle = "#98A2B3"; x.font = "500 26px Lexend, sans-serif"; x.fillText("otorga el presente", W / 2, 240);
+  x.fillStyle = "#E9EDF4"; x.font = "800 72px Lexend, sans-serif"; x.fillText(et === 1 ? "Certificado" : "Certificado Avanzado", W / 2, 330);
+  x.fillStyle = "#98A2B3"; x.font = "500 28px Lexend, sans-serif"; x.fillText("a", W / 2, 400);
+  x.fillStyle = "#FFD36E"; x.font = "700 64px Lexend, sans-serif"; x.fillText(c.nombre, W / 2, 490, W - 200);
+  x.fillStyle = "#E9EDF4"; x.font = "500 28px Lexend, sans-serif";
+  if (et === 1) { x.fillText("por completar la Ruta de Aprendizaje de ALEMA Trading Lab:", W / 2, 580); x.fillText("6 unidades de análisis técnico, gestión del riesgo y psicología del trader.", W / 2, 625); }
+  else { x.fillText("por completar la Etapa 2 · Ruta avanzada de ALEMA Trading Lab:", W / 2, 580); x.fillText("indicadores, estrategias, noticias y operativa profesional.", W / 2, 625); }
+  x.fillStyle = "#98A2B3"; x.font = "500 24px Lexend, sans-serif"; x.fillText(`Fecha: ${c.fecha}   ·   Folio: ${c.folio}`, W / 2, 760);
+  x.fillStyle = "#6B7588"; x.font = "400 18px Lexend, sans-serif"; x.fillText("Certificado de formación educativa con práctica en terminal simulada. No acredita experiencia en mercados reales.", W / 2, 880);
+}
+
+/* ---------- clics de la ruta ---------- */
+$("ruta").addEventListener("click", e => {
+  const t = e.target;
+  if (t.closest("[data-e2pago]")) return e2Pago();
+  const cf = t.closest("[data-cofre]");
+  if (cf) { const u = +cf.dataset.cofre;
+    if (cofres.has(u)) return guia("bien", "Ya abriste este cofre.");
+    if (e1.esferas < (u + 1) * 5) return guia("mal", "🎁 El cofre se abre al terminar las 5 esferas de la unidad.");
+    cofres.add(u); pts += 20; ganados += 20; pintar(); pintarRuta(); return enviar("cofre", { unidad: u }); }
+  const ev = t.closest("[data-eval]"); if (ev) { if (!activos.has(ev.dataset.eval)) ofrecerEval(ev.dataset.eval); return; }
+  const ex = t.closest("[data-examen]"); if (ex) return examen(+ex.dataset.examen);
+  const gc = t.closest("[data-gencert]"); if (gc) return generarCert(+gc.dataset.gencert);
+  const dl = t.closest("[data-descargar]"); if (dl) { try { const a = document.createElement("a"); a.href = $("cert" + dl.dataset.descargar).toDataURL("image/png"); a.download = "Certificado_ALEMA_Trading_Lab.png"; a.click(); guia("bien", "📥 Descargando tu certificado."); } catch (err) { guia("mal", "No se pudo descargar. Intenta desde otro navegador."); } return; }
+  const cp = t.closest("[data-copiar]"); if (cp) { const c = cp.dataset.copiar; (navigator.clipboard ? navigator.clipboard.writeText(c) : Promise.reject()).then(() => guia("bien", "📋 Código copiado.")).catch(() => guia("bien", `Tu código: ${c}`)); return; }
+  const b = t.closest("[data-esf]"); if (!b) return;
+  const [et, k] = b.dataset.esf.split(":").map(Number), est = et === 1 ? e1 : e2;
+  if (et === 2 && k >= 5 && !e2.completa) return e2Pago();
+  if (k > est.esferas) return guia("mal", "🔒 Termina la esfera anterior para desbloquear esta.");
+  if (k < est.esferas) return guia("bien", "Ya completaste esta esfera. ¡Sigue con la siguiente!");
+  if (vidas <= 0) return sinVidas();
+  const banco = (et === 1 ? BANCOS1 : BANCOS2)[k];
+  if (!banco) return guia("bien", "📚 Estamos preparando el contenido de esta esfera. ¡Muy pronto!");
+  const nombre = (et === 1 ? ETAPA1 : ETAPA2)[Math.floor(k / 5)][2][k % 5], ronda = est.rondas + 1;
+  serie(mezcla(banco).slice(0, 3), `${nombre} · Ronda ${ronda}${est.total ? " de " + est.total : ""}`, false, () => {
+    enviar("ronda", { etapa: et, esfera: k }).then(j => { if (j.ok && !j.completada) guia("bien", `¡Ronda ${ronda} lista! Te faltan ${j.total - ronda}.`); });
+  });
+});
+// Serie de preguntas. En lecciones una respuesta mala quita vida y se puede reintentar; en evaluaciones se contesta una vez.
+function serie(qs, titulo, unaVez, fin, k = 0, buenas = 0) {
+  if (k >= qs.length) return fin(buenas);
+  if (vidas <= 0) return sinVidas();
+  const [q, ops, ok] = qs[k], orden = mezcla(ops.map((o, n) => [o, n === ok]));
+  pregunta(`${titulo} · ${k + 1}/${qs.length}`, q, orden.map(x => x[0]), orden.findIndex(x => x[1]), bien => serie(qs, titulo, unaVez, fin, k + 1, buenas + (bien ? 1 : 0)), unaVez);
+}
+function perderVida() { if (vidasInf) return; vidas = Math.max(0, vidas - 1); pulso("s_vid"); pintar(); enviar("fallo"); }
+function sinVidas() {
+  ventana("mal", "Te quedaste sin vidas", `Tus vidas se recargan cada día. También puedes recargar una vida con ${VIDA_COSTO} ⚡ créditos, o tener vidas ilimitadas con un paquete.`, [
+    [`Recargar 1 vida · ${VIDA_COSTO} ⚡`, () => { if (cred < VIDA_COSTO) return guia("mal", "No tienes créditos suficientes.");
+      cerrarV(); enviar("recargar_vida").then(j => { if (j.ok) guia("bien", "❤️ ¡Vida recargada! A seguir aprendiendo."); }); }],
+    ["Ver paquetes", () => { cerrarV(); ir("paquetes"); }, "sec"]]);
+}
+
+/* ---------- evaluaciones de activos y exámenes ---------- */
+function ofrecerEval(activo) {
+  ventana("bien", `Desbloquea ${activo}`, `Contesta ${REG.evalPreg} preguntas sobre ${activo}. Apruebas con ${REG.evalOk} aciertos o más. Cada respuesta incorrecta cuesta 1 ❤️.`, [
+    ["Empezar evaluación", () => evaluar(activo)], ["Desbloquear con el paquete Básico", () => basico(activo), "sec"]]);
+}
+function evaluar(activo) {
+  serie(mezcla(EVAL[activo]).slice(0, REG.evalPreg), `Evaluación ${activo}`, true, buenas => {
+    enviar("eval_activo", { activo, aciertos: buenas }).then(j => {
+      if (j.aprobado) { ventana("bien", `¡Aprobaste! ${buenas}/${REG.evalPreg}`, `Ya puedes operar ${activo} en la Terminal.`, [["Ir a la Terminal", () => { cerrarV(); ir("terminal"); }]]); }
+      else if (j.ok) { ventana("mal", `Esta vez no: ${buenas}/${REG.evalPreg}`, `Necesitas ${REG.evalOk} aciertos. Puedes seguir practicando en Forex y volver a intentarlo, o desbloquear ${activo} con el paquete Básico, que incluye 3 sesiones 1 a 1 con mentor al mes.`, [
+        ["Ver paquete Básico", () => basico(activo)], ["Seguir en Forex", cerrarV, "sec"]]); guia("mal", "No pasa nada: repasa y vuelve a intentarlo."); }
+    });
+  });
+}
+function basico(activo) {
+  ventana("bien", "Paquete Básico · $199 MXN al mes", `Desbloquea ${activo} y los demás activos, te da 40 ⚡ al día, vidas ilimitadas y el módulo básico con 3 sesiones 1 a 1 con mentor al mes.`, [
+    ["Ver paquetes", () => { cerrarV(); ir("paquetes"); }], ["Ahora no", cerrarV, "sec"]]);
+}
+function examen(et) {
+  if (examenes.has(String(et))) return guia("bien", "¡Ya aprobaste este examen!");
+  if (et === 1 && e1.esferas < 30) return guia("mal", "🔒 Termina las 6 unidades para presentar el examen final.");
+  if (et === 2 && !e2.completa) return e2Pago();
+  if (et === 2 && e2.esferas < 20) return guia("mal", "🔒 Termina las 4 unidades de la Etapa 2 para presentar el examen final 2.");
+  const preg = et === 1 ? REG.ex1Preg : REG.ex2Preg, ok = et === 1 ? REG.ex1Ok : REG.ex2Ok;
+  const banco = et === 1 ? Object.values(BANCOS1).flat().concat(EVAL.XAUUSD, EVAL.NAS100) : Object.values(BANCOS2).flat();
+  ventana("bien", et === 1 ? "Examen final" : "Examen final 2", `${preg} preguntas. Apruebas con ${ok} aciertos. Cada error cuesta 1 ❤️.`, [
+    ["Empezar examen", () => serie(mezcla(banco).slice(0, preg), et === 1 ? "Examen final" : "Examen final 2", true, buenas => {
+      enviar("examen", { etapa: et, aciertos: buenas }).then(j => {
+        if (j.aprobado) { ventana("bien", `¡Aprobaste! ${buenas}/${preg}`, `Escribe tu nombre para generar tu certificado y recibir tu código ${et === 1 ? "para tu primer mes del Programa Académico a $990 MXN" : "de 2 meses del Programa a $990 MXN cada uno"}, válido 5 días.`); guia("bien", "🏆 ¡Felicidades!"); }
+        else if (j.ok) ventana("mal", `Esta vez no: ${buenas}/${preg}`, `Necesitas ${ok}. Repasa tus esferas y vuelve a intentarlo.`);
+      }); })], ["Más tarde", cerrarV, "sec"]]);
+}
+function generarCert(et) {
+  const nom = $("cert_nom" + et).value.trim().replace(/\s+/g, " ");
+  if (nom.split(" ").length < 2 || nom.length < 6) { $("cert_err" + et).textContent = "Escribe tu nombre completo (nombre y apellidos)."; $("cert_err" + et).hidden = false; return; }
+  ventana("bien", "¿Tu nombre está bien escrito?", `Tu certificado dirá: "${nom}". Solo se genera uno por cuenta y después no se puede cambiar.`, [
+    ["Sí, generar certificado", () => { cerrarV(); guia("bien", "Generando tu certificado…");
+      enviar("certificado", { etapa: et, nombre: nom }).then(j => { if (!j.ok) return;
+        if (et === 1) { guia("bien", "🎓 ¡Tu certificado está listo! Se desbloqueó la Etapa 2.");
+          ventana("bien", "🔓 ¡Desbloqueaste la Etapa 2!", "Tu certificado está listo y se abrió gratis la Unidad 7 · Indicadores. Las unidades 8 a 10 se abren con paquete Básico o Pro, o vienen incluidas si entras al Programa con tu código. También te enviamos tu código por correo.", [["Empezar la Etapa 2", () => { cerrarV(); document.querySelector("[data-esf='2:0']")?.scrollIntoView({ behavior: "smooth", block: "center" }); }], ["Ver mi certificado", cerrarV, "sec"]]); }
+        else { guia("bien", "🎓 ¡Tu Certificado 2 está listo!"); ventana("bien", "🎓 ¡Certificado 2 listo!", "Te enviamos tu código de 2 meses del Programa a $990 por correo. Canjéalo por WhatsApp antes de que venza."); } }); }],
+    ["Corregir", cerrarV, "sec"]]);
+}
+
+/* ---------- ventana ---------- */
+function ventana(tipo, t, p, botones) {
+  $("m_masc").querySelector("use").setAttribute("href", tipo === "mal" ? "#oso" : "#toro");
+  $("m_t").textContent = t; $("m_p").textContent = p; $("m_ops").innerHTML = ""; const acc = $("m_acc"); acc.innerHTML = "";
+  (botones || [["Entendido", cerrarV]]).forEach(([txt, fn, cls]) => { const b = document.createElement("button"); b.type = "button"; b.className = "btn " + (cls || ""); b.textContent = txt; b.addEventListener("click", fn); acc.appendChild(b); });
+  $("velo").hidden = false;
+}
+function cerrarV() { $("velo").hidden = true; }
+function pregunta(t, q, ops, buena, fin, unaVez) {
+  ventana("bien", t, q, []); const box = $("m_ops"); let listo = false;
+  ops.forEach((o, k) => { const b = document.createElement("button"); b.type = "button"; b.textContent = o; box.appendChild(b);
+    b.addEventListener("click", () => { if (listo || b.classList.contains("mal")) return;
+      if (k === buena) { listo = true; b.classList.add("bien"); $("m_masc").querySelector("use").setAttribute("href", "#toro"); guia("bien", "¡Correcto! 💪");
+        $("m_acc").innerHTML = ""; const c = document.createElement("button"); c.type = "button"; c.className = "btn"; c.textContent = "Continuar"; c.addEventListener("click", () => { cerrarV(); fin(true); }); $("m_acc").appendChild(c); }
+      else { b.classList.add("mal"); perderVida(); $("m_masc").querySelector("use").setAttribute("href", "#oso"); guia("mal", vidas > 0 ? `Uy, esa no.${vidasInf ? "" : ` Te quedan ${vidas} ❤️.`}` : "Te quedaste sin vidas.");
+        if (unaVez) { listo = true; const c = document.createElement("button"); c.type = "button"; c.className = "btn"; c.textContent = "Siguiente"; c.addEventListener("click", () => { cerrarV(); fin(false); }); $("m_acc").innerHTML = ""; $("m_acc").appendChild(c); }
+        else if (vidas <= 0) { cerrarV(); sinVidas(); } } }); });
+}
+$("velo").addEventListener("click", e => { if (e.target === $("velo") && !$("m_ops").children.length) cerrarV(); });
+
+/* ---------- recompensas ---------- */
+const NIVELES = [
+  { n: "Bronce", min: 0, items: [["Checklist", "Antes de operar", "Lista de 10 puntos para revisar antes de cada operación.", 150], ["Plantilla", "Plan de trading", "Define tu riesgo, horario y reglas.", 250], ["Plantilla", "Trading Journal", "Registra y analiza tus operaciones.", 350]] },
+  { n: "Plata", min: 1000, items: [["Guía PDF", "Manual del Trader Básico", "Conceptos clave para operar con método.", 600], ["Guía PDF", "Guía de Acción del Precio", "Lee el precio sin indicadores.", 750], ["Clase grabada", "Gestión de riesgo", "Clase de 40 min del Programa Académico.", 900]] },
+  { n: "Oro", min: 2500, items: [["Sesión 1 a 1", "Revisión con mentor", "30 min revisando tus operaciones con un mentor.", 1500], ["Clase en vivo", "Clase grupal", "Una clase en vivo del Programa.", 1800], ["Herramienta", "Prop Firm 7 días", "Prueba la Terminal Prop de ALEMA por 7 días.", 2200]] }
+];
+const clave = nom => nom === "Antes de operar" ? "Checklist antes de operar" : nom; // nombre en el servidor
+function nivelActual() { return NIVELES.reduce((a, n) => ganados >= n.min ? n : a, NIVELES[0]); }
+function pintarRecompensas() {
+  const nv = nivelActual(), sig = NIVELES[NIVELES.indexOf(nv) + 1];
+  $("nv_nombre").textContent = nv.n;
+  $("nv_txt").textContent = sig ? `${ganados} de ${sig.min} 🪙 ganados para nivel ${sig.n}` : `${ganados} 🪙 ganados · nivel máximo`;
+  $("nv_barra").style.width = sig ? Math.min(100, (ganados - nv.min) / (sig.min - nv.min) * 100) + "%" : "100%";
+  $("niveles").innerHTML = NIVELES.map(n => { const abierto = ganados >= n.min;
+    return `<div class="nivel ${abierto ? "" : "cerrado"}" style="margin-top:14px"><h3>${abierto ? "🔓" : "🔒"} Nivel ${n.n} <small>${abierto ? "" : `· se abre con ${n.min} 🪙 ganados`}</small></h3><div class="grid3">` +
+      n.items.map(([tipo, nom, desc, c]) => { const ya = canjeados.has(clave(nom));
+        const btn = ya ? `<button class="btn hecho" type="button" disabled>Canjeado ✓</button>` : !abierto ? `<button class="btn" type="button" disabled>Nivel ${n.n}</button>` :
+          pts < c ? `<button class="btn" type="button" disabled>Te faltan ${c - pts} 🪙</button>` : `<button class="btn" type="button" data-canje="${nom}" data-costo="${c}">Canjear</button>`;
+        return `<div class="premio"><span class="tipo">${tipo}</span><b>${nom}</b><p>${desc}</p><span class="pts">${c} 🪙</span>${btn}</div>`; }).join("") + `</div></div>`; }).join("");
+}
+$("niveles").addEventListener("click", e => { const b = e.target.closest("[data-canje]"); if (!b) return; const c = +b.dataset.costo, k = b.dataset.canje;
+  if (pts < c || canjeados.has(clave(k))) return;
+  ventana("bien", `¿Canjear "${k}"?`, `Se descuentan ${c} 🪙 de tus puntos.`, [["Sí, canjear", () => { cerrarV(); b.disabled = true;
+    enviar("canjear", { recompensa: clave(k) }).then(j => { if (!j.ok) return; guia("bien", `🎁 ¡Canjeaste "${k}"!`);
+      ventana("bien", "Recompensa canjeada", k === "Revisión con mentor" || k === "Clase grupal" ? "Te escribiremos por correo para agendarla." : `Te enviaremos "${k}" a tu correo.`); }); }], ["Cancelar", cerrarV, "sec"]]); });
+
+/* ---------- pintar y pestañas ---------- */
+function pintar() {
+  $("v_cred").textContent = ilimitado ? "∞" : cred; $("v_max").textContent = ilimitado ? "" : "/" + credMax; $("v_vid").textContent = vidasInf ? "∞" : vidas; $("v_pts").textContent = pts;
+  $("b_comprar").disabled = $("b_vender").disabled = cred <= 0; $("sin_cred").hidden = cred > 0;
+  $("sin_txt").textContent = plan === "Básico" ? "Mañana recibes 40 más." : "Mañana recibes 10 más.";
+  Object.entries(mis).forEach(([id, [a, t]]) => { $(id).querySelector(".barra i").style.width = Math.min(100, a / t * 100) + "%"; $(id).classList.toggle("hecha", a >= t); });
+  document.querySelectorAll(".vidas-ruta").forEach(el => el.textContent = CORAZON());
+  pintarPos(); pintarRecompensas();
+}
+function pintarPlan() {
+  document.querySelectorAll("[data-plan-btn]").forEach(b => { const k = b.dataset.planBtn, mio = k === plan;
+    if (k === "Gratis") { b.textContent = mio ? "Tu plan actual" : "Plan gratis"; return; }
+    b.disabled = mio; b.textContent = mio ? `Tu plan actual${EST && EST.planVence ? " · vence " + EST.planVence : ""}` : `Elegir ${k}`; });
+}
+const FRASES = { terminal: ["bien", "Calcula tu stop loss y take profit antes de operar."], ruta: ["bien", "Cada lección te acerca a nuevos activos. ¡Cuida tus vidas!"],
+  recompensas: ["bien", "Junta 🪙 con buenos hábitos y súbete de nivel."], paquetes: ["bien", "Con Pro tienes un mentor que revisa tus operaciones conmigo."], clases: ["bien", "¿Quieres clases en vivo con mentor? Conoce el Programa Académico."] };
+function ir(tab) { document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab ? "true" : "false"));
+  document.querySelectorAll("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== tab); guia(...FRASES[tab]); if (tab === "terminal") dibujar(); scrollTo(0, 0); }
+document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => ir(b.dataset.tab)));
+document.querySelectorAll("[data-ir]").forEach(b => b.addEventListener("click", () => ir(b.dataset.ir)));
+
+/* ---------- pagos con Clip (activación manual con comprobante por WhatsApp) ---------- */
+const CLIP = { "Básico": ["Paquete Básico", "$199 MXN al mes", "basico"], "Pro": ["Paquete Pro", "$499 MXN al mes", "pro"], "Mentor": ["Pase Mentor Lab", "$120 MXN al mes", "mentor"] };
+function abrirUrl(url) { window.open(url, "_blank", "noopener"); }
+function pagar(k) {
+  const [nom, pr, cl] = CLIP[k], url = PAGOS[cl];
+  const t = `Hola, pagué el ${nom} (${pr}) de ALEMA Trading Lab. Mi usuario es ${$("u_nom").textContent}. Te envío mi comprobante para activarlo.`;
+  ventana("bien", `${nom} · ${pr}`, `1. Paga con Clip (tarjeta de débito o crédito). 2. Envía tu comprobante por WhatsApp con tu usuario. 3. Validamos tu pago y activamos tu ${k === "Mentor" ? "pase" : "paquete"}. El pago es mensual: cada mes renuevas con el mismo link.`, [
+    ["Pagar con Clip", () => url ? abrirUrl(url) : guia("mal", "El link de pago no está disponible. Escríbenos por WhatsApp.")],
+    ["Enviar comprobante por WhatsApp", () => { abrirUrl(`https://wa.me/${WHATSAPP_ALEMA}?text=${encodeURIComponent(t)}`); enviar("reportar_pago", { paquete: k }); }], ["Ahora no", cerrarV, "sec"]]);
+}
+document.querySelectorAll("[data-pase]").forEach(b => b.addEventListener("click", () => pagar("Mentor")));
+document.querySelectorAll("[data-plan]").forEach(b => b.addEventListener("click", () => pagar(b.dataset.plan)));
+
+/* ---------- acceso ---------- */
+function entrar(token, estado) {
+  TK = token; guardarLocal("alab_tk", token); aplicar(estado);
+  $("acceso").hidden = true; $("app").hidden = false; document.querySelector(".guia").hidden = false; dibujar();
+  guia("bien", `¡Hola, ${estado.nombre.split(" ")[0]}! Calcula tu stop loss y take profit antes de operar.`);
+}
+function cerrarSesion() { TK = null; guardarLocal("alab_tk", null); posiciones = []; $("app").hidden = true; document.querySelector(".guia").hidden = true; $("acceso").hidden = false; cerrarV(); document.querySelector("[data-acc=entrar]").click(); }
+function errAcc(m) { $("acc_err").textContent = m; $("acc_err").hidden = false; }
+function ocupado(form, si) { const b = form.querySelector("button[type=submit]"); b.disabled = si; b.dataset.txt = b.dataset.txt || b.textContent; b.textContent = si ? "Un momento…" : b.dataset.txt; }
+document.querySelectorAll("[data-acc]").forEach(b => b.addEventListener("click", () => { document.querySelectorAll("[data-acc]").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  $("f_entrar").hidden = b.dataset.acc !== "entrar"; $("f_registro").hidden = b.dataset.acc !== "registro"; $("acc_err").hidden = true; }));
+$("f_entrar").addEventListener("submit", async e => { e.preventDefault(); $("acc_err").hidden = true;
+  if (!$("e_usr").value.trim() || !$("e_pass").value) return errAcc("Escribe tu usuario y contraseña.");
+  ocupado(e.target, true);
+  try { const j = await api("login", { usuario: $("e_usr").value.trim(), pass: $("e_pass").value }); if (!j.ok) errAcc(j.error); else { $("e_pass").value = ""; entrar(j.token, j.estado); } }
+  catch (err) { errAcc("No se pudo conectar. Revisa tu internet e intenta de nuevo."); } finally { ocupado(e.target, false); } });
+$("f_registro").addEventListener("submit", async e => { e.preventDefault(); $("acc_err").hidden = true; const v = id => $(id).value.trim(); let m = "";
+  if (!v("r_nom")) m = "Escribe tu nombre."; else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("r_mail"))) m = "Escribe un correo válido.";
+  else if (!/^[a-zA-Z][a-zA-Z0-9._-]{3,29}$/.test(v("r_usr"))) m = "El usuario debe empezar con letra y tener de 4 a 30 letras o números, sin espacios.";
+  else if ($("r_pass").value.length < 8) m = "La contraseña debe tener al menos 8 caracteres."; else if (!$("r_acepta").checked) m = "Acepta el acuerdo de responsabilidad para continuar.";
+  if (m) return errAcc(m);
+  ocupado(e.target, true);
+  try { const j = await api("registro", { nombre: v("r_nom"), correo: v("r_mail"), usuario: v("r_usr"), pass: $("r_pass").value, acepta: true, web: $("r_web").value });
+    if (!j.ok) errAcc(j.error); else { $("r_pass").value = ""; entrar(j.token, j.estado); ventana("bien", "¡Bienvenido a ALEMA Trading Lab!", "Tienes 10 ⚡ créditos al día para practicar en la Terminal y 5 ❤️ vidas para la Ruta. Pon siempre tu stop loss: cada vez ganas 🪙 que cambias por material de ALEMA."); } }
+  catch (err) { errAcc("No se pudo conectar. Revisa tu internet e intenta de nuevo."); } finally { ocupado(e.target, false); } });
+$("ver_acuerdo").addEventListener("click", () => ventana("bien", "Acuerdo de responsabilidad", document.querySelector(".acuerdo .txt").innerText));
+$("salir").addEventListener("click", () => { api("salir").catch(() => {}); cerrarSesion(); });
+document.querySelector(".guia").hidden = true;
+// Al volver a la pestaña o cambiar de día, se pide el estado actualizado.
+document.addEventListener("visibilitychange", () => { if (!document.hidden && TK && !$("app").hidden) api("estado").catch(() => {}); });
+
+iniciarVelas(); $("precio").innerHTML = fmt(precio()) + "<small>precio simulado</small>";
+pintarActivos(); pintarRuta(); pintar();
+addEventListener("resize", () => { if (!$("app").hidden) dibujar(); });
+setInterval(avanzar, 700);
+if (TK) { $("acc_cargando").hidden = false; $("f_entrar").hidden = true;
+  api("estado").then(j => { if (j.ok) entrar(TK, j.estado); }).catch(() => {}).finally(() => { $("acc_cargando").hidden = true; if ($("app").hidden) $("f_entrar").hidden = false; }); }
+</script>
+</body>
+</html>
