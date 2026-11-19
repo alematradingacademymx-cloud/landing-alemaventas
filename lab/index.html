@@ -300,6 +300,17 @@ canvas { display: block; width: 100%; height: 330px; }
 .web-link:hover, .web-link:focus-visible { color: var(--ambar); border-color: rgb(254 166 33 / .5); }
 @media (max-width: 620px) { .enlaces { order: 2; width: 100%; } .enlaces .web-link { flex: 1; justify-content: center; } .top .stats { order: 3; } }
 </style>
+<!-- Meta Pixel: mide visitas, registros y clics de pago para los anuncios. Pon tu ID en PIXEL_ID (vacío = desactivado). -->
+<script>
+window.PIXEL_ID = "1709948527428609";
+if (window.PIXEL_ID) {
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;
+  s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', window.PIXEL_ID); fbq('track', 'PageView');
+}
+function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) fbq(tipo, evento, datos || {}); } catch (e) {} }
+</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -336,7 +347,7 @@ canvas { display: block; width: 100%; height: 330px; }
       <label class="acepto"><input type="checkbox" id="r_acepta"><span>Acepto el <button type="button" id="ver_acuerdo">acuerdo de responsabilidad</button> y el <a href="privacidad/" target="_blank" rel="noopener">aviso de privacidad</a>.</span></label>
       <label class="acepto"><input type="checkbox" id="r_promos"><span>Quiero recibir información del Programa Académico y promociones de ALEMA (opcional).</span></label>
       <button class="btn" type="submit">Crear mi cuenta gratis</button>
-      <p class="acc-nota">Tus datos se usan solo para tu cuenta y tu avance. <a href="privacidad/" target="_blank" rel="noopener" style="color:var(--ambar)">Aviso de privacidad</a></p>
+      <p class="acc-nota">Conoce cómo usamos tus datos en el <a href="privacidad/" target="_blank" rel="noopener" style="color:var(--ambar)">aviso de privacidad</a>.</p>
     </form>
     <p class="acc-nota" id="acc_cargando" hidden>Cargando tu cuenta…</p>
     <p class="err" id="acc_err" hidden></p>
@@ -1601,7 +1612,7 @@ $("ruta").addEventListener("click", e => {
   if (!banco) return guia("bien", "📚 Estamos preparando el contenido de esta esfera. ¡Muy pronto!");
   const nombre = (et === 1 ? ETAPA1 : ETAPA2)[Math.floor(k / 5)][2][k % 5], ronda = est.rondas + 1;
   serie(mezcla(banco).slice(0, 3), `${nombre} · Ronda ${ronda}${est.total ? " de " + est.total : ""}`, false, () => {
-    enviar("ronda", { etapa: et, esfera: k }).then(j => { if (j.ok && !j.completada) guia("bien", `¡Ronda ${ronda} lista! Te faltan ${j.total - ronda}.`); });
+    enviar("ronda", { etapa: et, esfera: k }).then(j => { if (j.ok && j.completada && et === 1 && k === 4) pixel("trackCustom", "Unidad1Completada"); if (j.ok && !j.completada) guia("bien", `¡Ronda ${ronda} lista! Te faltan ${j.total - ronda}.`); });
   });
 });
 // Serie de preguntas. En lecciones una respuesta mala quita vida y se puede reintentar; en evaluaciones se contesta una vez.
@@ -1737,7 +1748,7 @@ function pagar(k) {
   const [nom, pr, cl] = CLIP[k], url = PAGOS[cl];
   const t = `Hola, pagué el ${nom} (${pr}) de ALEMA Trading Lab. Mi usuario es ${$("u_nom").textContent}. Te envío mi comprobante para activarlo.`;
   ventana("bien", `${nom} · ${pr}`, `1. Paga con Clip (tarjeta de débito o crédito). 2. Envía tu comprobante por WhatsApp con tu usuario. 3. Validamos tu pago y activamos tu ${k === "Mentor" ? "pase" : "paquete"}. El pago es mensual: cada mes renuevas con el mismo link.`, [
-    ["Pagar con Clip", () => url ? abrirUrl(url) : guia("mal", "El link de pago no está disponible. Escríbenos por WhatsApp.")],
+    ["Pagar con Clip", () => { pixel("track", "InitiateCheckout", { content_name: nom, value: { "Básico": 199, "Pro": 499, "Mentor": 120 }[k], currency: "MXN" }); return url ? abrirUrl(url) : guia("mal", "El link de pago no está disponible. Escríbenos por WhatsApp."); }],
     ["Enviar comprobante por WhatsApp", () => { abrirUrl(`https://wa.me/${WHATSAPP_ALEMA}?text=${encodeURIComponent(t)}`); enviar("reportar_pago", { paquete: k }); }], ["Ahora no", cerrarV, "sec"]]);
 }
 document.querySelectorAll("[data-pase]").forEach(b => b.addEventListener("click", () => pagar("Mentor")));
@@ -1766,7 +1777,7 @@ $("f_registro").addEventListener("submit", async e => { e.preventDefault(); $("a
   if (m) return errAcc(m);
   ocupado(e.target, true);
   try { const j = await api("registro", { nombre: v("r_nom"), correo: v("r_mail"), usuario: v("r_usr"), pass: $("r_pass").value, acepta: true, web: $("r_web").value, codigo: $("r_cod").value.trim().toUpperCase(), promos: $("r_promos").checked });
-    if (!j.ok) errAcc(j.error); else { $("r_pass").value = ""; entrar(j.token, j.estado); ventana("bien", "¡Bienvenido a ALEMA Trading Lab!", "Tienes 10 ⚡ créditos al día para practicar en la Terminal y 5 ❤️ vidas para la Ruta. Pon siempre tu stop loss: cada vez ganas 🪙 que cambias por material de ALEMA."); } }
+    if (!j.ok) errAcc(j.error); else { $("r_pass").value = ""; pixel("track", "CompleteRegistration", { content_name: "ALEMA Trading Lab", status: true }); entrar(j.token, j.estado); ventana("bien", "¡Bienvenido a ALEMA Trading Lab!", "Tienes 10 ⚡ créditos al día para practicar en la Terminal y 5 ❤️ vidas para la Ruta. Pon siempre tu stop loss: cada vez ganas 🪙 que cambias por material de ALEMA."); } }
   catch (err) { errAcc("No se pudo conectar. Revisa tu internet e intenta de nuevo."); } finally { ocupado(e.target, false); } });
 $("ver_acuerdo").addEventListener("click", () => ventana("bien", "Acuerdo de responsabilidad", document.querySelector(".acuerdo .txt").innerText));
 $("salir").addEventListener("click", () => { api("salir").catch(() => {}); cerrarSesion(); });
