@@ -295,6 +295,10 @@ canvas { display: block; width: 100%; height: 330px; }
 .ruta .puntos-r i { background: rgb(42 22 6 / .22); } .ruta .puntos-r i.on { background: #0E7A55; }
 .ruta .aqui span { background: #1A1204; color: var(--ambar); }
 .ruta .meta, .ruta .etapa2, .ruta .cert-caja { background: rgb(9 13 22 / .9); border-color: rgb(255 255 255 / .25); }
+.enlaces { display: flex; gap: 6px; flex-wrap: wrap; margin-right: auto; }
+.web-link { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--borde); color: var(--tenue); font-size: .74rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: color .15s, border-color .15s; }
+.web-link:hover, .web-link:focus-visible { color: var(--ambar); border-color: rgb(254 166 33 / .5); }
+@media (max-width: 620px) { .enlaces { order: 2; width: 100%; } .enlaces .web-link { flex: 1; justify-content: center; } .top .stats { order: 3; } }
 </style>
 </head>
 <body>
@@ -343,6 +347,7 @@ canvas { display: block; width: 100%; height: 330px; }
 <main class="pag" id="app" hidden>
   <header class="top vidrio">
     <div class="marca"><span class="logo">A</span><div><b>ALEMA</b><small>Trading Lab · <span id="u_nom"></span></small></div></div>
+    <nav class="enlaces" aria-label="Enlaces de ALEMA"><a class="web-link" href="https://alematradingacademy.com.mx/" target="_blank" rel="noopener">🌐 Sitio web ↗</a><a class="web-link" href="https://alematradingacademy.com.mx/app/" target="_blank" rel="noopener">🎓 Ingresa al portal ↗</a></nav>
     <div class="stats">
       <span class="stat c" id="s_cred" title="Créditos de hoy"><span class="e">⚡</span><span id="v_cred">10</span><span id="v_max">/10</span></span>
       <span class="stat v" id="s_vid" title="Vidas de la Ruta"><span class="e">❤️</span><span id="v_vid">5</span></span>
