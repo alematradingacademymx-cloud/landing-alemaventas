@@ -279,6 +279,20 @@ canvas { display: block; width: 100%; height: 330px; }
 .acc-caja label.acepto { display: flex; align-items: flex-start; gap: 10px; font-weight: 500; font-size: .82rem; line-height: 1.4; }
 .acc-caja label.acepto input { width: 18px; height: 18px; min-height: 0; padding: 0; margin-top: 1px; flex: none; accent-color: var(--ambar); }
 .acepto button { background: none; border: 0; padding: 0; color: var(--ambar); text-decoration: underline; cursor: pointer; font: inherit; }
+
+/* Ruta con fondo naranja-amarillo (gradiente del logo de ALEMA) */
+.ruta.vidrio { background: radial-gradient(rgb(60 25 0 / .10) 1px, transparent 1.6px) 0 0 / 22px 22px, linear-gradient(165deg, #FFB547, #FF7A1A); border-color: rgb(255 255 255 / .35); box-shadow: inset 0 1px 0 rgb(255 255 255 / .45), 0 24px 60px -30px rgb(0 0 0 / .85); }
+.ruta .nodo-et { color: #2A1606; font-weight: 600; }
+.ruta .nodo-et small { color: rgb(42 22 6 / .72); font-weight: 500; }
+.ruta .seccion-t { color: #3A1F06; }
+.ruta .unidad { border: 2px solid rgb(255 255 255 / .6); box-shadow: 0 6px 0 rgb(60 25 0 / .35); }
+.ruta .unidad.cerrada { filter: grayscale(.85) brightness(.55); }
+.ruta .nodo { box-shadow: 0 7px 0 rgb(60 25 0 / .35); }
+.ruta .nodo.actual { outline: 5px solid rgb(255 255 255 / .75); }
+.ruta .nodo.cofre.listo { outline: 3px solid rgb(255 255 255 / .7); }
+.ruta .puntos-r i { background: rgb(42 22 6 / .22); } .ruta .puntos-r i.on { background: #0E7A55; }
+.ruta .aqui span { background: #1A1204; color: var(--ambar); }
+.ruta .meta, .ruta .etapa2, .ruta .cert-caja { background: rgb(9 13 22 / .9); border-color: rgb(255 255 255 / .25); }
 </style>
 </head>
 <body>
