@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aviso de privacidad · ALEMA Trading Lab</title>
+<meta name="description" content="Aviso de privacidad de ALEMA Trading Lab: qué datos recabamos, para qué los usamos y cómo ejercer tus derechos ARCO.">
+<meta name="theme-color" content="#070B13">
+<link rel="icon" type="image/png" sizes="32x32" href="../icono-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Aviso de privacidad de ALEMA Trading Lab. Lo marcado con .falta son datos pendientes de completar. */
+:root { --fondo: #070B13; --tinta: #E9EDF4; --tenue: #98A2B3; --ambar: #FEA621; --naranja: #FF7A1A; --verde: #2BD49A;
+  --vidrio: rgb(255 255 255 / .045); --vidrio-alto: rgb(255 255 255 / .085); --borde: rgb(255 255 255 / .10); --brillo: rgb(255 255 255 / .16);
+  --letra: "Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color-scheme: dark; }
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body { margin: 0; background: radial-gradient(800px 420px at 15% -5%, rgb(254 166 33 / .10), transparent 65%), var(--fondo); color: var(--tinta); font: 15px/1.6 var(--letra); }
+button, input { font: inherit; color: inherit; }
+.pag { max-width: 860px; margin-inline: auto; padding: 22px max(16px, env(safe-area-inset-left, 0px)) 48px; display: grid; gap: 18px; }
+.cab h1 { margin: 0; font-size: 1.35rem; } .cab p { margin: 4px 0 0; color: var(--tenue); font-size: .9rem; }
+.vistas { display: flex; gap: 6px; flex-wrap: wrap; }
+.vistas button { border: 1px solid var(--borde); background: rgb(255 255 255 / .04); border-radius: 999px; padding: 8px 14px; cursor: pointer; font-weight: 600; color: var(--tenue); }
+.vistas button[aria-selected="true"] { background: var(--ambar); color: #1A1204; border-color: transparent; }
+.vidrio { background: linear-gradient(180deg, var(--vidrio-alto), var(--vidrio)); border: 1px solid var(--borde); border-radius: 20px; box-shadow: inset 0 1px 0 var(--brillo); }
+.btn { border: 0; border-radius: 12px; padding: 10px 16px; min-height: 46px; font-weight: 700; background: linear-gradient(135deg, #FFB547, var(--naranja)); color: #1A1204; cursor: pointer; }
+.btn.sec { background: rgb(255 255 255 / .07); color: var(--tinta); border: 1px solid var(--borde); font-weight: 600; }
+/* registro */
+.centro { display: grid; place-items: center; }
+.acc { width: 100%; max-width: 420px; padding: 26px 24px; display: grid; gap: 12px; }
+.acc-cab { display: flex; gap: 12px; align-items: center; } .acc-cab .logo { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-weight: 800; font-size: 1.3rem; background: linear-gradient(135deg, #FFB547, var(--naranja)); color: #1A1204; }
+.acc-cab h2 { margin: 0; font-size: 1.15rem; } .acc-cab p { margin: 0; color: var(--tenue); font-size: .85rem; }
+.acc label { display: grid; gap: 4px; font-size: .78rem; font-weight: 600; color: var(--tenue); }
+.acc input:not([type=checkbox]) { width: 100%; background: rgb(0 0 0 / .3); border: 1px solid var(--borde); border-radius: 12px; padding: 11px 13px; min-height: 46px; font-size: 16px; }
+.acepto { display: flex !important; align-items: flex-start; gap: 10px; font-weight: 500 !important; font-size: .82rem !important; line-height: 1.45; }
+.acepto input { width: 18px; height: 18px; margin-top: 1px; flex: none; accent-color: var(--ambar); }
+.acepto a, .enlace { color: var(--ambar); text-decoration: underline; cursor: pointer; background: none; border: 0; padding: 0; font: inherit; }
+.nueva { outline: 2px dashed rgb(254 166 33 / .7); outline-offset: 6px; border-radius: 8px; }
+.marca-n { font-size: .72rem; color: var(--ambar); font-weight: 700; }
+.pie { text-align: center; font-size: .78rem; color: var(--tenue); margin: 0; }
+.err { margin: 0; color: #F45B69; font-size: .82rem; }
+/* página del aviso */
+.aviso { padding: 26px clamp(18px, 4vw, 34px); display: grid; gap: 18px; }
+.aviso .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.aviso h2 { margin: 0; font-size: 1.4rem; } .aviso .act { color: var(--tenue); font-size: .82rem; margin: 2px 0 0; }
+.indice { display: flex; flex-wrap: wrap; gap: 6px; }
+.indice a { font-size: .78rem; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--borde); color: var(--tenue); text-decoration: none; }
+.indice a:hover { color: var(--ambar); border-color: rgb(254 166 33 / .5); }
+.aviso section { display: grid; gap: 8px; scroll-margin-top: 16px; }
+.aviso h3 { margin: 0; font-size: 1.02rem; color: var(--ambar); }
+.aviso p, .aviso li { margin: 0; color: #C9D0DB; font-size: .92rem; }
+.aviso ol, .aviso ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.falta { background: rgb(254 166 33 / .14); color: var(--ambar); border-radius: 6px; padding: 0 5px; }
+.tabla { display: grid; gap: 8px; }
+.fila { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 4px 14px; padding: 10px 12px; border-radius: 12px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); font-size: .88rem; }
+.fila b { color: var(--tinta); } .fila span { color: #C9D0DB; }
+@media (max-width: 560px) { .fila { grid-template-columns: 1fr; } }
+.nota { color: var(--tenue); font-size: .8rem; text-align: center; margin: 0; }
+.aviso-t { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: #10251D; border: 1px solid rgb(43 212 154 / .5); padding: 10px 16px; border-radius: 12px; font-size: .88rem; max-width: calc(100% - 32px); }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<main class="pag">
+<article class="aviso vidrio">
+      <div class="top"><div><h2>Aviso de privacidad</h2><p class="act">ALEMA Trading Lab · Última actualización: <span class="falta">[fecha]</span></p></div><a class="btn sec" href="../" style="display:inline-grid;place-items:center;text-decoration:none">← Volver a la app</a></div>
+      <nav class="indice"><a href="#a1">Responsable</a><a href="#a2">Datos</a><a href="#a3">Finalidades</a><a href="#a4">Proveedores</a><a href="#a5">Derechos ARCO</a><a href="#a6">Navegador</a><a href="#a7">Cambios</a></nav>
+      <section id="a1"><h3>1. Quién es responsable de tus datos</h3>
+        <p><span class="falta">[Nombre o razón social]</span> ("ALEMA"), con domicilio en <span class="falta">[domicilio completo]</span>, es responsable del uso y protección de los datos que nos das al usar ALEMA Trading Lab. Para cualquier tema de privacidad escríbenos a <span class="falta">[correo de privacidad]</span>.</p></section>
+      <section id="a2"><h3>2. Qué datos recabamos</h3>
+        <p>No recabamos datos sensibles. Solo lo necesario para tu cuenta y tu aprendizaje:</p>
+        <div class="tabla">
+          <div class="fila"><b>Identificación</b><span>Nombre, correo y usuario.</span></div>
+          <div class="fila"><b>Acceso</b><span>Contraseña, guardada cifrada: nadie en ALEMA puede verla.</span></div>
+          <div class="fila"><b>Uso de la app</b><span>Avance, evaluaciones, exámenes, créditos, vidas, puntos, racha, recompensas y fechas de acceso.</span></div>
+          <div class="fila"><b>Certificado</b><span>Tu nombre completo como aparece en el certificado.</span></div>
+          <div class="fila"><b>Invitaciones</b><span>El código con el que llegaste y tu código para invitar.</span></div>
+          <div class="fila"><b>Pagos</b><span>Paquete, monto y fecha. No guardamos datos de tu tarjeta: los procesa Clip.</span></div>
+          <div class="fila"><b>WhatsApp</b><span>Tu número y lo que nos envíes, si nos escribes.</span></div>
+        </div></section>
+      <section id="a3"><h3>3. Para qué usamos tus datos</h3>
+        <p><b style="color:var(--tinta)">Necesarias para el servicio:</b></p>
+        <ol><li>Crear y administrar tu cuenta.</li><li>Guardar tu avance, créditos, vidas, puntos y racha.</li><li>Emitir tu certificado y tu código de descuento.</li><li>Entregarte las recompensas que canjees.</li><li>Validar tus pagos y activar tus paquetes.</li><li>Darte los premios por invitar amigos.</li><li>Atender tus dudas por correo o WhatsApp.</li></ol>
+        <p><b style="color:var(--tinta)">Adicionales (puedes negarte):</b></p>
+        <ol><li>Enviarte información del Programa Académico, promociones y contenido de ALEMA.</li><li>Medir qué campañas funcionan mejor, con datos agrupados.</li></ol>
+        <p>Negarte a las finalidades adicionales no afecta tu cuenta.</p></section>
+      <section id="a4"><h3>4. Con quién compartimos tus datos</h3>
+        <p>No vendemos ni rentamos tus datos. Usamos estos proveedores, que solo los tratan para darte el servicio:</p>
+        <ul><li><b style="color:var(--tinta)">Google</b>: guardar tu cuenta y enviarte correos.</li><li><b style="color:var(--tinta)">GitHub</b>: alojar la página de la app.</li><li><b style="color:var(--tinta)">Clip</b>: procesar tus pagos.</li><li><b style="color:var(--tinta)">WhatsApp (Meta)</b>: atenderte si nos escribes.</li></ul>
+        <p>Algunos tienen servidores fuera de México, así que tus datos pueden guardarse en otros países.</p></section>
+      <section id="a5"><h3>5. Tus derechos ARCO</h3>
+        <p>Puedes acceder a tus datos, rectificarlos, cancelarlos u oponerte a su uso, y revocar tu consentimiento. Escribe a <span class="falta">[correo de privacidad]</span> con tu nombre, tu usuario, una identificación oficial y qué quieres hacer. Te respondemos en <span class="falta">[plazo legal]</span>.</p>
+        <p>Si cancelas tus datos, tu cuenta, tu avance y tus puntos se eliminan.</p></section>
+      <section id="a6"><h3>6. Cookies y tu navegador</h3>
+        <p>No usamos cookies de publicidad ni de rastreo. Solo guardamos un dato de sesión en tu navegador para que no tengas que entrar cada vez; se borra al presionar "Salir". Los tipos de letra se cargan desde Google Fonts.</p></section>
+      <section id="a7"><h3>7. Cambios y autoridad</h3>
+        <p>Si cambiamos este aviso, publicaremos la nueva versión aquí con su fecha. Si consideras que se violaron tus derechos, puedes acudir a la Secretaría Anticorrupción y Buen Gobierno.</p></section>
+      <a class="btn" href="../" style="justify-self:center;display:inline-grid;place-items:center;text-decoration:none">Volver a ALEMA Trading Lab</a>
+    </article>
+</main>
+</body>
+</html>

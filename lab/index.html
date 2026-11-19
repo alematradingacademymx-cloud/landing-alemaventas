@@ -278,6 +278,8 @@ canvas { display: block; width: 100%; height: 330px; }
 .trampa { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .acc-caja label.acepto { display: flex; align-items: flex-start; gap: 10px; font-weight: 500; font-size: .82rem; line-height: 1.4; }
 .acc-caja label.acepto input { width: 18px; height: 18px; min-height: 0; padding: 0; margin-top: 1px; flex: none; accent-color: var(--ambar); }
+.acepto a { color: var(--ambar); }
+.pie-priv { text-align: center; font-size: .78rem; margin: 0; } .pie-priv a { color: var(--tenue); } .pie-priv a:hover { color: var(--ambar); }
 .acepto button { background: none; border: 0; padding: 0; color: var(--ambar); text-decoration: underline; cursor: pointer; font: inherit; }
 
 /* Ruta con fondo naranja-amarillo (gradiente del logo de ALEMA) */
@@ -327,8 +329,10 @@ canvas { display: block; width: 100%; height: 330px; }
       <label>Código de invitación <span class="opc">(opcional)</span><input id="r_cod" style="font-family:var(--mono);text-transform:uppercase" placeholder="Ej. CARL7K" autocapitalize="characters" autocomplete="off" spellcheck="false"></label>
       <div class="cod-ok" id="r_cod_ok" hidden></div><p class="cod-mal" id="r_cod_mal" hidden>Ese código no existe. Revísalo o déjalo vacío.</p>
       <input id="r_web" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <label class="acepto"><input type="checkbox" id="r_acepta"><span>Acepto el <button type="button" id="ver_acuerdo">acuerdo de responsabilidad</button>.</span></label>
+      <label class="acepto"><input type="checkbox" id="r_acepta"><span>Acepto el <button type="button" id="ver_acuerdo">acuerdo de responsabilidad</button> y el <a href="privacidad/" target="_blank" rel="noopener">aviso de privacidad</a>.</span></label>
+      <label class="acepto"><input type="checkbox" id="r_promos"><span>Quiero recibir información del Programa Académico y promociones de ALEMA (opcional).</span></label>
       <button class="btn" type="submit">Crear mi cuenta gratis</button>
+      <p class="acc-nota">Tus datos se usan solo para tu cuenta y tu avance. <a href="privacidad/" target="_blank" rel="noopener" style="color:var(--ambar)">Aviso de privacidad</a></p>
     </form>
     <p class="acc-nota" id="acc_cargando" hidden>Cargando tu cuenta…</p>
     <p class="err" id="acc_err" hidden></p>
@@ -464,6 +468,7 @@ canvas { display: block; width: 100%; height: 330px; }
       <p>El contenido no es asesoría de inversión. Operar en los mercados financieros reales implica riesgo de pérdida.</p>
     </div>
   </details>
+  <p class="pie-priv"><a href="privacidad/" target="_blank" rel="noopener">Aviso de privacidad</a></p>
 </main>
 
 <div class="guia" aria-live="polite"><div class="burbuja" id="burbuja">¡Hola! Soy el Toro. Calcula tu stop loss y take profit antes de operar.</div><svg class="mascota" id="mascota"><use href="#toro"/></svg></div>
@@ -1752,10 +1757,10 @@ $("f_entrar").addEventListener("submit", async e => { e.preventDefault(); $("acc
 $("f_registro").addEventListener("submit", async e => { e.preventDefault(); $("acc_err").hidden = true; const v = id => $(id).value.trim(); let m = "";
   if (!v("r_nom")) m = "Escribe tu nombre."; else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("r_mail"))) m = "Escribe un correo válido.";
   else if (!/^[a-zA-Z][a-zA-Z0-9._-]{3,29}$/.test(v("r_usr"))) m = "El usuario debe empezar con letra y tener de 4 a 30 letras o números, sin espacios.";
-  else if ($("r_pass").value.length < 8) m = "La contraseña debe tener al menos 8 caracteres."; else if (!codValido) m = "Ese código de invitación no existe. Revísalo o déjalo vacío."; else if (!$("r_acepta").checked) m = "Acepta el acuerdo de responsabilidad para continuar.";
+  else if ($("r_pass").value.length < 8) m = "La contraseña debe tener al menos 8 caracteres."; else if (!codValido) m = "Ese código de invitación no existe. Revísalo o déjalo vacío."; else if (!$("r_acepta").checked) m = "Acepta el acuerdo de responsabilidad y el aviso de privacidad para continuar.";
   if (m) return errAcc(m);
   ocupado(e.target, true);
-  try { const j = await api("registro", { nombre: v("r_nom"), correo: v("r_mail"), usuario: v("r_usr"), pass: $("r_pass").value, acepta: true, web: $("r_web").value, codigo: $("r_cod").value.trim().toUpperCase() });
+  try { const j = await api("registro", { nombre: v("r_nom"), correo: v("r_mail"), usuario: v("r_usr"), pass: $("r_pass").value, acepta: true, web: $("r_web").value, codigo: $("r_cod").value.trim().toUpperCase(), promos: $("r_promos").checked });
     if (!j.ok) errAcc(j.error); else { $("r_pass").value = ""; entrar(j.token, j.estado); ventana("bien", "¡Bienvenido a ALEMA Trading Lab!", "Tienes 10 ⚡ créditos al día para practicar en la Terminal y 5 ❤️ vidas para la Ruta. Pon siempre tu stop loss: cada vez ganas 🪙 que cambias por material de ALEMA."); } }
   catch (err) { errAcc("No se pudo conectar. Revisa tu internet e intenta de nuevo."); } finally { ocupado(e.target, false); } });
 $("ver_acuerdo").addEventListener("click", () => ventana("bien", "Acuerdo de responsabilidad", document.querySelector(".acuerdo .txt").innerText));
