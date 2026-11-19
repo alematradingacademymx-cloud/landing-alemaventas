@@ -72,6 +72,22 @@ input, select { width: 100%; background: rgb(0 0 0 / .3); border: 1px solid var(
 .aviso { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: #10251D; border: 1px solid rgb(43 212 154 / .5); color: var(--tinta); padding: 10px 16px; border-radius: 12px; font-size: .88rem; z-index: 20; max-width: calc(100% - 32px); }
 .nota { color: var(--tenue); font-size: .78rem; text-align: center; }
 .err { margin: 0; color: var(--rojo); font-size: .84rem; }
+.nuevo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 160px auto; gap: 10px; align-items: end; }
+.nuevo label, .comparar-sel label { display: grid; gap: 4px; font-size: .78rem; font-weight: 600; color: var(--tenue); }
+@media (max-width: 760px) { .nuevo { grid-template-columns: 1fr; } }
+.tabla-x { overflow-x: auto; border-radius: 14px; border: 1px solid var(--borde); }
+table { width: 100%; border-collapse: collapse; font-size: .85rem; min-width: 700px; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+th { color: var(--tenue); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: rgb(0 0 0 / .2); }
+td.num, th.num { text-align: right; } td.num { font-family: var(--mono); }
+tr.mejor td { background: rgb(43 212 154 / .06); }
+.barra { height: 6px; border-radius: 999px; background: rgb(255 255 255 / .08); overflow: hidden; min-width: 70px; } .barra i { display: block; height: 100%; background: var(--verde); }
+.comparar-sel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.comparar { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.cmp { padding: 14px; border-radius: 16px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); display: grid; gap: 6px; }
+.cmp.gana { border-color: rgb(43 212 154 / .55); } .cmp b { font-family: var(--mono); } .cmp .d { color: var(--tenue); font-size: .8rem; }
+.chip.vend { color: var(--azul); border-color: rgb(90 169 255 / .45); } .chip.camp { color: var(--morado); border-color: rgb(183 156 255 / .45); }
+.copiar-l { border: 0; background: none; color: var(--ambar); cursor: pointer; font-size: .78rem; padding: 0; text-decoration: underline; }
 .cargando { opacity: .55; pointer-events: none; }
 </style>
 </head>
@@ -97,6 +113,7 @@ input, select { width: 100%; background: rgb(0 0 0 / .3); border: 1px solid var(
     <button role="tab" aria-selected="false" data-tab="pagos">Pagos <span class="n" id="n_pagos"></span></button>
     <button role="tab" aria-selected="false" data-tab="codigos">Códigos $990 <span class="n" id="n_codigos"></span></button>
     <button role="tab" aria-selected="false" data-tab="canjes">Canjes <span class="n" id="n_canjes"></span></button>
+    <button role="tab" aria-selected="false" data-tab="invitaciones">Códigos de invitación</button>
     <button role="tab" aria-selected="false" data-tab="usuarios">Usuarios</button>
   </nav>
 
@@ -126,6 +143,30 @@ input, select { width: 100%; background: rgb(0 0 0 / .3); border: 1px solid var(
     <div class="lista" id="l_canjes"></div>
   </section>
 
+  <section data-panel="invitaciones" style="display:grid;gap:16px" hidden>
+    <div class="panel vidrio">
+      <h2>Crear código</h2>
+      <p>Crea un código por vendedor o por anuncio. Para comparar dos anuncios, crea uno para cada uno y usa su link en cada anuncio.</p>
+      <form class="nuevo" id="f_nuevo">
+        <label>Código<input id="n_cod" class="mono" placeholder="Ej. FBDIC-A" autocapitalize="characters" autocomplete="off" spellcheck="false"></label>
+        <label>Descripción<input id="n_desc" placeholder="Ej. Anuncio video toro, diciembre"></label>
+        <label>Tipo<select id="n_tipo"><option>Campaña</option><option>Vendedor</option></select></label>
+        <button class="btn" type="submit">Crear</button>
+      </form>
+    </div>
+    <div class="panel vidrio">
+      <h2>Comparar</h2>
+      <p>Lo que importa no es solo cuántos se registran, sino cuántos se quedan y compran.</p>
+      <div class="comparar-sel"><label>Código 1<select id="cmp1"></select></label><label>Código 2<select id="cmp2"></select></label></div>
+      <div class="comparar" id="comparar"></div>
+    </div>
+    <div class="panel vidrio">
+      <h2>Todos los códigos</h2>
+      <div class="tabla-x"><table><thead><tr><th>Código</th><th>Tipo</th><th>Descripción</th><th class="num">Registros</th><th class="num">Unidad 1</th><th class="num">Pagaron</th><th>Conversión</th><th class="num">Activado</th><th>Link</th></tr></thead><tbody id="t_inv"></tbody></table></div>
+      <p class="nota" style="text-align:left">"Pagaron" cuenta alumnos con un paquete activado o un código de $990 canjeado. "Activado" suma lo que pagaron. Los códigos de los alumnos se agrupan en "Alumnos".</p>
+    </div>
+  </section>
+
   <section data-panel="usuarios" class="panel vidrio" hidden>
     <h2>Usuarios</h2>
     <p>Consulta el avance de cada alumno, cambia su plan a mano o bloquea una cuenta.</p>
@@ -141,7 +182,7 @@ const API = "https://script.google.com/macros/s/AKfycbwhJRzfvx5IaeDmqgYYLMChkMvB
 const $ = id => document.getElementById(id);
 const leer = k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
 const guardar = (k, v) => { try { v === null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) {} };
-let TK = leer("alab_admin"), USU = [], PAG = [], COD = [], CAN = [];
+let TK = leer("alab_admin"), USU = [], PAG = [], COD = [], CAN = [], INV = [];
 const hoy = () => new Date();
 const fd = v => v ? new Date(v) : null;
 const fecha = d => d ? d.toLocaleDateString("es-MX", { day: "2-digit", month: "short" }) : "—";
@@ -163,6 +204,7 @@ function cargar(j) {
   PAG = j.pagos.map(x => Object.assign(x, { fecha: fd(x.fecha), desde: fd(x.desde), hasta: fd(x.hasta) })).reverse();
   COD = j.codigos.map(x => Object.assign(x, { em: fd(x.em), vence: fd(x.vence), canjeado: fd(x.canjeado) })).reverse();
   CAN = j.canjes.map(x => Object.assign(x, { fecha: fd(x.fecha), entregado: fd(x.entregado) })).reverse();
+  INV = j.invitaciones || [];
   if (j.hoja) $("b_hoja").href = j.hoja;
   pintar();
 }
@@ -223,7 +265,32 @@ function pintarUsuarios() {
     <span class="d">Etapa 1: ${x.e1}/30 · Etapa 2: ${x.e2}/20 · 🪙 ${x.pts} · 🔥 ${x.racha} días${x.vence && x.plan !== "Gratis" ? " · vence " + fecha(x.vence) : ""}</span></div>
     <div class="acc-r"><button class="btn sec" type="button" data-usuario="${esc(x.u)}">Administrar</button></div></div>`).join("") : `<div class="vacio">${USU.length ? "No se encontraron usuarios." : "Todavía no hay usuarios registrados."}</div>`;
 }
-function pintar() { contar(); pintarResumen(); pintarPagos(); pintarCodigos(); pintarCanjes(); pintarUsuarios(); }
+const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+const LINK = c => `https://alematradingacademy.com.mx/lab/?c=${encodeURIComponent(c)}`;
+function pintarInvitaciones() {
+  const reales = INV.filter(x => x.t === "Campaña" || x.t === "Vendedor"), mejor = Math.max(0, ...INV.filter(x => x.reg).map(x => pct(x.pag, x.reg)));
+  $("t_inv").innerHTML = INV.map(x => { const cv = pct(x.pag, x.reg), real = x.t === "Campaña" || x.t === "Vendedor";
+    return `<tr class="${x.reg && cv === mejor && mejor > 0 ? "mejor" : ""}"><td class="mono"><b>${esc(x.c)}</b></td><td><span class="chip ${x.t === "Vendedor" ? "vend" : x.t === "Campaña" ? "camp" : "gris"}">${esc(x.t)}</span></td><td>${esc(x.d)}</td><td class="num">${x.reg}</td><td class="num">${x.u1}</td><td class="num">${x.pag}</td>
+      <td><div style="display:flex;gap:8px;align-items:center"><div class="barra"><i style="width:${Math.min(100, cv)}%"></i></div><span class="mono">${cv}%</span></div></td><td class="num">$${x.monto.toLocaleString("es-MX")}</td>
+      <td>${real ? `<button class="copiar-l" type="button" data-link="${esc(x.c)}">Copiar link</button>` : ""}</td></tr>`; }).join("");
+  const opts = INV.map(x => `<option value="${esc(x.c)}">${esc(x.c)}</option>`).join(""), v1 = cmpTocado ? $("cmp1").value : "", v2 = cmpTocado ? $("cmp2").value : "";
+  $("cmp1").innerHTML = opts; $("cmp2").innerHTML = opts;
+  $("cmp1").value = v1 && INV.some(x => x.c === v1) ? v1 : (reales[0] || INV[0] || {}).c || ""; $("cmp2").value = v2 && INV.some(x => x.c === v2) ? v2 : (reales[1] || INV[1] || {}).c || "";
+  pintarComparar();
+}
+function pintarComparar() {
+  const a = INV.find(x => x.c === $("cmp1").value), b = INV.find(x => x.c === $("cmp2").value);
+  if (!a || !b) { $("comparar").innerHTML = `<div class="vacio">Crea al menos dos códigos para comparar.</div>`; return; }
+  const ca = pct(a.pag, a.reg), cb = pct(b.pag, b.reg), gana = ca === cb ? null : ca > cb ? a.c : b.c;
+  $("comparar").innerHTML = [a, b].map(x => `<div class="cmp ${gana === x.c ? "gana" : ""}"><span class="mono" style="font-weight:700">${esc(x.c)} ${gana === x.c ? "· 🏆 convierte mejor" : ""}</span><span class="d">${esc(x.d)}</span>
+    <span>Registros <b>${x.reg}</b> · Unidad 1 <b>${pct(x.u1, x.reg)}%</b></span><span>Pagaron <b>${x.pag}</b> (${pct(x.pag, x.reg)}%) · <b>$${x.monto.toLocaleString("es-MX")}</b></span></div>`).join("");
+}
+let cmpTocado = false;
+["cmp1", "cmp2"].forEach(id => $(id).addEventListener("change", () => { cmpTocado = true; pintarComparar(); }));
+$("f_nuevo").addEventListener("submit", e => { e.preventDefault(); const c = $("n_cod").value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "");
+  if (c.length < 3) return aviso("⚠️ El código debe tener al menos 3 letras o números.");
+  hacer("admin_crear_codigo", { codigo: c, tipo: $("n_tipo").value, descripcion: $("n_desc").value.trim() }, `✓ Código ${c} creado`).then(() => { if (INV.some(x => x.c === c)) { $("n_cod").value = ""; $("n_desc").value = ""; } }); });
+function pintar() { contar(); pintarResumen(); pintarPagos(); pintarCodigos(); pintarCanjes(); pintarInvitaciones(); pintarUsuarios(); }
 ["q_pagos", "f_pagos"].forEach(id => $(id).addEventListener("input", pintarPagos)); ["q_codigos", "f_codigos"].forEach(id => $(id).addEventListener("input", pintarCodigos));
 ["q_canjes", "f_canjes"].forEach(id => $(id).addEventListener("input", pintarCanjes)); ["q_usuarios", "f_usuarios"].forEach(id => $(id).addEventListener("input", pintarUsuarios));
 
@@ -233,6 +300,7 @@ document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click",
 
 document.addEventListener("click", e => {
   const t = e.target, irB = t.closest("[data-ir]"); if (irB) return ir(irB.dataset.ir);
+  const lk = t.closest("[data-link]"); if (lk) { const l = LINK(lk.dataset.link); (navigator.clipboard ? navigator.clipboard.writeText(l) : Promise.reject()).then(() => aviso("📋 Link copiado: " + l)).catch(() => aviso(l)); return; }
   const a = t.closest("[data-activar]");
   if (a) { const x = PAG.find(p => p.id === a.dataset.activar), us = usu(x.u), h = new Date(); h.setMonth(h.getMonth() + 1);
     return ventana(`¿Activar ${PAQ[x.paq] || x.paq}?`, `<dl class="det"><dt>Alumno</dt><dd>${esc(us.n)} (${esc(x.u)})</dd><dt>Monto</dt><dd>$${x.monto} MXN</dd><dt>Vigencia</dt><dd>1 mes, hasta ${fecha(h)}</dd></dl><p style="margin-top:10px">Confirma que el pago aparece en Clip antes de activarlo.</p>`,
@@ -250,7 +318,7 @@ document.addEventListener("click", e => {
     return ventana("¿Marcar como entregado?", `<p>"${esc(x.r)}" para ${esc(usu(x.u).n)} (${esc(usu(x.u).c)}).</p>`, [["Cancelar", cerrar, "sec"], ["Sí, entregado", () => hacer("admin_canje", { id: x.id }, `✓ "${x.r}" marcado como entregado`), "ok"]]); }
   const u = t.closest("[data-usuario]");
   if (u) { const x = USU.find(j => j.u === u.dataset.usuario);
-    return ventana(x.n, `<dl class="det"><dt>Usuario</dt><dd class="mono">${esc(x.u)}</dd><dt>Correo</dt><dd>${esc(x.c)}</dd><dt>Registro</dt><dd>${fecha(x.reg)}</dd><dt>Último acceso</dt><dd>${fechaH(x.ultimo)}</dd><dt>Avance</dt><dd>Etapa 1: ${x.e1}/30 · Etapa 2: ${x.e2}/20</dd><dt>Puntos</dt><dd>${x.pts} 🪙 (${x.gan} ganados)</dd><dt>Racha</dt><dd>🔥 ${x.racha} días</dd><dt>Programa</dt><dd>${x.prog ? "Sí" : "No"}</dd></dl>
+    return ventana(x.n, `<dl class="det"><dt>Usuario</dt><dd class="mono">${esc(x.u)}</dd><dt>Correo</dt><dd>${esc(x.c)}</dd><dt>Registro</dt><dd>${fecha(x.reg)}</dd><dt>Último acceso</dt><dd>${fechaH(x.ultimo)}</dd><dt>Avance</dt><dd>Etapa 1: ${x.e1}/30 · Etapa 2: ${x.e2}/20</dd><dt>Puntos</dt><dd>${x.pts} 🪙 (${x.gan} ganados)</dd><dt>Racha</dt><dd>🔥 ${x.racha} días</dd><dt>Programa</dt><dd>${x.prog ? "Sí" : "No"}</dd><dt>Su código</dt><dd class="mono">${esc(x.mio || "—")}</dd><dt>Llegó con</dt><dd class="mono">${esc(x.inv || "Sin código")}</dd></dl>
       <label style="display:grid;gap:4px;margin-top:12px;font-size:.78rem;color:var(--tenue);font-weight:600">Plan (Básico y Pro quedan por 1 mes)<select id="m_plan">${["Gratis", "Básico", "Pro"].map(p => `<option ${p === x.plan ? "selected" : ""}>${p}</option>`).join("")}</select></label>`,
       [[x.estado === "Bloqueado" ? "Desbloquear" : "Bloquear", () => { const nuevo = x.estado === "Bloqueado" ? "Activo" : "Bloqueado"; hacer("admin_usuario", { usuario: x.u, estado: nuevo }, `Cuenta ${nuevo === "Bloqueado" ? "bloqueada" : "desbloqueada"}`); }, "no"],
        ["Cancelar", cerrar, "sec"], ["Guardar plan", () => { const p = $("m_plan").value; if (p === x.plan) return cerrar(); hacer("admin_usuario", { usuario: x.u, plan: p }, `Plan de ${x.n}: ${p}`); }, "ok"]]); }

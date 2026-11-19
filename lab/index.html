@@ -259,6 +259,22 @@ canvas { display: block; width: 100%; height: 330px; }
 }
 @media (prefers-reduced-motion: reduce) { .stat.bump, .mascota.salta, .nodo.actual, .aqui svg { animation: none; } .barra i { transition: none; } }
 [hidden] { display: none !important; }
+.opc { font-weight: 500; color: #6B7588; }
+.cod-ok { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; background: rgb(43 212 154 / .1); border: 1px solid rgb(43 212 154 / .4); color: var(--verde); font-size: .82rem; }
+.cod-mal { margin: 0; color: var(--rojo); font-size: .8rem; }
+.invitar { margin-top: 14px; padding: 18px; border-radius: 18px; background: rgb(0 0 0 / .22); border: 1px solid rgb(254 166 33 / .3); display: grid; gap: 16px; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: start; }
+.invitar h3 { margin: 0; font-size: 1.05rem; } .invitar p { margin: 0; color: var(--tenue); font-size: .86rem; }
+.mi-cod { padding: 16px; border-radius: 16px; background: rgb(254 166 33 / .08); border: 1px solid rgb(254 166 33 / .35); display: grid; gap: 10px; text-align: center; }
+.mi-cod small { color: var(--tenue); font-size: .76rem; font-weight: 600; } .mi-cod b { font-family: var(--mono); font-size: 1.6rem; letter-spacing: .06em; color: var(--ambar); }
+.mi-cod .acc-r { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.btn.wa { background: #25D366; color: #04130D; }
+.inv-pasos { display: grid; gap: 10px; } .inv-paso { display: flex; gap: 12px; align-items: flex-start; font-size: .86rem; }
+.inv-paso i { flex: none; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; font-style: normal; font-weight: 800; background: rgb(255 255 255 / .07); color: var(--ambar); }
+.amigos { display: grid; gap: 8px; } .amigo { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); font-size: .86rem; }
+.amigo span { color: var(--tenue); font-size: .78rem; }
+.chip { font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--borde); white-space: nowrap; }
+.chip.ok { color: var(--verde); border-color: rgb(43 212 154 / .45); } .chip.pend { color: var(--ambar); border-color: rgb(254 166 33 / .45); }
+@media (max-width: 760px) { .invitar { grid-template-columns: 1fr; } }
 .trampa { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .acc-caja label.acepto { display: flex; align-items: flex-start; gap: 10px; font-weight: 500; font-size: .82rem; line-height: 1.4; }
 .acc-caja label.acepto input { width: 18px; height: 18px; min-height: 0; padding: 0; margin-top: 1px; flex: none; accent-color: var(--ambar); }
@@ -294,6 +310,8 @@ canvas { display: block; width: 100%; height: 330px; }
       <label>Correo<input id="r_mail" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com"></label>
       <label>Usuario<input id="r_usr" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Elige un usuario"></label>
       <label>Contraseña<input id="r_pass" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres"></label>
+      <label>Código de invitación <span class="opc">(opcional)</span><input id="r_cod" style="font-family:var(--mono);text-transform:uppercase" placeholder="Ej. CARL7K" autocapitalize="characters" autocomplete="off" spellcheck="false"></label>
+      <div class="cod-ok" id="r_cod_ok" hidden></div><p class="cod-mal" id="r_cod_mal" hidden>Ese código no existe. Revísalo o déjalo vacío.</p>
       <input id="r_web" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
       <label class="acepto"><input type="checkbox" id="r_acepta"><span>Acepto el <button type="button" id="ver_acuerdo">acuerdo de responsabilidad</button>.</span></label>
       <button class="btn" type="submit">Crear mi cuenta gratis</button>
@@ -386,6 +404,23 @@ canvas { display: block; width: 100%; height: 330px; }
     <p>Cambia tus 🪙 ALEMA Puntos por material educativo oficial de ALEMA. Subes de nivel con los puntos que ganas.</p>
     <div class="nivel-cab"><div class="fila"><span>Tu nivel: <b id="nv_nombre">Bronce</b></span><span id="nv_txt"></span></div><div class="barra"><i id="nv_barra"></i></div></div>
     <div id="niveles"></div>
+    <div class="invitar" id="invitar">
+      <div style="display:grid;gap:12px">
+        <h3>🎁 Invita a tus amigos</h3>
+        <p>Comparte tu código. Cuando tu amigo complete la <b>Unidad 1</b> de la Ruta, <b>los dos ganan +<span class="inv_pts">50</span> 🪙</b>.</p>
+        <div class="inv-pasos">
+          <div class="inv-paso"><i>1</i><span>Comparte tu código o tu link por WhatsApp.</span></div>
+          <div class="inv-paso"><i>2</i><span>Tu amigo crea su cuenta gratis con tu código.</span></div>
+          <div class="inv-paso"><i>3</i><span>Cuando termine la Unidad 1, a los dos les llegan +<span class="inv_pts">50</span> 🪙.</span></div>
+        </div>
+        <p style="font-size:.78rem">Máximo <span id="inv_max">20</span> amigos con premio por cuenta. Los 🪙 solo se canjean por material educativo de ALEMA.</p>
+      </div>
+      <div style="display:grid;gap:12px">
+        <div class="mi-cod"><small>TU CÓDIGO</small><b id="inv_cod">—</b>
+          <div class="acc-r"><button class="btn wa" type="button" id="inv_wa">Compartir por WhatsApp</button><button class="btn sec" type="button" id="inv_copiar">Copiar link</button></div></div>
+        <div class="amigos" id="inv_amigos"></div>
+      </div>
+    </div>
   </section>
 
   <!-- PAQUETES -->
@@ -467,7 +502,30 @@ function aplicar(s) {
   $("u_nom").textContent = s.usuario;
   pintarTodo();
 }
-function pintarTodo() { pintar(); pintarActivos(); pintarRuta(); pintarRacha(); pintarPlan(); }
+function pintarTodo() { pintar(); pintarActivos(); pintarRuta(); pintarRacha(); pintarPlan(); pintarInvita(); }
+/* ---------- códigos de invitación ---------- */
+const LINK_LAB = "https://alematradingacademy.com.mx/lab/";
+const linkInvita = () => EST && EST.invita ? `${LINK_LAB}?c=${EST.invita.codigo}` : LINK_LAB;
+function pintarInvita() {
+  const v = EST && EST.invita; if (!v) return;
+  $("inv_cod").textContent = v.codigo; $("inv_max").textContent = v.max; document.querySelectorAll(".inv_pts").forEach(x => x.textContent = v.puntos);
+  $("inv_amigos").innerHTML = v.amigos.length ? v.amigos.map(a => `<div class="amigo"><div><b>${a.nombre.replace(/[<>&]/g, "")}</b><br><span>${a.premio ? "Terminó la Unidad 1" : a.esferas ? `Va en la esfera ${a.esferas} de 5` : "Ya creó su cuenta"}</span></div><span class="chip ${a.premio ? "ok" : "pend"}">${a.premio ? `+${v.puntos} 🪙 ganados` : "En camino"}</span></div>`).join("")
+    : `<p style="text-align:center">Aún no invitas a nadie. ¡Comparte tu código!</p>`;
+}
+$("inv_wa").addEventListener("click", () => abrirUrl(`https://wa.me/?text=${encodeURIComponent(`Practica trading gratis en ALEMA Trading Lab con mi código ${EST.invita.codigo}: ${linkInvita()}`)}`));
+$("inv_copiar").addEventListener("click", () => { const t = linkInvita(); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => guia("bien", "📋 Link copiado. ¡Compártelo!")).catch(() => guia("bien", `Tu link: ${t}`)); });
+// En el registro: valida el código mientras se escribe (y lo toma del link ?c=CODIGO)
+let codValido = true, codTimer = null;
+function revisarCodigo() {
+  const v = $("r_cod").value.trim().toUpperCase(); $("r_cod_ok").hidden = $("r_cod_mal").hidden = true; codValido = true; clearTimeout(codTimer);
+  if (!v) return; codValido = false;
+  codTimer = setTimeout(() => api("validar_codigo", { codigo: v }).then(j => { if ($("r_cod").value.trim().toUpperCase() !== v) return;
+    codValido = !!j.valido;
+    if (j.valido) { $("r_cod_ok").textContent = j.tipo === "Alumno" ? `✓ Te invitó ${j.quien.replace(/\.$/, "")}. Al terminar la Unidad 1 los dos ganan +50 🪙` : "✓ Código válido"; $("r_cod_ok").hidden = false; }
+    else $("r_cod_mal").hidden = false; }).catch(() => { codValido = true; }), 450);
+}
+$("r_cod").addEventListener("input", revisarCodigo);
+
 
 /* ---------- mascota ---------- */
 function guia(tipo, txt) {
@@ -1680,10 +1738,10 @@ $("f_entrar").addEventListener("submit", async e => { e.preventDefault(); $("acc
 $("f_registro").addEventListener("submit", async e => { e.preventDefault(); $("acc_err").hidden = true; const v = id => $(id).value.trim(); let m = "";
   if (!v("r_nom")) m = "Escribe tu nombre."; else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("r_mail"))) m = "Escribe un correo válido.";
   else if (!/^[a-zA-Z][a-zA-Z0-9._-]{3,29}$/.test(v("r_usr"))) m = "El usuario debe empezar con letra y tener de 4 a 30 letras o números, sin espacios.";
-  else if ($("r_pass").value.length < 8) m = "La contraseña debe tener al menos 8 caracteres."; else if (!$("r_acepta").checked) m = "Acepta el acuerdo de responsabilidad para continuar.";
+  else if ($("r_pass").value.length < 8) m = "La contraseña debe tener al menos 8 caracteres."; else if (!codValido) m = "Ese código de invitación no existe. Revísalo o déjalo vacío."; else if (!$("r_acepta").checked) m = "Acepta el acuerdo de responsabilidad para continuar.";
   if (m) return errAcc(m);
   ocupado(e.target, true);
-  try { const j = await api("registro", { nombre: v("r_nom"), correo: v("r_mail"), usuario: v("r_usr"), pass: $("r_pass").value, acepta: true, web: $("r_web").value });
+  try { const j = await api("registro", { nombre: v("r_nom"), correo: v("r_mail"), usuario: v("r_usr"), pass: $("r_pass").value, acepta: true, web: $("r_web").value, codigo: $("r_cod").value.trim().toUpperCase() });
     if (!j.ok) errAcc(j.error); else { $("r_pass").value = ""; entrar(j.token, j.estado); ventana("bien", "¡Bienvenido a ALEMA Trading Lab!", "Tienes 10 ⚡ créditos al día para practicar en la Terminal y 5 ❤️ vidas para la Ruta. Pon siempre tu stop loss: cada vez ganas 🪙 que cambias por material de ALEMA."); } }
   catch (err) { errAcc("No se pudo conectar. Revisa tu internet e intenta de nuevo."); } finally { ocupado(e.target, false); } });
 $("ver_acuerdo").addEventListener("click", () => ventana("bien", "Acuerdo de responsabilidad", document.querySelector(".acuerdo .txt").innerText));
@@ -1696,6 +1754,8 @@ iniciarVelas(); $("precio").innerHTML = fmt(precio()) + "<small>precio simulado<
 pintarActivos(); pintarRuta(); pintar();
 addEventListener("resize", () => { if (!$("app").hidden) dibujar(); });
 setInterval(avanzar, 700);
+// Link con código (?c=CODIGO): abre el registro con el código ya puesto
+try { const c = new URLSearchParams(location.search).get("c"); if (c) { $("r_cod").value = c.toUpperCase().replace(/[^A-Z0-9-]/g, "").slice(0, 20); document.querySelector("[data-acc=registro]").click(); revisarCodigo(); } } catch (e) {}
 if (TK) { $("acc_cargando").hidden = false; $("f_entrar").hidden = true;
   api("estado").then(j => { if (j.ok) entrar(TK, j.estado); }).catch(() => {}).finally(() => { $("acc_cargando").hidden = true; if ($("app").hidden) $("f_entrar").hidden = false; }); }
 </script>
