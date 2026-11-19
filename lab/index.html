@@ -1686,7 +1686,7 @@ $("velo").addEventListener("click", e => { if (e.target === $("velo") && !$("m_o
 /* ---------- recompensas ---------- */
 const NIVELES = [
   { n: "Bronce", min: 0, items: [["Checklist", "Antes de operar", "Lista de 10 puntos para revisar antes de cada operación.", 150], ["Plantilla", "Plan de trading", "Define tu riesgo, horario y reglas.", 250], ["Plantilla", "Trading Journal", "Registra y analiza tus operaciones.", 350]] },
-  { n: "Plata", min: 1000, items: [["Guía PDF", "Manual del Trader Básico", "Conceptos clave para operar con método.", 600], ["Guía PDF", "Guía de Acción del Precio", "Lee el precio sin indicadores.", 750], ["Clase grabada", "Gestión de riesgo", "Clase de 40 min del Programa Académico.", 900]] },
+  { n: "Plata", min: 1000, items: [["Guía PDF", "Manual del Trader Básico", "Conceptos clave para operar con método.", 600], ["Guía PDF", "Guía de Acción del Precio", "Lee el precio sin indicadores.", 750], ["Clase en vivo", "Gestión de riesgo", "Clase de 40 min del Programa Académico.", 900]] },
   { n: "Oro", min: 2500, items: [["Sesión 1 a 1", "Revisión con mentor", "30 min revisando tus operaciones con un mentor.", 1500], ["Clase en vivo", "Clase grupal", "Una clase en vivo del Programa.", 1800], ["Herramienta", "Prop Firm 7 días", "Prueba la Terminal Prop de ALEMA por 7 días.", 2200]] }
 ];
 const clave = nom => nom === "Antes de operar" ? "Checklist antes de operar" : nom; // nombre en el servidor
@@ -1707,7 +1707,7 @@ $("niveles").addEventListener("click", e => { const b = e.target.closest("[data-
   if (pts < c || canjeados.has(clave(k))) return;
   ventana("bien", `¿Canjear "${k}"?`, `Se descuentan ${c} 🪙 de tus puntos.`, [["Sí, canjear", () => { cerrarV(); b.disabled = true;
     enviar("canjear", { recompensa: clave(k) }).then(j => { if (!j.ok) return; guia("bien", `🎁 ¡Canjeaste "${k}"!`);
-      ventana("bien", "Recompensa canjeada", k === "Revisión con mentor" || k === "Clase grupal" ? "Te escribiremos por correo para agendarla." : `Te enviaremos "${k}" a tu correo.`); }); }], ["Cancelar", cerrarV, "sec"]]); });
+      ventana("bien", "Recompensa canjeada", k === "Revisión con mentor" || k === "Clase grupal" || k === "Gestión de riesgo" ? "Te escribiremos por correo para agendarla." : `Te enviaremos "${k}" a tu correo.`); }); }], ["Cancelar", cerrarV, "sec"]]); });
 
 /* ---------- pintar y pestañas ---------- */
 function pintar() {
