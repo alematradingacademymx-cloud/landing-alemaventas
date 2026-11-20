@@ -262,6 +262,7 @@ canvas { display: block; width: 100%; height: 330px; }
 .opc { font-weight: 500; color: #6B7588; }
 .cod-ok { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; background: rgb(43 212 154 / .1); border: 1px solid rgb(43 212 154 / .4); color: var(--verde); font-size: .82rem; }
 .cod-mal { margin: 0; color: var(--rojo); font-size: .8rem; }
+.wa-nota { font-weight: 500; font-size: .74rem; color: #6B7588; }
 .invitar { margin-top: 14px; padding: 18px; border-radius: 18px; background: rgb(0 0 0 / .22); border: 1px solid rgb(254 166 33 / .3); display: grid; gap: 16px; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: start; }
 .invitar h3 { margin: 0; font-size: 1.05rem; } .invitar p { margin: 0; color: var(--tenue); font-size: .86rem; }
 .mi-cod { padding: 16px; border-radius: 16px; background: rgb(254 166 33 / .08); border: 1px solid rgb(254 166 33 / .35); display: grid; gap: 10px; text-align: center; }
@@ -346,6 +347,7 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
       <input id="r_web" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
       <label class="acepto"><input type="checkbox" id="r_acepta"><span>Acepto el <button type="button" id="ver_acuerdo">acuerdo de responsabilidad</button> y el <a href="privacidad/" target="_blank" rel="noopener">aviso de privacidad</a>.</span></label>
       <label class="acepto"><input type="checkbox" id="r_promos"><span>Quiero recibir información del Programa Académico y promociones de ALEMA (opcional).</span></label>
+      <label id="r_wa_caja" hidden>WhatsApp <span class="opc">(opcional)</span><input id="r_wa" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" placeholder="10 dígitos, ej. 81 1234 5678"><span class="wa-nota">Un asesor de ALEMA puede escribirte para contarte del Programa Académico.</span></label>
       <button class="btn" type="submit">Crear mi cuenta gratis</button>
       <p class="acc-nota">Conoce cómo usamos tus datos en el <a href="privacidad/" target="_blank" rel="noopener" style="color:var(--ambar)">aviso de privacidad</a>.</p>
     </form>
@@ -1770,15 +1772,16 @@ $("f_entrar").addEventListener("submit", async e => { e.preventDefault(); $("acc
   ocupado(e.target, true);
   try { const j = await api("login", { usuario: $("e_usr").value.trim(), pass: $("e_pass").value }); if (!j.ok) errAcc(j.error); else { $("e_pass").value = ""; entrar(j.token, j.estado); } }
   catch (err) { errAcc("No se pudo conectar. Revisa tu internet e intenta de nuevo."); } finally { ocupado(e.target, false); } });
-$("f_registro").addEventListener("submit", async e => { e.preventDefault(); $("acc_err").hidden = true; const v = id => $(id).value.trim(); let m = "";
+$("f_registro").addEventListener("submit", async e => { e.preventDefault(); $("acc_err").hidden = true; const v = id => $(id).value.trim(); let m = ""; const wa = $("r_promos").checked ? $("r_wa").value.replace(/\D/g, "") : "";
   if (!v("r_nom")) m = "Escribe tu nombre."; else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("r_mail"))) m = "Escribe un correo válido.";
   else if (!/^[a-zA-Z][a-zA-Z0-9._-]{3,29}$/.test(v("r_usr"))) m = "El usuario debe empezar con letra y tener de 4 a 30 letras o números, sin espacios.";
-  else if ($("r_pass").value.length < 8) m = "La contraseña debe tener al menos 8 caracteres."; else if (!codValido) m = "Ese código de invitación no existe. Revísalo o déjalo vacío."; else if (!$("r_acepta").checked) m = "Acepta el acuerdo de responsabilidad y el aviso de privacidad para continuar.";
+  else if ($("r_pass").value.length < 8) m = "La contraseña debe tener al menos 8 caracteres."; else if (!codValido) m = "Ese código de invitación no existe. Revísalo o déjalo vacío."; else if (wa && !/^(52)?\d{10}$/.test(wa)) m = "Escribe tu WhatsApp a 10 dígitos o déjalo vacío."; else if (!$("r_acepta").checked) m = "Acepta el acuerdo de responsabilidad y el aviso de privacidad para continuar.";
   if (m) return errAcc(m);
   ocupado(e.target, true);
-  try { const j = await api("registro", { nombre: v("r_nom"), correo: v("r_mail"), usuario: v("r_usr"), pass: $("r_pass").value, acepta: true, web: $("r_web").value, codigo: $("r_cod").value.trim().toUpperCase(), promos: $("r_promos").checked });
+  try { const j = await api("registro", { nombre: v("r_nom"), correo: v("r_mail"), usuario: v("r_usr"), pass: $("r_pass").value, acepta: true, web: $("r_web").value, codigo: $("r_cod").value.trim().toUpperCase(), promos: $("r_promos").checked, whatsapp: wa.slice(-10) });
     if (!j.ok) errAcc(j.error); else { $("r_pass").value = ""; pixel("track", "CompleteRegistration", { content_name: "ALEMA Trading Lab", status: true }); entrar(j.token, j.estado); ventana("bien", "¡Bienvenido a ALEMA Trading Lab!", "Tienes 10 ⚡ créditos al día para practicar en la Terminal y 5 ❤️ vidas para la Ruta. Pon siempre tu stop loss: cada vez ganas 🪙 que cambias por material de ALEMA."); } }
   catch (err) { errAcc("No se pudo conectar. Revisa tu internet e intenta de nuevo."); } finally { ocupado(e.target, false); } });
+$("r_promos").addEventListener("change", () => { $("r_wa_caja").hidden = !$("r_promos").checked; if (!$("r_promos").checked) $("r_wa").value = ""; });
 $("ver_acuerdo").addEventListener("click", () => ventana("bien", "Acuerdo de responsabilidad", document.querySelector(".acuerdo .txt").innerText));
 $("salir").addEventListener("click", () => { api("salir").catch(() => {}); cerrarSesion(); });
 document.querySelector(".guia").hidden = true;
