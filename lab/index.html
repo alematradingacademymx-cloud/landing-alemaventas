@@ -269,6 +269,40 @@ canvas { display: block; width: 100%; height: 330px; }
 .mi-cod small { color: var(--tenue); font-size: .76rem; font-weight: 600; } .mi-cod b { font-family: var(--mono); font-size: 1.6rem; letter-spacing: .06em; color: var(--ambar); }
 .mi-cod .acc-r { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .btn.wa { background: #25D366; color: #04130D; }
+/* Biblioteca */
+.bib-grupo { display: grid; gap: 10px; }
+.bib-grupo h3 { margin: 4px 0 0; font-size: .95rem; } .bib-grupo h3 small { color: var(--tenue); font-weight: 500; }
+.bib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.libro { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 16px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); }
+.libro .tapa { position: relative; aspect-ratio: 3 / 4; border-radius: 10px; overflow: hidden; box-shadow: 0 12px 26px -16px #000; }
+.libro .tapa .img { position: absolute; inset: 0; background: #0E1A33 center / cover no-repeat; }
+.libro .tapa .img.dibujo { display: grid; align-content: space-between; padding: 12px; background: linear-gradient(160deg, var(--c1), var(--c2)); }
+.libro .tapa .dibujo .ico { font-size: 2rem; } .libro .tapa .dibujo b { font-size: .95rem; line-height: 1.2; color: #fff; text-shadow: 0 2px 10px rgb(0 0 0 / .4); }
+.libro .tapa .dibujo small { font-size: .62rem; font-weight: 800; letter-spacing: .18em; color: rgb(255 255 255 / .8); }
+.libro.cerrado .tapa .img { filter: grayscale(.5) brightness(.55); }
+.libro .etq { position: absolute; top: 8px; right: 8px; left: auto; transform: none; z-index: 1; color: var(--tinta); letter-spacing: 0; padding: 3px 8px; border-radius: 999px; font-size: .68rem; font-weight: 800; background: rgb(7 11 19 / .85); border: 1px solid var(--borde); }
+.libro .etq.gratis { color: var(--verde); border-color: rgb(43 212 154 / .5); } .libro .etq.mio { color: var(--ambar); border-color: rgb(254 166 33 / .5); }
+.libro > b { font-size: .86rem; line-height: 1.25; } .libro > span + .btn, .libro > b + .btn { margin-top: auto; } .libro > span { color: var(--tenue); font-size: .74rem; }
+.libro .btn { margin-top: auto; min-height: 38px; padding: 0 10px; font-size: .82rem; width: 100%; display: inline-grid; place-items: center; text-decoration: none; white-space: normal; line-height: 1.15; }
+.bib-prog { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 16px; border: 1px solid rgb(254 166 33 / .35); background: rgb(254 166 33 / .06); flex-wrap: wrap; }
+.bib-prog .candado { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 1.3rem; background: rgb(254 166 33 / .12); border: 1px solid rgb(254 166 33 / .4); flex: none; }
+.bib-prog > div:nth-child(2) { flex: 1; min-width: 200px; } .bib-prog p { margin: 2px 0 0; color: var(--tenue); font-size: .84rem; }
+.bib-prog .btn { display: inline-grid; place-items: center; text-decoration: none; }
+@media (max-width: 520px) { .bib-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .bib-prog .btn { width: 100%; } }
+/* Lector: sin selección, sin menú, sin arrastrar, sin imprimir */
+.visor { position: fixed; inset: 0; z-index: 80; display: grid; grid-template-rows: auto 1fr auto; background: #05080F; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.visor[hidden] { display: none !important; }
+.visor-cab { display: flex; align-items: center; gap: 10px; padding: 10px max(12px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--borde); }
+.vs-t { flex: 1; min-width: 0; display: grid; } .vs-t b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .95rem; } .vs-t span { color: var(--tenue); font-size: .76rem; }
+.vs-btns { display: flex; gap: 6px; } .vs-btns .btn { min-height: 40px; min-width: 40px; padding: 0 12px; font-size: 1.05rem; }
+.visor-cuerpo { overflow: auto; -webkit-overflow-scrolling: touch; padding: 14px 10px 24px; display: grid; justify-items: center; align-content: start; gap: 12px; }
+.vs-hoja { position: relative; width: min(var(--ancho, 820px), 100%); background: #fff center / 100% 100% no-repeat; border-radius: 6px; box-shadow: 0 16px 40px -18px #000; }
+.vs-hoja.cargando { background: rgb(255 255 255 / .06); } .vs-hoja.cargando::after { content: "Cargando…"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--tenue); font-size: .85rem; }
+.vs-hoja .agua { position: absolute; inset: 0; pointer-events: none; background-repeat: repeat; border-radius: 6px; }
+.visor.tapado .visor-cuerpo { filter: blur(22px); }
+.vs-tapa { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; color: var(--tinta); pointer-events: none; }
+.visor-pie { margin: 0; padding: 8px 14px; text-align: center; font-size: .72rem; color: var(--tenue); border-top: 1px solid var(--borde); }
+@media print { body.leyendo > * { display: none !important; } body.leyendo::after { content: "La impresión no está disponible en ALEMA Trading Lab."; display: block; padding: 40px; font: 16px sans-serif; color: #000; } }
 .inv-pasos { display: grid; gap: 10px; } .inv-paso { display: flex; gap: 12px; align-items: flex-start; font-size: .86rem; }
 .inv-paso i { flex: none; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; font-style: normal; font-weight: 800; background: rgb(255 255 255 / .07); color: var(--ambar); }
 .amigos { display: grid; gap: 8px; } .amigo { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); font-size: .86rem; }
@@ -375,7 +409,7 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
     <button role="tab" aria-selected="false" data-tab="ruta">Ruta de aprendizaje</button>
     <button role="tab" aria-selected="false" data-tab="recompensas">Recompensas</button>
     <button role="tab" aria-selected="false" data-tab="paquetes">Paquetes</button>
-    <button role="tab" aria-selected="false" data-tab="clases">Clases y biblioteca ↗</button>
+    <button role="tab" aria-selected="false" data-tab="clases">📚 Biblioteca</button>
   </div>
 
   <!-- TERMINAL -->
@@ -471,10 +505,14 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
     <div class="pase vidrio"><div><small>PASE MENTOR LAB</small><b>2 sesiones 1 a 1 con mentor + 2 guías de regalo</b><span><b class="pase-pr">$120 MXN / mes</b> · Las sesiones se agendan en la fecha que indique tu mentor.</span></div><div class="pase-acc"><button class="btn" type="button" data-pase>Conocer el Pase</button><small class="clip">🔒 Pago seguro con Clip</small></div></div>
   </section>
 
-  <!-- CLASES: llevan a la landing de ALEMA -->
-  <section data-panel="clases" class="bloqueo vidrio" hidden>
-    <div class="fondo"><div style="height:80px"></div><div style="height:80px"></div><div style="height:80px"></div><div style="height:80px"></div></div>
-    <div class="aviso-b vidrio"><div class="candado">🎓</div><h3>Clases y biblioteca</h3><p>Las clases en vivo 1 a 1 con mentor, las evaluaciones y la biblioteca de guías son parte del Programa Académico. Conoce el programa y sus costos en nuestra página.</p><a class="btn" href="https://alematradingacademy.com.mx/" target="_blank" rel="noopener" style="display:inline-grid;place-items:center;text-decoration:none">Conocer el Programa Académico&nbsp;↗</a></div>
+  <!-- BIBLIOTECA: material para leer dentro de la app (sin descarga ni impresión) -->
+  <section data-panel="clases" class="panel vidrio" hidden>
+    <h2>📚 Biblioteca</h2>
+    <p>Lee el material de ALEMA aquí mismo. Es solo para consulta dentro de la app: no se descarga ni se imprime.</p>
+    <div class="bib-grupo"><h3>🆓 Material de apoyo <small>· gratis</small></h3><div class="bib-grid" id="bib_gratis"></div></div>
+    <div class="bib-grupo"><h3>🎁 Guías de recompensa <small>· se abren al canjearlas</small></h3><div class="bib-grid" id="bib_canje"></div></div>
+    <div class="bib-grupo"><h3>🔒 Guías del portal <small>· para alumnos del Programa</small></h3><div class="bib-grid" id="bib_portal"></div></div>
+    <div class="bib-prog"><div class="candado">🎓</div><div><b>Clases en vivo con mentor</b><p>Las clases 1 a 1, las evaluaciones y todas las guías son parte del Programa Académico.</p></div><a class="btn" href="https://alematradingacademy.com.mx/" target="_blank" rel="noopener">Conocer el Programa&nbsp;↗</a></div>
   </section>
 
   <details class="acuerdo vidrio">
@@ -495,6 +533,15 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
   <div class="mcab"><svg id="m_masc"><use href="#toro"/></svg><div><h3 id="m_t"></h3><p id="m_p"></p></div></div>
   <div class="opciones" id="m_ops"></div><div class="acciones" id="m_acc"></div>
 </div></div>
+<div class="visor" id="visor" hidden role="dialog" aria-modal="true" aria-labelledby="vs_tit">
+  <div class="visor-cab">
+    <div class="vs-t"><b id="vs_tit"></b><span id="vs_pag">—</span></div>
+    <div class="vs-btns"><button type="button" class="btn sec" id="vs_menos" aria-label="Alejar">−</button><button type="button" class="btn sec" id="vs_mas" aria-label="Acercar">+</button><button type="button" class="btn sec" id="vs_x" aria-label="Cerrar lector">✕</button></div>
+  </div>
+  <div class="visor-cuerpo" id="vs_cuerpo"></div>
+  <div class="vs-tapa" id="vs_tapa" hidden>👀 Regresa a la app para seguir leyendo.</div>
+  <p class="visor-pie">Material protegido por derechos de autor. Se prohíbe su venta o distribución sin autorización de ALEMA Trading Academy.</p>
+</div>
 <script>
 /* ALEMA Trading Lab · app real. El avance se guarda en el servidor (Apps Script + Google Sheets). */
 const API = "https://script.google.com/macros/s/AKfycbwhJRzfvx5IaeDmqgYYLMChkMvB9HBqG--LlX8tXSzq9f9MTkb0t3Vx9OLE0h1RDHxKpg/exec";
@@ -1712,15 +1759,103 @@ function pintarRecompensas() {
   $("niveles").innerHTML = NIVELES.map(n => { const abierto = ganados >= n.min;
     return `<div class="nivel ${abierto ? "" : "cerrado"}" style="margin-top:14px"><h3>${abierto ? "🔓" : "🔒"} Nivel ${n.n} <small>${abierto ? "" : `· se abre con ${n.min} 🪙 ganados`}</small></h3><div class="grid3">` +
       n.items.map(([tipo, nom, desc, c]) => { const ya = canjeados.has(clave(nom));
-        const btn = ya ? `<button class="btn hecho" type="button" disabled>Canjeado ✓</button>` : !abierto ? `<button class="btn" type="button" disabled>Nivel ${n.n}</button>` :
+        const btn = ya && PREMIO_LIBRO[nom] ? `<button class="btn hecho" type="button" data-leer="${PREMIO_LIBRO[nom].id}">📖 Leer en Biblioteca</button>` : ya ? `<button class="btn hecho" type="button" disabled>Canjeado ✓</button>` : !abierto ? `<button class="btn" type="button" disabled>Nivel ${n.n}</button>` :
           pts < c ? `<button class="btn" type="button" disabled>Te faltan ${c - pts} 🪙</button>` : `<button class="btn" type="button" data-canje="${nom}" data-costo="${c}">Canjear</button>`;
         return `<div class="premio"><span class="tipo">${tipo}</span><b>${nom}</b><p>${desc}</p><span class="pts">${c} 🪙</span>${btn}</div>`; }).join("") + `</div></div>`; }).join("");
 }
-$("niveles").addEventListener("click", e => { const b = e.target.closest("[data-canje]"); if (!b) return; const c = +b.dataset.costo, k = b.dataset.canje;
+$("niveles").addEventListener("click", e => { const lb = e.target.closest("[data-leer]"); if (lb) return abrirLibro(lb.dataset.leer); const b = e.target.closest("[data-canje]"); if (!b) return; const c = +b.dataset.costo, k = b.dataset.canje;
   if (pts < c || canjeados.has(clave(k))) return;
   ventana("bien", `¿Canjear "${k}"?`, `Se descuentan ${c} 🪙 de tus puntos.`, [["Sí, canjear", () => { cerrarV(); b.disabled = true;
     enviar("canjear", { recompensa: clave(k) }).then(j => { if (!j.ok) return; guia("bien", `🎁 ¡Canjeaste "${k}"!`);
-      ventana("bien", "Recompensa canjeada", k === "Revisión con mentor" || k === "Clase grupal" || k === "Gestión de riesgo" ? "Te escribiremos por correo para agendarla." : `Te enviaremos "${k}" a tu correo.`); }); }], ["Cancelar", cerrarV, "sec"]]); });
+      ventana("bien", "Recompensa canjeada", k === "Revisión con mentor" || k === "Clase grupal" || k === "Gestión de riesgo" ? "Te escribiremos por correo para agendarla." : PREMIO_LIBRO[k] ? `Ya está en tu Biblioteca. Puedes leerla cuando quieras dentro de la app.` : `Te enviaremos "${k}" a tu correo.`, PREMIO_LIBRO[k] ? [["📖 Leer ahora", () => { cerrarV(); abrirLibro(PREMIO_LIBRO[k].id); }], ["Después", cerrarV, "sec"]] : undefined); }); }], ["Cancelar", cerrarV, "sec"]]); });
+
+/* ---------- Biblioteca ---------- */
+const PORTAL = "https://alematradingacademy.com.mx/app/";
+const BIBLIO = [
+  { id: "indicadores", t: "Indicadores y Osciladores", g: "gratis", ico: "📈", c: ["#1E3A8A", "#3B82F6"] },
+  { id: "soportes", t: "Soportes y Resistencias", g: "gratis", ico: "🧱", c: ["#7C2D12", "#F97316"] },
+  { id: "gann", t: "Abanico de Gann", g: "gratis", ico: "📐", c: ["#134E4A", "#14B8A6"] },
+  { id: "fibonacci", t: "Introducción a Fibonacci", g: "gratis", ico: "🌀", c: ["#4C1D95", "#A855F7"] },
+  { id: "manual", t: "Manual del Trader Básico", g: "canje", premio: "Manual del Trader Básico", costo: 600, tapa: "portadas/manual_trader.jpg" },
+  { id: "accion", t: "Guía de Acción del Precio", g: "canje", premio: "Guía de Acción del Precio", costo: 750, tapa: "portadas/accion_precio.jpg" },
+  { id: "inicial", t: "La guía inicial del trader", g: "portal", sub: "Paquete Starter", tapa: "portadas/guia_inicial.jpg" },
+  { id: "g1", t: "Guía 1 · Arquitectura del riesgo", g: "portal", sub: "Paquete Élite", tapa: "portadas/guia1_arquitectura.jpg" },
+  { id: "g2", t: "Guía 2 · Psicología del trader de élite", g: "portal", sub: "Paquete Élite", tapa: "portadas/guia2_psicologia.jpg" },
+  { id: "g3", t: "Guía 3 · Bitácora institucional", g: "portal", sub: "Paquete Élite", tapa: "portadas/guia3_bitacora.jpg" },
+  { id: "g4", t: "Guía 4 · La IA en el análisis técnico", g: "portal", sub: "Paquete Élite", tapa: "portadas/guia4_ia.jpg" },
+  { id: "tecnico", t: "Manual Técnico Avanzado", g: "portal", sub: "Guía única", ico: "🛠️", c: ["#1F2937", "#6B7280"] }
+];
+const PREMIO_LIBRO = {}; BIBLIO.forEach(l => { if (l.premio) PREMIO_LIBRO[l.premio] = l; });
+// De dónde salen las páginas: el servidor manda cada página como imagen solo si tienes sesión y acceso.
+// Las páginas se piden fuera de la fila de la app (hasta 3 a la vez) para no frenar lo demás.
+let bibActivas = 0; const bibFila = [];
+function bibLlamar(accion, datos) { return new Promise((ok, mal) => { bibFila.push([accion, datos, ok, mal]); bibSig(); }); }
+function bibSig() { if (bibActivas >= 3 || !bibFila.length) return; const [a, d, ok, mal] = bibFila.shift(); bibActivas++;
+  llamar(a, d).then(ok, mal).finally(() => { bibActivas--; bibSig(); }); }
+const BIB_FUENTE = window.BIB_FUENTE || {
+  info: id => bibLlamar("material", { id }).then(j => { if (!j.ok) throw new Error(j.error || "No se pudo abrir."); return j.paginas; }),
+  pagina: (id, p) => bibLlamar("material_pagina", { id, p }).then(j => { if (!j.ok) throw new Error(j.error || "No se pudo cargar."); return j.img; })
+};
+function tapaHtml(l, sello) {
+  const s = sello ? `<span class="etq ${sello[0]}">${sello[1]}</span>` : "";
+  return l.tapa ? `<div class="tapa"><div class="img" style="background-image:url('${l.tapa}')"></div>${s}</div>`
+    : `<div class="tapa"><div class="img dibujo" style="--c1:${l.c[0]};--c2:${l.c[1]}"><span class="ico">${l.ico}</span><div><small>ALEMA</small><br><b>${l.t}</b></div></div>${s}</div>`;
+}
+function puedeLeer(l) { return l.g === "gratis" || (l.g === "canje" && canjeados.has(l.premio)); }
+function pintarBiblioteca() {
+  const caja = { gratis: $("bib_gratis"), canje: $("bib_canje"), portal: $("bib_portal") }; if (!caja.gratis) return;
+  Object.values(caja).forEach(c => c.innerHTML = "");
+  BIBLIO.forEach(l => { let html;
+    if (l.g === "gratis") html = `<div class="libro">${tapaHtml(l, ["gratis", "GRATIS"])}<b>${l.t}</b><button class="btn" type="button" data-leer="${l.id}">📖 Leer</button></div>`;
+    else if (l.g === "canje") { const mio = canjeados.has(l.premio);
+      html = `<div class="libro ${mio ? "" : "cerrado"}">${tapaHtml(l, mio ? ["mio", "CANJEADA"] : ["", "🔒 " + l.costo + " 🪙"])}<b>${l.t}</b>` +
+        (mio ? `<button class="btn" type="button" data-leer="${l.id}">📖 Leer</button>` : `<span>Nivel Plata · ${l.costo} 🪙</span><button class="btn sec" type="button" data-ir="recompensas">Canjear en Recompensas</button>`) + `</div>`; }
+    else html = `<div class="libro cerrado">${tapaHtml(l, ["", "🔒 Portal"])}<b>${l.t}</b><span>${l.sub}</span><a class="btn sec" href="${PORTAL}" target="_blank" rel="noopener">Ver en el portal ↗</a></div>`;
+    caja[l.g].insertAdjacentHTML("beforeend", html); });
+}
+document.querySelector('[data-panel="clases"]').addEventListener("click", e => {
+  const b = e.target.closest("[data-leer]"); if (b) return abrirLibro(b.dataset.leer);
+  const r = e.target.closest("[data-ir]"); if (r) ir(r.dataset.ir); });
+// Lector
+let LEYENDO = null, zoomL = 1, obsL = null;
+function marcaAgua() {
+  const c = document.createElement("canvas"); c.width = 420; c.height = 260; const x = c.getContext("2d");
+  const txt = `${EST ? EST.nombre : ""} · @${EST ? EST.usuario : ""} · ${new Date().toLocaleDateString("es-MX")}`;
+  x.translate(210, 130); x.rotate(-Math.PI / 7); x.font = "600 17px Lexend, sans-serif"; x.textAlign = "center";
+  x.fillStyle = "rgba(110,120,140,.20)"; x.fillText(txt, 0, 0); x.fillStyle = "rgba(110,120,140,.12)"; x.font = "800 13px Lexend, sans-serif"; x.fillText("ALEMA TRADING LAB", 0, 24);
+  return c.toDataURL();
+}
+async function abrirLibro(id) {
+  const l = BIBLIO.find(x => x.id === id); if (!l || !puedeLeer(l)) return;
+  LEYENDO = id; zoomL = 1; $("vs_tit").textContent = l.t; $("vs_pag").textContent = "Abriendo…";
+  const cuerpo = $("vs_cuerpo"); cuerpo.innerHTML = ""; cuerpo.scrollTop = 0; $("visor").hidden = false; document.body.classList.add("leyendo"); document.body.style.overflow = "hidden";
+  let n; try { n = await BIB_FUENTE.info(id); } catch (err) { $("vs_pag").textContent = err.message; return; }
+  if (LEYENDO !== id) return;
+  const agua = marcaAgua();
+  for (let p = 1; p <= n; p++) { const h = document.createElement("div"); h.className = "vs-hoja cargando"; h.dataset.p = p; h.style.aspectRatio = "0.707";
+    h.innerHTML = `<div class="agua" style="background-image:url('${agua}')"></div>`; cuerpo.appendChild(h); }
+  ajustarZoom(); $("vs_pag").textContent = `Página 1 de ${n}`;
+  if (obsL) obsL.disconnect();
+  obsL = new IntersectionObserver(ents => ents.forEach(en => { if (!en.isIntersecting) return; const h = en.target; obsL.unobserve(h);
+    BIB_FUENTE.pagina(id, +h.dataset.p).then(src => { if (LEYENDO !== id) return; const im = new Image();
+      im.onload = () => { h.style.aspectRatio = (im.naturalWidth / im.naturalHeight).toFixed(4); h.style.backgroundImage = `url('${src}')`; h.classList.remove("cargando"); }; im.src = src; })
+    .catch(() => { h.classList.remove("cargando"); h.textContent = "No se pudo cargar esta página."; }); }), { root: cuerpo, rootMargin: "600px 0px" });
+  cuerpo.querySelectorAll(".vs-hoja").forEach(h => obsL.observe(h));
+}
+function cerrarLibro() { LEYENDO = null; bibFila.length = 0; if (obsL) obsL.disconnect(); $("visor").hidden = true; $("vs_cuerpo").innerHTML = ""; document.body.classList.remove("leyendo"); document.body.style.overflow = ""; }
+function ajustarZoom() { $("vs_cuerpo").style.setProperty("--ancho", Math.round(820 * zoomL) + "px"); }
+$("vs_x").addEventListener("click", cerrarLibro);
+$("vs_mas").addEventListener("click", () => { zoomL = Math.min(2.2, zoomL + .2); ajustarZoom(); });
+$("vs_menos").addEventListener("click", () => { zoomL = Math.max(.6, zoomL - .2); ajustarZoom(); });
+$("vs_cuerpo").addEventListener("scroll", () => { const c = $("vs_cuerpo"), hs = c.querySelectorAll(".vs-hoja"); if (!hs.length) return; const mid = c.scrollTop + c.clientHeight / 2;
+  let p = 1; hs.forEach(h => { if (h.offsetTop <= mid) p = +h.dataset.p; }); $("vs_pag").textContent = `Página ${p} de ${hs.length}`; });
+["contextmenu", "dragstart", "selectstart", "copy"].forEach(ev => $("visor").addEventListener(ev, e => e.preventDefault()));
+document.addEventListener("keydown", e => { if (!LEYENDO) return;
+  if (e.key === "Escape") return cerrarLibro();
+  if ((e.ctrlKey || e.metaKey) && /^[psc]$/i.test(e.key)) { e.preventDefault(); guia("mal", "Este material es solo para leer en la app: no se descarga ni se imprime."); } });
+const tapar = on => { $("visor").classList.toggle("tapado", on); $("vs_tapa").hidden = !on; };
+addEventListener("blur", () => { if (LEYENDO) tapar(true); }); addEventListener("focus", () => tapar(false));
+document.addEventListener("visibilitychange", () => { if (LEYENDO) tapar(document.hidden); });
 
 /* ---------- pintar y pestañas ---------- */
 function pintar() {
@@ -1729,7 +1864,7 @@ function pintar() {
   $("sin_txt").textContent = plan === "Básico" ? "Mañana recibes 40 más." : "Mañana recibes 10 más.";
   Object.entries(mis).forEach(([id, [a, t]]) => { $(id).querySelector(".barra i").style.width = Math.min(100, a / t * 100) + "%"; $(id).classList.toggle("hecha", a >= t); });
   document.querySelectorAll(".vidas-ruta").forEach(el => el.textContent = CORAZON());
-  pintarPos(); pintarRecompensas();
+  pintarPos(); pintarRecompensas(); pintarBiblioteca();
 }
 function pintarPlan() {
   document.querySelectorAll("[data-plan-btn]").forEach(b => { const k = b.dataset.planBtn, mio = k === plan;
@@ -1737,7 +1872,7 @@ function pintarPlan() {
     b.disabled = mio; b.textContent = mio ? `Tu plan actual${EST && EST.planVence ? " · vence " + EST.planVence : ""}` : `Elegir ${k}`; });
 }
 const FRASES = { terminal: ["bien", "Calcula tu stop loss y take profit antes de operar."], ruta: ["bien", "Cada lección te acerca a nuevos activos. ¡Cuida tus vidas!"],
-  recompensas: ["bien", "Junta 🪙 con buenos hábitos y súbete de nivel."], paquetes: ["bien", "Con Pro tienes un mentor que revisa tus operaciones conmigo."], clases: ["bien", "¿Quieres clases en vivo con mentor? Conoce el Programa Académico."] };
+  recompensas: ["bien", "Junta 🪙 con buenos hábitos y súbete de nivel."], paquetes: ["bien", "Con Pro tienes un mentor que revisa tus operaciones conmigo."], clases: ["bien", "El material de apoyo es gratis. Las guías de recompensa se abren al canjearlas."] };
 function ir(tab) { document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab ? "true" : "false"));
   document.querySelectorAll("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== tab); guia(...FRASES[tab]); if (tab === "terminal") dibujar(); scrollTo(0, 0); }
 document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => ir(b.dataset.tab)));
@@ -1762,7 +1897,7 @@ function entrar(token, estado) {
   $("acceso").hidden = true; $("app").hidden = false; document.querySelector(".guia").hidden = false; dibujar();
   guia("bien", `¡Hola, ${estado.nombre.split(" ")[0]}! Calcula tu stop loss y take profit antes de operar.`);
 }
-function cerrarSesion() { TK = null; guardarLocal("alab_tk", null); posiciones = []; $("app").hidden = true; document.querySelector(".guia").hidden = true; $("acceso").hidden = false; cerrarV(); document.querySelector("[data-acc=entrar]").click(); }
+function cerrarSesion() { cerrarLibro(); TK = null; guardarLocal("alab_tk", null); posiciones = []; $("app").hidden = true; document.querySelector(".guia").hidden = true; $("acceso").hidden = false; cerrarV(); document.querySelector("[data-acc=entrar]").click(); }
 function errAcc(m) { $("acc_err").textContent = m; $("acc_err").hidden = false; }
 function ocupado(form, si) { const b = form.querySelector("button[type=submit]"); b.disabled = si; b.dataset.txt = b.dataset.txt || b.textContent; b.textContent = si ? "Un momento…" : b.dataset.txt; }
 document.querySelectorAll("[data-acc]").forEach(b => b.addEventListener("click", () => { document.querySelectorAll("[data-acc]").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
