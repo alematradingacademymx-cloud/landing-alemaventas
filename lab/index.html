@@ -551,6 +551,7 @@ const leerLocal = k => { try { return localStorage.getItem(k); } catch (e) { ret
 let TK = leerLocal("alab_tk"), EST = null;
 
 /* ---------- estado (lo manda el servidor) ---------- */
+const MAX_POS = 10;
 let cred = 0, credMax = 10, ilimitado = false, vidas = 5, vidasInf = false, pts = 0, ganados = 0, racha = 0, plan = "Gratis", programa = false, nId = 1, posiciones = [];
 const mis = { m1: [0, 3, 15], m2: [0, 1, 15], m3: [0, 1, 15] };
 let TOPE_SL = 5, bonosSL = 0, VIDA_COSTO = 2;
@@ -575,6 +576,8 @@ function enviar(accion, datos) { return api(accion, datos).then(j => { if (!j.ok
   .catch(() => { guia("mal", "No se pudo guardar. Revisa tu conexión."); return { ok: false }; }); }
 
 function aplicar(s) {
+  if (s.ahora) { const d = s.ahora - Date.now(), cambio = Math.abs(d - DESFASE) > 2000; DESFASE = d; if (cambio) iniciarVelas(); }
+  if (s.posiciones) posDeServidor(s.posiciones);
   EST = s; plan = s.plan; programa = s.programa; ilimitado = s.ilimitado;
   credMax = ilimitado ? Infinity : plan === "Básico" ? 40 : 10; cred = ilimitado ? Infinity : s.creditos;
   vidasInf = s.vidas < 0; vidas = vidasInf ? Infinity : s.vidas;
@@ -624,10 +627,21 @@ const PARES = {
   USDJPY: { p: 151.42, d: 3, pip: 0.01, vol: 0.02 }, XAUUSD: { p: 2385.4, d: 2, pip: 0.1, vol: 0.45 }, NAS100: { p: 18420.5, d: 1, pip: 1, vol: 4 }
 };
 let par = "EURUSD", velas = [];
-let semilla = Date.now() % 233280; const azar = () => (semilla = (semilla * 9301 + 49297) % 233280) / 233280;
-function iniciarVelas() { const c = PARES[par]; velas = []; let p = c.p;
-  for (let i = 0; i < 70; i++) { const a = p, cl = a + (azar() - .48) * c.vol * 4; velas.push({ a, c: cl, h: Math.max(a, cl) + azar() * c.vol * 2, l: Math.min(a, cl) - azar() * c.vol * 2 }); p = cl; } }
-const precio = () => velas[velas.length - 1].c;
+// Mercado simulado compartido: el precio sale de la hora, así que es el mismo en todos los dispositivos.
+// IMPORTANTE: debe ser idéntico a precioEn_() del servidor (Code.gs).
+const SEMILLA = { EURUSD: 11, GBPUSD: 23, USDJPY: 37, XAUUSD: 41, NAS100: 53 };
+const ESCALAS = [[1, .5], [4, 1], [15, 1.8], [60, 3.2], [300, 6], [1800, 12], [10800, 22], [86400, 40]];
+function hashM(n) { n = (n ^ 61) ^ (n >>> 16); n = Math.imul(n, 9); n ^= n >>> 4; n = Math.imul(n, 0x27d4eb2d); n ^= n >>> 15; return (n >>> 0) / 4294967296; }
+function precioEn(pr, t) { const c = PARES[pr]; let x = 0;
+  ESCALAS.forEach(([s, w], i) => { const q = t / s, k = Math.floor(q), f = q - k, u = f * f * (3 - 2 * f), sm = SEMILLA[pr] * 1013 + i * 7;
+    const a = hashM(Math.imul(k, 7919) ^ sm), b = hashM(Math.imul(k + 1, 7919) ^ sm); x += ((a + (b - a) * u) * 2 - 1) * w; });
+  return +(c.p + x * c.vol).toFixed(c.d); }
+let DESFASE = 0; const ahoraSeg = () => Math.floor((Date.now() + DESFASE) / 1000); // hora del servidor
+const VELA = 10; // segundos por vela
+function velaDe(pr, t0, hasta) { let a = precioEn(pr, t0), h = a, l = a, c = a; for (let k = t0 + 1; k <= hasta; k++) { c = precioEn(pr, k); h = Math.max(h, c); l = Math.min(l, c); } return { a, c, h, l, t: t0 }; }
+function iniciarVelas() { const ahora = ahoraSeg(), t0 = ahora - ahora % VELA; velas = [];
+  for (let i = 69; i >= 1; i--) velas.push(velaDe(par, t0 - i * VELA, t0 - i * VELA + VELA)); velas.push(velaDe(par, t0, ahora)); }
+const precio = () => precioEn(par, ahoraSeg());
 const fmt = (x, p = par) => (+x).toFixed(PARES[p].d);
 const usdPip = (p, l) => 10 * (l / 0.1) * (p === "XAUUSD" ? 1 : p === "NAS100" ? 0.1 : 1);
 function dibujar() {
@@ -646,9 +660,10 @@ function dibujar() {
   vis.forEach(p => { linea(p.e, "#98A2B3", "ENT"); if (p.sl) linea(p.sl, "#F45B69", "SL"); if (p.tp) linea(p.tp, "#2BD49A", "TP"); });
   linea(precio(), "#FEA621", fmt(precio()).slice(-7));
 }
-function avanzar() { const c = PARES[par], v = velas[velas.length - 1];
-  v.c += (azar() - .49) * c.vol; v.h = Math.max(v.h, v.c); v.l = Math.min(v.l, v.c);
-  if (azar() < .1) { velas.push({ a: v.c, c: v.c, h: v.c, l: v.c }); velas.shift(); }
+function avanzar() { const ahora = ahoraSeg(), t0 = ahora - ahora % VELA, ult = velas[velas.length - 1];
+  if (!ult || t0 - ult.t > VELA * 60 || t0 < ult.t) iniciarVelas();
+  else { if (t0 !== ult.t) { velas[velas.length - 1] = velaDe(par, ult.t, ult.t + VELA); for (let t = ult.t + VELA; t < t0; t += VELA) velas.push(velaDe(par, t, t + VELA)); velas.push(velaDe(par, t0, ahora)); velas = velas.slice(-70); }
+    else velas[velas.length - 1] = velaDe(par, t0, ahora); }
   $("precio").innerHTML = fmt(precio()) + "<small>precio simulado</small>"; revisar(); pintarPos(); if (!$("app").hidden) dibujar(); }
 
 /* ---------- calculadora en vivo ---------- */
@@ -664,15 +679,16 @@ function calcular() {
 ["sl", "tp", "lotes"].forEach(id => $(id).addEventListener("input", () => { $(id).classList.remove("malo"); $("err").hidden = true; calcular(); }));
 
 /* ---------- operaciones ---------- */
-function resultado(p) { const act = p.par === par ? precio() : p.e; return (p.t === "Compra" ? act - p.e : p.e - act) / PARES[p.par].pip * usdPip(p.par, p.l); }
+function resultado(p, cierre) { const act = cierre !== undefined ? cierre : precioEn(p.par, ahoraSeg()); return (p.t === "Compra" ? act - p.e : p.e - act) / PARES[p.par].pip * usdPip(p.par, p.l); }
 function error(txt, campo) { $("err").textContent = txt; $("err").hidden = false; if (campo) $(campo).classList.add("malo"); guia("mal", txt); }
 function abrir(t) {
   if (cred <= 0) return;
-  const e = precio(), sl = num("sl"), tp = num("tp"), compra = t === "Compra", l = Math.min(0.10, Math.max(0.01, +$("lotes").value || 0.01));
+  if (posiciones.length >= MAX_POS) return error(`Puedes tener hasta ${MAX_POS} operaciones abiertas. Cierra alguna para abrir otra.`);
+  const ts = ahoraSeg(), e = precioEn(par, ts), sl = num("sl"), tp = num("tp"), compra = t === "Compra", l = Math.min(0.10, Math.max(0.01, +$("lotes").value || 0.01));
   if (sl !== null && (compra ? sl >= e : sl <= e)) return error(`En una ${t.toLowerCase()} el stop loss va ${compra ? "debajo" : "arriba"} del precio de entrada (${fmt(e)}).`, "sl");
   if (tp !== null && (compra ? tp <= e : tp >= e)) return error(`En una ${t.toLowerCase()} el take profit va ${compra ? "arriba" : "debajo"} del precio de entrada (${fmt(e)}).`, "tp");
   $("err").hidden = true;
-  posiciones.push({ id: nId++, par, t, l, e, sl, tp }); if (!ilimitado) cred--; pulso("s_cred");
+  const nueva = { id: "tmp" + (nId++), tmp: true, par, t, l, e, sl, tp, ts, chk: ts }; posiciones.push(nueva); if (!ilimitado) cred--; pulso("s_cred");
   const rb2 = sl !== null && tp !== null && Math.abs(tp - e) / Math.abs(e - sl) >= 2;
   if (sl !== null) { const bono = bonosSL < TOPE_SL; if (bono) { bonosSL++; pts += 5; ganados += 5; pulso("s_pts"); }
     const extra = bono ? " +5 🪙" : ` (ya juntaste los ${TOPE_SL} bonos de stop loss de hoy)`;
@@ -680,20 +696,46 @@ function abrir(t) {
     else guia("bien", "¡Bien! Pusiste stop loss." + extra + " Prueba un take profit al doble de distancia."); }
   else guia("mal", "Operaste sin stop loss… así no ganas 🪙 y puedes perder de más.");
   $("sl").value = ""; $("tp").value = ""; calcular(); pintar();
-  enviar("operar", { sl: sl !== null, rb2 });
+  enviar("operar", { sl: sl !== null, rb2, pos: { par, t, l, ts, sl, tp } }).then(j => { if (!j.ok) { posiciones = posiciones.filter(p => p !== nueva); pintar(); } });
 }
-function cerrar(id, motivo) { const p = posiciones.find(x => x.id === id); if (!p) return; const r = resultado(p);
+function cerrar(id, motivo, ts, silencio) { const p = posiciones.find(x => x.id === id); if (!p) return;
+  ts = ts || ahoraSeg(); const r = resultado(p, motivo === "SL" ? p.sl : motivo === "TP" ? p.tp : precioEn(p.par, ts));
   posiciones = posiciones.filter(x => x.id !== id);
-  if (motivo === "TP") guia("bien", `¡Tu take profit se cumplió! ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD de práctica.`);
-  else if (motivo === "SL") guia("mal", `Se activó tu stop loss: perdiste solo lo que planeaste (${r.toFixed(2)} USD de práctica).`);
-  else guia(r >= 0 ? "bien" : "mal", `Cerraste ${p.par} con ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD de práctica.`);
-  pintar(); }
-function revisar() { posiciones.filter(p => p.par === par).forEach(p => { const a = precio(), c = p.t === "Compra";
-  if (p.sl && (c ? a <= p.sl : a >= p.sl)) cerrar(p.id, "SL"); else if (p.tp && (c ? a >= p.tp : a <= p.tp)) cerrar(p.id, "TP"); }); }
+  if (p.tmp) cierresPend.push({ ts0: p.ts, par: p.par, t: p.t, motivo: motivo || "Manual", ts }); // aún no la confirma el servidor
+  else enviar("cerrar_pos", { id: p.id, motivo: motivo || "Manual", ts });
+  if (!silencio) {
+    if (motivo === "TP") guia("bien", `¡Tu take profit se cumplió! ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD de práctica.`);
+    else if (motivo === "SL") guia("mal", `Se activó tu stop loss: perdiste solo lo que planeaste (${r.toFixed(2)} USD de práctica).`);
+    else guia(r >= 0 ? "bien" : "mal", `Cerraste ${p.par} con ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD de práctica.`); }
+  pintar(); return r; }
+// Revisa segundo a segundo desde la última revisión (también lo que pasó mientras la app estaba cerrada).
+function revisar() { const ahora = ahoraSeg(), tarde = [];
+  posiciones.slice().forEach(p => { const c = p.t === "Compra"; let desde = Math.max(p.chk || p.ts, p.ts) + 1;
+    if (ahora - desde > 2592000) desde = ahora - 2592000; // más de 30 días: solo revisa el último mes
+    // el precio no puede moverse más de L por segundo: salta los segundos en los que es imposible tocar el SL o el TP
+    const L = 2.9 * PARES[p.par].vol, eps = Math.pow(10, -PARES[p.par].d);
+    if (p.sl || p.tp) for (let k = desde; k <= ahora;) { const a = precioEn(p.par, k);
+      const toca = (p.sl && (c ? a <= p.sl : a >= p.sl)) ? "SL" : (p.tp && (c ? a >= p.tp : a <= p.tp)) ? "TP" : "";
+      if (toca) { if (ahora - k > 30) tarde.push([p, toca, k]); else cerrar(p.id, toca, k); return; }
+      const D = Math.min(p.sl ? Math.abs(a - p.sl) : Infinity, p.tp ? Math.abs(a - p.tp) : Infinity);
+      k += Math.max(1, Math.floor((D - eps) / L)); }
+    p.chk = ahora; });
+  if (tarde.length) avisoTarde(tarde.map(([p, m, k]) => [p, m, cerrar(p.id, m, k, true)])); }
+function avisoTarde(lista) {
+  const txt = lista.map(([p, m, r], i) => `${lista.length > 1 ? i + 1 + ") " : ""}${p.par} ${p.t.toLowerCase()} · ${m === "TP" ? "take profit ✅" : "stop loss 🛑"} · ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD`).join("   ");
+  ventana(lista.every(x => x[1] === "TP") ? "bien" : "mal", lista.length === 1 ? "Se cerró una operación mientras no estabas" : `Se cerraron ${lista.length} operaciones mientras no estabas`, txt); }
+// Las operaciones vienen del servidor; las que acabo de abrir siguen aquí hasta que el servidor las confirme.
+let cierresPend = [];
+function posDeServidor(lista) { const antes = {}; posiciones.forEach(p => antes[p.id] = p); const nuevas = [];
+  (lista || []).forEach(sp => { const pend = cierresPend.find(c => c.ts0 === sp.ts && c.par === sp.par && c.t === sp.t);
+    if (pend) { cierresPend = cierresPend.filter(c => c !== pend); enviar("cerrar_pos", { id: sp.id, motivo: pend.motivo, ts: pend.ts }); return; }
+    nuevas.push(Object.assign({}, sp, { chk: antes[sp.id] ? antes[sp.id].chk : sp.ts })); });
+  posiciones.filter(p => p.tmp && !(lista || []).some(sp => sp.ts === p.ts && sp.par === p.par && sp.t === p.t)).forEach(p => nuevas.push(p));
+  posiciones = nuevas; }
 function pintarPos() { const tb = $("posiciones");
   if (!posiciones.length) { tb.innerHTML = '<tr><td colspan="8" class="vacio">Abre una operación para empezar.</td></tr>'; return; }
   tb.innerHTML = posiciones.map(p => { const r = resultado(p); return `<tr><td>${p.par}</td><td>${p.t}</td><td class="num">${p.l.toFixed(2)}</td><td class="num">${fmt(p.e, p.par)}</td><td class="num">${p.sl ? fmt(p.sl, p.par) : "—"}</td><td class="num">${p.tp ? fmt(p.tp, p.par) : "—"}</td><td class="num ${r >= 0 ? "g" : "l"}">${r >= 0 ? "+" : ""}${r.toFixed(2)}</td><td><button type="button" data-cerrar="${p.id}">Cerrar</button></td></tr>`; }).join(""); }
-$("posiciones").addEventListener("click", e => { const b = e.target.closest("[data-cerrar]"); if (b) cerrar(+b.dataset.cerrar); });
+$("posiciones").addEventListener("click", e => { const b = e.target.closest("[data-cerrar]"); if (b) cerrar(b.dataset.cerrar); });
 $("b_comprar").addEventListener("click", () => abrir("Compra"));
 $("b_vender").addEventListener("click", () => abrir("Venta"));
 $("par").addEventListener("change", e => { const v = e.target.value;
