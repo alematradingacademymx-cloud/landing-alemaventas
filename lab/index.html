@@ -360,6 +360,14 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
     <ellipse cx="50" cy="54" rx="34" ry="32" fill="#86603F"/><ellipse cx="50" cy="68" rx="17" ry="13" fill="#D9B48C"/><ellipse cx="50" cy="62" rx="6" ry="4.5" fill="#2A1A0E"/>
     <circle cx="37" cy="48" r="5" fill="#1A1204"/><circle cx="63" cy="48" r="5" fill="#1A1204"/><circle cx="38.5" cy="46.5" r="1.6" fill="#fff"/><circle cx="64.5" cy="46.5" r="1.6" fill="#fff"/>
   </symbol>
+  <symbol id="oso_triste" viewBox="0 0 100 100">
+    <circle cx="24" cy="26" r="11" fill="#6B4A33"/><circle cx="76" cy="26" r="11" fill="#6B4A33"/><circle cx="24" cy="26" r="5" fill="#C99A72"/><circle cx="76" cy="26" r="5" fill="#C99A72"/>
+    <ellipse cx="50" cy="54" rx="34" ry="32" fill="#86603F"/><ellipse cx="50" cy="68" rx="17" ry="13" fill="#D9B48C"/><ellipse cx="50" cy="62" rx="6" ry="4.5" fill="#2A1A0E"/>
+    <path d="M29 42 L43 37 M57 37 L71 42" stroke="#2A1A0E" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="37" cy="49" r="4.5" fill="#1A1204"/><circle cx="63" cy="49" r="4.5" fill="#1A1204"/><circle cx="38.3" cy="47.6" r="1.4" fill="#fff"/><circle cx="64.3" cy="47.6" r="1.4" fill="#fff"/>
+    <path d="M42 76 Q50 69 58 76" fill="none" stroke="#2A1A0E" stroke-width="3" stroke-linecap="round"/>
+    <path d="M33 55 Q30.5 60 33 62 Q35.5 60 33 55 Z" fill="#7CC4FF"/>
+  </symbol>
 </defs></svg>
 
 <section class="acceso" id="acceso">
@@ -588,6 +596,7 @@ function aplicar(s) {
   PAGOS = s.pagos || {}; if (PAGOS.whatsapp) WHATSAPP_ALEMA = PAGOS.whatsapp;
   $("u_nom").textContent = s.usuario;
   pintarTodo();
+  if (s.rachaPerdida > 0) setTimeout(() => ventana("triste", "Se reinició tu racha 🔥 0", `Tenías ${s.rachaPerdida} ${s.rachaPerdida === 1 ? "día" : "días"} de racha, pero pasó un día sin practicar. Tu racha vuelve a empezar desde 0: haz una operación o una lección hoy para reanudarla.`, [["¡Empezar de nuevo!", cerrarV]]), 500);
 }
 function pintarTodo() { pintar(); pintarActivos(); pintarRuta(); pintarRacha(); pintarPlan(); pintarInvita(); }
 /* ---------- códigos de invitación ---------- */
@@ -1767,7 +1776,7 @@ function generarCert(et) {
 
 /* ---------- ventana ---------- */
 function ventana(tipo, t, p, botones) {
-  $("m_masc").querySelector("use").setAttribute("href", tipo === "mal" ? "#oso" : "#toro");
+  $("m_masc").querySelector("use").setAttribute("href", tipo === "triste" ? "#oso_triste" : tipo === "mal" ? "#oso" : "#toro");
   $("m_t").textContent = t; $("m_p").textContent = p; $("m_ops").innerHTML = ""; const acc = $("m_acc"); acc.innerHTML = "";
   (botones || [["Entendido", cerrarV]]).forEach(([txt, fn, cls]) => { const b = document.createElement("button"); b.type = "button"; b.className = "btn " + (cls || ""); b.textContent = txt; b.addEventListener("click", fn); acc.appendChild(b); });
   $("velo").hidden = false;
