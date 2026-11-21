@@ -99,6 +99,14 @@ canvas { display: block; width: 100%; height: 330px; }
 .pos th { font-size: .7rem; color: var(--tenue); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-top: 0; }
 .pos .num { font-family: var(--mono); } .pos .g { color: var(--verde); } .pos .l { color: var(--rojo); }
 .pos .vacio { color: var(--tenue); text-align: center; padding: 16px; }
+.hist h3 small { font-weight: 600; color: var(--azul); margin-left: 6px; }
+.h-res { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 16px 8px; }
+.h-res span { padding: 6px 10px; border-radius: 10px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); font-size: .8rem; color: var(--tenue); } .h-res b { color: var(--tinta); font-family: var(--mono); }
+.h-res .g { color: var(--verde); } .h-res .l { color: var(--rojo); }
+.h-regla { margin: 0; padding: 0 16px 8px; font-size: .78rem; color: var(--tenue); } .h-regla b { color: var(--tinta); }
+.h-aviso { margin: 0 16px 10px; padding: 8px 12px; border-radius: 10px; font-size: .78rem; color: var(--tinta); background: rgb(254 166 33 / .08); border: 1px solid rgb(254 166 33 / .35); } .h-aviso b { color: var(--ambar); }
+.pos .cr { color: var(--azul); font-weight: 700; } .pos .tenue { color: var(--tenue); font-family: var(--mono); font-size: .76rem; }
+.hist td, .hist th { padding: 8px 10px; }
 .pos button { border: 1px solid var(--borde); background: none; border-radius: 8px; padding: 3px 10px; cursor: pointer; font-size: .78rem; }
 .tabla-x { overflow-x: auto; }
 .sin { margin: 12px 16px; padding: 12px 14px; border-radius: 12px; font-size: .86rem; background: rgb(90 169 255 / .08); border: 1px solid rgb(90 169 255 / .35); display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
@@ -450,7 +458,13 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
       </div>
       <div class="sin" id="sin_cred" hidden><span>⚡ <b>Se acabaron tus créditos de hoy.</b> <span id="sin_txt">Mañana recibes 10 más.</span></span><button class="btn sec" type="button" data-ir="paquetes" style="min-height:36px">Ver paquetes</button></div>
       <div class="pos"><h3>Posiciones abiertas</h3>
-        <div class="tabla-x"><table><thead><tr><th>Par</th><th>Tipo</th><th>Lotes</th><th>Entrada</th><th>SL</th><th>TP</th><th>Resultado</th><th></th></tr></thead><tbody id="posiciones"></tbody></table></div>
+        <div class="tabla-x"><table><thead><tr><th>Par</th><th>Tipo</th><th>Lotes</th><th>Entrada</th><th>SL</th><th>TP</th><th>Resultado (AC)</th><th></th></tr></thead><tbody id="posiciones"></tbody></table></div>
+      </div>
+      <div class="pos hist"><h3>Historial de operaciones <small id="h_hoy"></small></h3>
+        <div class="h-res" id="h_res"></div>
+        <p class="h-regla">Gana ⚡ con operaciones con stop loss que cierren en ganancia: <b>1R = +1 ⚡ · 2R = +2 ⚡ · 3R o más = +3 ⚡</b> (máximo 5 ⚡ al día). 1R es lo que arriesgaste hasta tu stop loss.</p>
+        <p class="h-aviso">💡 Tus resultados se miden en <b>AlemaCash (AC)</b>, dinero simulado que equivale a dólares de práctica: no es dinero real, no se paga ni se cambia por dinero. Tu premio por operar bien son los <b>⚡ créditos</b>.</p>
+        <div class="tabla-x"><table><thead><tr><th>Fecha</th><th>Operación</th><th>Entrada → Cierre</th><th>Motivo</th><th>Resultado (AC)</th><th>Beneficio</th></tr></thead><tbody id="historial"></tbody></table></div>
       </div>
     </div>
     <aside class="lado">
@@ -705,10 +719,10 @@ function calcular() {
   if (sl === null && tp === null) { $("calc").innerHTML = "<span>Escribe tu stop loss y take profit para ver tu riesgo.</span>"; return; }
   const ps = sl !== null ? Math.abs(e - sl) / c.pip : null, pt = tp !== null ? Math.abs(tp - e) / c.pip : null;
   const lejos = Math.max(ps || 0, pt || 0) > 60;
-  $("calc").innerHTML = (ps !== null ? `<span>Stop loss a <b>${ps.toFixed(1)} pips</b> · arriesgas <b>$${(ps * usdPip(par, l)).toFixed(2)}</b></span>` : "") +
+  $("calc").innerHTML = (ps !== null ? `<span>Stop loss a <b>${ps.toFixed(1)} pips</b> · arriesgas <b>${(ps * usdPip(par, l)).toFixed(2)} AC</b></span>` : "") +
     (pt !== null ? `<span>Take profit a <b>${pt.toFixed(1)} pips</b></span>` : "") +
     (ps && pt ? `<span>Riesgo/beneficio <b>1:${(pt / ps).toFixed(1)}</b></span>` : "") +
-    `<span>Spread <b>${spreadPips(par)} pips</b> · al abrir pagas <b>$${(spreadPips(par) * usdPip(par, l)).toFixed(2)}</b></span>` +
+    `<span>Spread <b>${spreadPips(par)} pips</b> · al abrir pagas <b>${(spreadPips(par) * usdPip(par, l)).toFixed(2)} AC</b></span>` +
     (lejos ? `<span class="aviso-d">⚠️ A más de 60 pips, la operación puede tardar horas o días en cerrarse.</span>` : "");
 }
 ["sl", "tp", "lotes"].forEach(id => $(id).addEventListener("input", () => { $(id).classList.remove("malo"); $("err").hidden = true; calcular(); }));
@@ -737,11 +751,11 @@ function cerrar(id, motivo, ts, silencio) { const p = posiciones.find(x => x.id 
   ts = ts || ahoraSeg(); const r = resultado(p, motivo === "SL" ? p.sl : motivo === "TP" ? p.tp : p.t === "Compra" ? precioEn(p.par, ts) : askEn(p.par, ts));
   posiciones = posiciones.filter(x => x.id !== id);
   if (p.tmp) cierresPend.push({ ts0: p.ts, par: p.par, t: p.t, motivo: motivo || "Manual", ts }); // aún no la confirma el servidor
-  else enviar("cerrar_pos", { id: p.id, motivo: motivo || "Manual", ts });
+  else enviarCierre({ id: p.id, motivo: motivo || "Manual", ts });
   if (!silencio) {
-    if (motivo === "TP") guia("bien", `¡Tu take profit se cumplió! ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD de práctica.`);
-    else if (motivo === "SL") guia("mal", `Se activó tu stop loss: perdiste solo lo que planeaste (${r.toFixed(2)} USD de práctica).`);
-    else guia(r >= 0 ? "bien" : "mal", `Cerraste ${p.par} con ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD de práctica.`); }
+    if (motivo === "TP") guia("bien", `¡Tu take profit se cumplió! ${r >= 0 ? "+" : ""}${r.toFixed(2)} AlemaCash.`);
+    else if (motivo === "SL") guia("mal", `Se activó tu stop loss: perdiste solo lo que planeaste (${r.toFixed(2)} AlemaCash).`);
+    else guia(r >= 0 ? "bien" : "mal", `Cerraste ${p.par} con ${r >= 0 ? "+" : ""}${r.toFixed(2)} AlemaCash.`); }
   pintar(); return r; }
 // Revisa segundo a segundo desde la última revisión (también lo que pasó mientras la app estaba cerrada).
 function revisar() { const ahora = ahoraSeg(), tarde = [];
@@ -757,13 +771,13 @@ function revisar() { const ahora = ahoraSeg(), tarde = [];
     p.chk = ahora; });
   if (tarde.length) avisoTarde(tarde.map(([p, m, k]) => [p, m, cerrar(p.id, m, k, true)])); }
 function avisoTarde(lista) {
-  const txt = lista.map(([p, m, r], i) => `${lista.length > 1 ? i + 1 + ") " : ""}${p.par} ${p.t.toLowerCase()} · ${m === "TP" ? "take profit ✅" : "stop loss 🛑"} · ${r >= 0 ? "+" : ""}${r.toFixed(2)} USD`).join("   ");
+  const txt = lista.map(([p, m, r], i) => `${lista.length > 1 ? i + 1 + ") " : ""}${p.par} ${p.t.toLowerCase()} · ${m === "TP" ? "take profit ✅" : "stop loss 🛑"} · ${r >= 0 ? "+" : ""}${r.toFixed(2)} AlemaCash`).join("   ");
   ventana(lista.every(x => x[1] === "TP") ? "bien" : "mal", lista.length === 1 ? "Se cerró una operación mientras no estabas" : `Se cerraron ${lista.length} operaciones mientras no estabas`, txt); }
 // Las operaciones vienen del servidor; las que acabo de abrir siguen aquí hasta que el servidor las confirme.
 let cierresPend = [];
 function posDeServidor(lista) { const antes = {}; posiciones.forEach(p => antes[p.id] = p); const nuevas = [];
   (lista || []).forEach(sp => { const pend = cierresPend.find(c => c.ts0 === sp.ts && c.par === sp.par && c.t === sp.t);
-    if (pend) { cierresPend = cierresPend.filter(c => c !== pend); enviar("cerrar_pos", { id: sp.id, motivo: pend.motivo, ts: pend.ts }); return; }
+    if (pend) { cierresPend = cierresPend.filter(c => c !== pend); enviarCierre({ id: sp.id, motivo: pend.motivo, ts: pend.ts }); return; }
     nuevas.push(Object.assign({}, sp, { chk: antes[sp.id] ? antes[sp.id].chk : sp.ts })); });
   posiciones.filter(p => p.tmp && !(lista || []).some(sp => sp.ts === p.ts && sp.par === p.par && sp.t === p.t)).forEach(p => nuevas.push(p));
   posiciones = nuevas; }
@@ -1936,6 +1950,22 @@ const tapar = on => { $("visor").classList.toggle("tapado", on); $("vs_tapa").hi
 addEventListener("blur", () => { if (LEYENDO) tapar(true); }); addEventListener("focus", () => tapar(false));
 document.addEventListener("visibilitychange", () => { if (LEYENDO) tapar(document.hidden); });
 
+/* ---------- historial de operaciones ---------- */
+// El servidor calcula el resultado y los ⚡ ganados; aquí solo se avisa y se muestra.
+function enviarCierre(datos) { return enviar("cerrar_pos", datos).then(j => { const c = j && j.ok && j.cierre; if (!c) return j;
+  if (c.cr > 0) { setTimeout(() => { guia("bien", `🎯 ${c.par}: +${c.cr} ⚡ por cerrar en ganancia con tu stop loss puesto.`); pulso("s_cred"); }, 1600); }
+  else if (c.usd > 0 && EST && EST.crHoy >= EST.crTope) setTimeout(() => guia("bien", `Ya juntaste los ${EST.crTope} ⚡ de hoy por operar. ¡Mañana más!`), 1600);
+  return j; }); }
+function pintarHist() { const tb = $("historial"); if (!tb || !EST) return; const h = EST.historial || [], r = EST.resumen || { n: 0, g: 0, usd: 0, cr: 0 };
+  $("h_hoy").textContent = `· hoy ${EST.crHoy || 0}/${EST.crTope || 5} ⚡`;
+  $("h_res").innerHTML = `<span>Operaciones <b>${r.n}</b></span><span>Aciertos <b>${r.n ? Math.round(r.g / r.n * 100) : 0}%</b></span>` +
+    `<span>AlemaCash <b class="${r.usd >= 0 ? "g" : "l"}">${r.usd >= 0 ? "+" : ""}${(+r.usd).toFixed(2)} AC</b></span><span>Ganados <b>${r.cr} ⚡</b></span>`;
+  if (!h.length) { tb.innerHTML = '<tr><td colspan="6" class="vacio">Aquí verás tus operaciones cerradas.</td></tr>'; return; }
+  const dd = n => String(n).padStart(2, "0"), fecha = t => { const d = new Date(t * 1000); return `${dd(d.getDate())}/${dd(d.getMonth() + 1)} ${dd(d.getHours())}:${dd(d.getMinutes())}`; };
+  const mot = { TP: "✅ TP", SL: "🛑 SL", Manual: "✋ Manual" };
+  tb.innerHTML = h.slice().sort((a, b) => b.tc - a.tc).map(o => `<tr><td class="num">${fecha(o.tc)}</td><td>${o.par} · ${o.t.toLowerCase()} <span class="tenue">${(+o.l).toFixed(2)}</span></td><td class="num">${fmt(o.e, o.par)} → ${fmt(o.c, o.par)}</td><td>${mot[o.m] || o.m}</td>` +
+    `<td class="num ${o.usd >= 0 ? "g" : "l"}">${o.usd >= 0 ? "+" : ""}${(+o.usd).toFixed(2)} AC</td><td class="num ${o.cr ? "cr" : ""}">${o.cr ? "+" + o.cr + " ⚡" : "—"}</td></tr>`).join(""); }
+
 /* ---------- pintar y pestañas ---------- */
 function pintar() {
   $("v_cred").textContent = ilimitado ? "∞" : cred; $("v_max").textContent = ilimitado ? "" : "/" + credMax; $("v_vid").textContent = vidasInf ? "∞" : vidas; $("v_pts").textContent = pts;
@@ -1943,7 +1973,7 @@ function pintar() {
   $("sin_txt").textContent = plan === "Básico" ? "Mañana recibes 40 más." : "Mañana recibes 10 más.";
   Object.entries(mis).forEach(([id, [a, t]]) => { $(id).querySelector(".barra i").style.width = Math.min(100, a / t * 100) + "%"; $(id).classList.toggle("hecha", a >= t); });
   document.querySelectorAll(".vidas-ruta").forEach(el => el.textContent = CORAZON());
-  pintarPos(); pintarRecompensas(); pintarBiblioteca();
+  pintarPos(); pintarRecompensas(); pintarBiblioteca(); pintarHist();
 }
 function pintarPlan() {
   document.querySelectorAll("[data-plan-btn]").forEach(b => { const k = b.dataset.planBtn, mio = k === plan;
