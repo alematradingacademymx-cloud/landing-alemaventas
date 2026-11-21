@@ -15,14 +15,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="application-name" content="ALEMA Lab">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ALEMA Trading Lab: app gratuita de práctica estilo "Duolingo de trading". Terminal con precios simulados, Ruta con vidas,
    Recompensas por niveles, Paquetes y Acuerdo de responsabilidad. El avance se guarda en el servidor (Apps Script). */
 :root {
   --fondo: #070B13; --tinta: #E9EDF4; --tenue: #98A2B3; --ambar: #FEA621; --naranja: #FF7A1A; --verde: #2BD49A; --rojo: #F45B69; --azul: #5AA9FF; --rosa: #FF5C8A;
   --vidrio: rgb(255 255 255 / .045); --vidrio-alto: rgb(255 255 255 / .085); --borde: rgb(255 255 255 / .10); --brillo: rgb(255 255 255 / .16);
-  --letra: "Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --letra: "Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --mono: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; /* números claros: el 0 y el 8 no se confunden */
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -71,6 +71,7 @@ button, input, select { font: inherit; color: inherit; }
 .term { overflow: hidden; }
 .t-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--borde); }
 .t-cab select { background: rgb(0 0 0 / .3); border: 1px solid var(--borde); border-radius: 10px; padding: 6px 10px; font-weight: 600; }
+.precio, .num, input, .tfs button, .comprar small, .vender small, .h-res b, .stat, .pos td { font-variant-numeric: tabular-nums; } /* cifras del mismo ancho */
 .precio { font-family: var(--mono); font-weight: 600; font-size: 1.02rem; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; justify-content: flex-end; }
 .precio .bid { color: var(--rojo); } .precio .ask { color: var(--verde); }
 .tfs { display: flex; gap: 4px; margin-right: auto; } .tfs button { border: 1px solid var(--borde); background: rgb(255 255 255 / .04); color: var(--tenue); border-radius: 8px; padding: 5px 10px; font: 600 .78rem var(--mono); cursor: pointer; min-height: 32px; }
@@ -448,8 +449,8 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
         <canvas id="grafica"></canvas>
         <div class="orden">
           <label>Lotes<input type="number" id="lotes" value="0.01" min="0.01" max="0.10" step="0.01"></label>
-          <label>Stop loss (precio)<input type="text" id="sl" inputmode="decimal" placeholder="Calcula y escribe el precio"></label>
-          <label>Take profit (precio)<input type="text" id="tp" inputmode="decimal" placeholder="Calcula y escribe el precio"></label>
+          <label>Stop loss (precio)<input type="text" id="sl" inputmode="decimal" autocomplete="off" placeholder="Precio, ej. 1.09850"></label>
+          <label>Take profit (precio)<input type="text" id="tp" inputmode="decimal" autocomplete="off" placeholder="Precio, ej. 1.09850"></label>
           <div class="calc" id="calc"><span>Escribe tu stop loss y take profit para ver tu riesgo.</span></div>
           <p class="err" id="err" hidden></p>
           <div class="lados"><button class="comprar" id="b_comprar" type="button">Comprar</button><button class="vender" id="b_vender" type="button">Vender</button></div>
@@ -694,7 +695,7 @@ function dibujar() {
   vs.forEach((v, i) => { const x = i * paso + paso / 2, col = v.c >= v.a ? "#2BD49A" : "#F45B69"; ctx.strokeStyle = col; ctx.fillStyle = col;
     ctx.beginPath(); ctx.moveTo(Math.round(x) + .5, y(v.h)); ctx.lineTo(Math.round(x) + .5, y(v.l)); ctx.stroke();
     ctx.fillRect(x - paso * .32, Math.min(y(v.a), y(v.c)), paso * .64, Math.max(1.5, Math.abs(y(v.a) - y(v.c)))); });
-  const etiqueta = (yy, col, txt, ancho) => { ctx.fillStyle = col; ctx.fillRect(w - ancho - 2, yy - 9, ancho, 18); ctx.fillStyle = "#0B0F18"; ctx.font = "600 10px JetBrains Mono, monospace"; ctx.fillText(txt, w - ancho + 1, yy + 4); };
+  const etiqueta = (yy, col, txt, ancho) => { ctx.fillStyle = col; ctx.fillRect(w - ancho - 2, yy - 9, ancho, 18); ctx.fillStyle = "#0B0F18"; ctx.font = `600 10.5px ${getComputedStyle(document.documentElement).getPropertyValue("--mono")}`; ctx.fillText(txt, w - ancho + 1, yy + 4); };
   const fuera = { arriba: [], abajo: [] };
   const linea = (val, col, txt) => { if (val > max) return fuera.arriba.push([col, txt, val]); if (val < min) return fuera.abajo.push([col, txt, val]);
     const yy = y(val); ctx.setLineDash([5, 4]); ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(w - 64, yy); ctx.stroke(); ctx.setLineDash([]); etiqueta(yy, col, txt, 60); };
@@ -725,6 +726,11 @@ function calcular() {
     `<span>Spread <b>${spreadPips(par)} pips</b> · al abrir pagas <b>${(spreadPips(par) * usdPip(par, l)).toFixed(2)} AC</b></span>` +
     (lejos ? `<span class="aviso-d">⚠️ A más de 60 pips, la operación puede tardar horas o días en cerrarse.</span>` : "");
 }
+// SL y TP: solo números y un punto decimal (la coma se cambia por punto), con los decimales del activo.
+function soloPrecio(el) { const d = PARES[par].d; let v = el.value.replace(/,/g, ".").replace(/[^0-9.]/g, ""); const i = v.indexOf(".");
+  if (i >= 0) v = v.slice(0, i + 1) + v.slice(i + 1).replace(/\./g, "").slice(0, d); if (v !== el.value) el.value = v; }
+function ejemploPrecio() { const t = "Precio, ej. " + fmt(precio()); $("sl").placeholder = t; $("tp").placeholder = t; }
+["sl", "tp"].forEach(id => $(id).addEventListener("input", () => soloPrecio($(id))));
 ["sl", "tp", "lotes"].forEach(id => $(id).addEventListener("input", () => { $(id).classList.remove("malo"); $("err").hidden = true; calcular(); }));
 
 /* ---------- operaciones ---------- */
@@ -789,7 +795,7 @@ $("b_comprar").addEventListener("click", () => abrir("Compra"));
 $("b_vender").addEventListener("click", () => abrir("Venta"));
 $("par").addEventListener("change", e => { const v = e.target.value;
   if (!activos.has(v)) { e.target.value = par; return ofrecerEval(v); }
-  par = v; iniciarVelas(); pintarPrecio(); calcular(); dibujar(); });
+  par = v; iniciarVelas(); pintarPrecio(); ejemploPrecio(); $("sl").value = ""; $("tp").value = ""; calcular(); dibujar(); });
 document.querySelectorAll("[data-tf]").forEach(b => b.addEventListener("click", () => { VELA = +b.dataset.tf;
   document.querySelectorAll("[data-tf]").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false")); iniciarVelas(); dibujar(); }));
 function pintarActivos() { const todos = Object.keys(PARES);
@@ -2032,7 +2038,7 @@ document.querySelector(".guia").hidden = true;
 // Al volver a la pestaña o cambiar de día, se pide el estado actualizado.
 document.addEventListener("visibilitychange", () => { if (!document.hidden && TK && !$("app").hidden) api("estado").catch(() => {}); });
 
-iniciarVelas(); pintarPrecio();
+iniciarVelas(); pintarPrecio(); ejemploPrecio();
 pintarActivos(); pintarRuta(); pintar();
 addEventListener("resize", () => { if (!$("app").hidden) dibujar(); });
 setInterval(avanzar, 700);
