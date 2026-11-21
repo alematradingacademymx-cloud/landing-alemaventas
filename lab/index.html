@@ -71,8 +71,11 @@ button, input, select { font: inherit; color: inherit; }
 .term { overflow: hidden; }
 .t-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--borde); }
 .t-cab select { background: rgb(0 0 0 / .3); border: 1px solid var(--borde); border-radius: 10px; padding: 6px 10px; font-weight: 600; }
-.precio { font-family: var(--mono); font-weight: 600; font-size: 1.05rem; }
-.precio small { color: var(--tenue); font-weight: 500; font-size: .75rem; margin-left: 8px; }
+.precio { font-family: var(--mono); font-weight: 600; font-size: 1.02rem; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; justify-content: flex-end; }
+.precio .bid { color: var(--rojo); } .precio .ask { color: var(--verde); }
+.tfs { display: flex; gap: 4px; margin-right: auto; } .tfs button { border: 1px solid var(--borde); background: rgb(255 255 255 / .04); color: var(--tenue); border-radius: 8px; padding: 5px 10px; font: 600 .78rem var(--mono); cursor: pointer; min-height: 32px; }
+.tfs button[aria-pressed="true"] { background: rgb(254 166 33 / .15); color: var(--ambar); border-color: rgb(254 166 33 / .5); }
+.precio small { color: var(--tenue); font-weight: 500; font-size: .75rem; }
 .t-cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 250px; }
 canvas { display: block; width: 100%; height: 330px; }
 .orden { border-left: 1px solid var(--borde); padding: 14px; display: grid; gap: 10px; align-content: start; }
@@ -80,7 +83,9 @@ canvas { display: block; width: 100%; height: 330px; }
 .orden input { width: 100%; background: rgb(0 0 0 / .3); border: 1px solid var(--borde); border-radius: 10px; padding: 8px 10px; font-family: var(--mono); }
 .orden input.malo { border-color: var(--rojo); }
 .lados { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.comprar, .vender { border: 0; border-radius: 12px; min-height: 46px; font-weight: 800; cursor: pointer; }
+.comprar, .vender { border: 0; border-radius: 12px; min-height: 50px; font-weight: 800; cursor: pointer; display: grid; place-items: center; line-height: 1.1; }
+.comprar small, .vender small { font: 600 .74rem var(--mono); opacity: .85; }
+.calc .aviso-d { color: var(--ambar); }
 .comprar { background: var(--verde); color: #04140D; } .vender { background: var(--rojo); color: #1A0508; }
 .comprar:disabled, .vender:disabled { opacity: .4; cursor: not-allowed; }
 .calc { font-size: .76rem; color: var(--tenue); background: rgb(0 0 0 / .22); border: 1px dashed var(--borde); border-radius: 10px; padding: 8px 10px; display: grid; gap: 2px; }
@@ -428,6 +433,7 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
           <option value="EURUSD">EURUSD</option><option value="GBPUSD">GBPUSD</option><option value="USDJPY">USDJPY</option>
           <option value="XAUUSD">🔒 XAUUSD (Oro)</option><option value="NAS100">🔒 NAS100 (Índice)</option>
         </select>
+        <div class="tfs" role="group" aria-label="Temporalidad"><button type="button" data-tf="10" aria-pressed="true">10s</button><button type="button" data-tf="60" aria-pressed="false">1m</button><button type="button" data-tf="300" aria-pressed="false">5m</button></div>
         <span class="precio" id="precio">—</span>
       </div>
       <div class="t-cuerpo">
@@ -632,48 +638,65 @@ function guia(tipo, txt) {
 
 /* ---------- precios simulados ---------- */
 const PARES = {
-  EURUSD: { p: 1.0864, d: 5, pip: 0.0001, vol: 0.00018 }, GBPUSD: { p: 1.2711, d: 5, pip: 0.0001, vol: 0.00022 },
-  USDJPY: { p: 151.42, d: 3, pip: 0.01, vol: 0.02 }, XAUUSD: { p: 2385.4, d: 2, pip: 0.1, vol: 0.45 }, NAS100: { p: 18420.5, d: 1, pip: 1, vol: 4 }
+  EURUSD: { p: 1.0864, d: 5, pip: 0.0001, vol: 0.00018, sp: 0.00011 }, GBPUSD: { p: 1.2711, d: 5, pip: 0.0001, vol: 0.00022, sp: 0.00014 },
+  USDJPY: { p: 151.42, d: 3, pip: 0.01, vol: 0.02, sp: 0.013 }, XAUUSD: { p: 2385.4, d: 2, pip: 0.1, vol: 0.45, sp: 0.25 }, NAS100: { p: 18420.5, d: 1, pip: 1, vol: 4, sp: 1.5 }
 };
 let par = "EURUSD", velas = [];
 // Mercado simulado compartido: el precio sale de la hora, así que es el mismo en todos los dispositivos.
 // IMPORTANTE: debe ser idéntico a precioEn_() del servidor (Code.gs).
 const SEMILLA = { EURUSD: 11, GBPUSD: 23, USDJPY: 37, XAUUSD: 41, NAS100: 53 };
-const ESCALAS = [[1, .5], [4, 1], [15, 1.8], [60, 3.2], [300, 6], [1800, 12], [10800, 22], [86400, 40]];
+const ESCALAS = [1, 4, 15, 60, 300, 1800, 10800, 43200, 172800, 604800].map(s => [s, 0.18 * Math.sqrt(Math.min(s, 172800))]);
+const LMAX = 3 * ESCALAS.reduce((a, [s, w]) => a + w / s, 0) * 1.02; // lo más que puede moverse el precio por segundo (× vol)
 function hashM(n) { n = (n ^ 61) ^ (n >>> 16); n = Math.imul(n, 9); n ^= n >>> 4; n = Math.imul(n, 0x27d4eb2d); n ^= n >>> 15; return (n >>> 0) / 4294967296; }
 function precioEn(pr, t) { const c = PARES[pr]; let x = 0;
   ESCALAS.forEach(([s, w], i) => { const q = t / s, k = Math.floor(q), f = q - k, u = f * f * (3 - 2 * f), sm = SEMILLA[pr] * 1013 + i * 7;
     const a = hashM(Math.imul(k, 7919) ^ sm), b = hashM(Math.imul(k + 1, 7919) ^ sm); x += ((a + (b - a) * u) * 2 - 1) * w; });
   return +(c.p + x * c.vol).toFixed(c.d); }
 let DESFASE = 0; const ahoraSeg = () => Math.floor((Date.now() + DESFASE) / 1000); // hora del servidor
-const VELA = 10; // segundos por vela
-function velaDe(pr, t0, hasta) { let a = precioEn(pr, t0), h = a, l = a, c = a; for (let k = t0 + 1; k <= hasta; k++) { c = precioEn(pr, k); h = Math.max(h, c); l = Math.min(l, c); } return { a, c, h, l, t: t0 }; }
+let VELA = 10; // segundos por vela (10 s, 1 min o 5 min)
+function velaDe(pr, t0, hasta) { const paso = VELA >= 300 ? 3 : 1; let a = precioEn(pr, t0), h = a, l = a, c = a;
+  for (let k = t0 + paso; k <= hasta; k += paso) { c = precioEn(pr, k); h = Math.max(h, c); l = Math.min(l, c); }
+  if (paso > 1 && hasta > t0) { c = precioEn(pr, hasta); h = Math.max(h, c); l = Math.min(l, c); } return { a, c, h, l, t: t0 }; }
 function iniciarVelas() { const ahora = ahoraSeg(), t0 = ahora - ahora % VELA; velas = [];
   for (let i = 69; i >= 1; i--) velas.push(velaDe(par, t0 - i * VELA, t0 - i * VELA + VELA)); velas.push(velaDe(par, t0, ahora)); }
+const askEn = (pr, t) => +(precioEn(pr, t) + PARES[pr].sp).toFixed(PARES[pr].d); // precioEn = Bid
 const precio = () => precioEn(par, ahoraSeg());
+const spreadPips = pr => +(PARES[pr].sp / PARES[pr].pip).toFixed(1);
+function pintarPrecio() { const t = ahoraSeg(), b = precioEn(par, t), a = askEn(par, t);
+  $("precio").innerHTML = `<span class="bid">Bid ${fmt(b)}</span><span class="ask">Ask ${fmt(a)}</span><small>spread ${spreadPips(par)} · precio simulado</small>`;
+  $("b_vender").innerHTML = `Vender<small>${fmt(b)}</small>`; $("b_comprar").innerHTML = `Comprar<small>${fmt(a)}</small>`; }
 const fmt = (x, p = par) => (+x).toFixed(PARES[p].d);
-const usdPip = (p, l) => 10 * (l / 0.1) * (p === "XAUUSD" ? 1 : p === "NAS100" ? 0.1 : 1);
+// Valor del pip en USD: 1 lote = $10 por pip en EURUSD, GBPUSD y Oro (100 oz); USDJPY ≈ 1,000 JPY ÷ precio; NAS100 $1 por punto.
+const usdPip = (p, l) => p === "USDJPY" ? l * 1000 / PARES.USDJPY.p : p === "NAS100" ? l : 10 * l;
 function dibujar() {
   const cv = $("grafica"), ctx = cv.getContext("2d"), r = devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight; if (!w) return;
   cv.width = w * r; cv.height = h * r; ctx.setTransform(r, 0, 0, r, 0, 0); ctx.clearRect(0, 0, w, h);
   const n = Math.min(velas.length, Math.floor(w / 9)), vs = velas.slice(-n);
   let max = Math.max(...vs.map(v => v.h)), min = Math.min(...vs.map(v => v.l));
-  const vis = posiciones.filter(p => p.par === par); vis.forEach(p => [p.e, p.sl, p.tp].forEach(x => { if (x) { max = Math.max(max, x); min = Math.min(min, x); } }));
+  const vis = posiciones.filter(p => p.par === par), ask = askEn(par, ahoraSeg()), pip = PARES[par].pip;
+  max = Math.max(max, ask); const rango = Math.max(max - min, pip * 8); max += rango * .12; min -= rango * .12; // margen; no se aleja por SL/TP lejanos
   const y = v => 12 + (max - v) / (max - min || 1) * (h - 24), paso = (w - 64) / n;
   ctx.strokeStyle = "rgba(255,255,255,.06)"; for (let k = 1; k < 5; k++) { const gy = Math.round(h * k / 5) + .5; ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
   vs.forEach((v, i) => { const x = i * paso + paso / 2, col = v.c >= v.a ? "#2BD49A" : "#F45B69"; ctx.strokeStyle = col; ctx.fillStyle = col;
     ctx.beginPath(); ctx.moveTo(Math.round(x) + .5, y(v.h)); ctx.lineTo(Math.round(x) + .5, y(v.l)); ctx.stroke();
     ctx.fillRect(x - paso * .32, Math.min(y(v.a), y(v.c)), paso * .64, Math.max(1.5, Math.abs(y(v.a) - y(v.c)))); });
-  const linea = (val, col, txt) => { const yy = y(val); ctx.setLineDash([5, 4]); ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(w - 64, yy); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle = col; ctx.fillRect(w - 62, yy - 9, 60, 18); ctx.fillStyle = "#0B0F18"; ctx.font = "600 10px JetBrains Mono, monospace"; ctx.fillText(txt, w - 59, yy + 4); };
+  const etiqueta = (yy, col, txt, ancho) => { ctx.fillStyle = col; ctx.fillRect(w - ancho - 2, yy - 9, ancho, 18); ctx.fillStyle = "#0B0F18"; ctx.font = "600 10px JetBrains Mono, monospace"; ctx.fillText(txt, w - ancho + 1, yy + 4); };
+  const fuera = { arriba: [], abajo: [] };
+  const linea = (val, col, txt) => { if (val > max) return fuera.arriba.push([col, txt, val]); if (val < min) return fuera.abajo.push([col, txt, val]);
+    const yy = y(val); ctx.setLineDash([5, 4]); ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(w - 64, yy); ctx.stroke(); ctx.setLineDash([]); etiqueta(yy, col, txt, 60); };
   vis.forEach(p => { linea(p.e, "#98A2B3", "ENT"); if (p.sl) linea(p.sl, "#F45B69", "SL"); if (p.tp) linea(p.tp, "#2BD49A", "TP"); });
+  ctx.globalAlpha = .55; linea(ask, "#2BD49A", "ASK"); ctx.globalAlpha = 1;
   linea(precio(), "#FEA621", fmt(precio()).slice(-7));
+  // niveles fuera de la vista: flecha en la orilla con la distancia en pips
+  const act = precio(); [["arriba", 10], ["abajo", h - 10]].forEach(([lado, y0]) => fuera[lado].forEach(([col, txt, val], i) => {
+    const yy = lado === "arriba" ? y0 + i * 20 : y0 - i * 20, d = Math.abs(val - act) / pip;
+    etiqueta(yy, col, `${lado === "arriba" ? "▲" : "▼"} ${txt} ${d.toFixed(0)} pips`, 118); }));
 }
 function avanzar() { const ahora = ahoraSeg(), t0 = ahora - ahora % VELA, ult = velas[velas.length - 1];
   if (!ult || t0 - ult.t > VELA * 60 || t0 < ult.t) iniciarVelas();
   else { if (t0 !== ult.t) { velas[velas.length - 1] = velaDe(par, ult.t, ult.t + VELA); for (let t = ult.t + VELA; t < t0; t += VELA) velas.push(velaDe(par, t, t + VELA)); velas.push(velaDe(par, t0, ahora)); velas = velas.slice(-70); }
     else velas[velas.length - 1] = velaDe(par, t0, ahora); }
-  $("precio").innerHTML = fmt(precio()) + "<small>precio simulado</small>"; revisar(); pintarPos(); if (!$("app").hidden) dibujar(); }
+  pintarPrecio(); revisar(); pintarPos(); if (!$("app").hidden) dibujar(); }
 
 /* ---------- calculadora en vivo ---------- */
 const num = id => { const v = parseFloat(String($(id).value).replace(",", ".")); return isNaN(v) ? null : v; };
@@ -681,19 +704,22 @@ function calcular() {
   const sl = num("sl"), tp = num("tp"), e = precio(), c = PARES[par], l = +$("lotes").value || 0.01;
   if (sl === null && tp === null) { $("calc").innerHTML = "<span>Escribe tu stop loss y take profit para ver tu riesgo.</span>"; return; }
   const ps = sl !== null ? Math.abs(e - sl) / c.pip : null, pt = tp !== null ? Math.abs(tp - e) / c.pip : null;
+  const lejos = Math.max(ps || 0, pt || 0) > 60;
   $("calc").innerHTML = (ps !== null ? `<span>Stop loss a <b>${ps.toFixed(1)} pips</b> · arriesgas <b>$${(ps * usdPip(par, l)).toFixed(2)}</b></span>` : "") +
     (pt !== null ? `<span>Take profit a <b>${pt.toFixed(1)} pips</b></span>` : "") +
-    (ps && pt ? `<span>Riesgo/beneficio <b>1:${(pt / ps).toFixed(1)}</b></span>` : "");
+    (ps && pt ? `<span>Riesgo/beneficio <b>1:${(pt / ps).toFixed(1)}</b></span>` : "") +
+    `<span>Spread <b>${spreadPips(par)} pips</b> · al abrir pagas <b>$${(spreadPips(par) * usdPip(par, l)).toFixed(2)}</b></span>` +
+    (lejos ? `<span class="aviso-d">⚠️ A más de 60 pips, la operación puede tardar horas o días en cerrarse.</span>` : "");
 }
 ["sl", "tp", "lotes"].forEach(id => $(id).addEventListener("input", () => { $(id).classList.remove("malo"); $("err").hidden = true; calcular(); }));
 
 /* ---------- operaciones ---------- */
-function resultado(p, cierre) { const act = cierre !== undefined ? cierre : precioEn(p.par, ahoraSeg()); return (p.t === "Compra" ? act - p.e : p.e - act) / PARES[p.par].pip * usdPip(p.par, p.l); }
+function resultado(p, cierre) { const t = ahoraSeg(), act = cierre !== undefined ? cierre : p.t === "Compra" ? precioEn(p.par, t) : askEn(p.par, t); return (p.t === "Compra" ? act - p.e : p.e - act) / PARES[p.par].pip * usdPip(p.par, p.l); }
 function error(txt, campo) { $("err").textContent = txt; $("err").hidden = false; if (campo) $(campo).classList.add("malo"); guia("mal", txt); }
 function abrir(t) {
   if (cred <= 0) return;
   if (posiciones.length >= MAX_POS) return error(`Puedes tener hasta ${MAX_POS} operaciones abiertas. Cierra alguna para abrir otra.`);
-  const ts = ahoraSeg(), e = precioEn(par, ts), sl = num("sl"), tp = num("tp"), compra = t === "Compra", l = Math.min(0.10, Math.max(0.01, +$("lotes").value || 0.01));
+  const ts = ahoraSeg(), compra = t === "Compra", e = compra ? askEn(par, ts) : precioEn(par, ts), sl = num("sl"), tp = num("tp"), l = Math.min(0.10, Math.max(0.01, +$("lotes").value || 0.01));
   if (sl !== null && (compra ? sl >= e : sl <= e)) return error(`En una ${t.toLowerCase()} el stop loss va ${compra ? "debajo" : "arriba"} del precio de entrada (${fmt(e)}).`, "sl");
   if (tp !== null && (compra ? tp <= e : tp >= e)) return error(`En una ${t.toLowerCase()} el take profit va ${compra ? "arriba" : "debajo"} del precio de entrada (${fmt(e)}).`, "tp");
   $("err").hidden = true;
@@ -708,7 +734,7 @@ function abrir(t) {
   enviar("operar", { sl: sl !== null, rb2, pos: { par, t, l, ts, sl, tp } }).then(j => { if (!j.ok) { posiciones = posiciones.filter(p => p !== nueva); pintar(); } });
 }
 function cerrar(id, motivo, ts, silencio) { const p = posiciones.find(x => x.id === id); if (!p) return;
-  ts = ts || ahoraSeg(); const r = resultado(p, motivo === "SL" ? p.sl : motivo === "TP" ? p.tp : precioEn(p.par, ts));
+  ts = ts || ahoraSeg(); const r = resultado(p, motivo === "SL" ? p.sl : motivo === "TP" ? p.tp : p.t === "Compra" ? precioEn(p.par, ts) : askEn(p.par, ts));
   posiciones = posiciones.filter(x => x.id !== id);
   if (p.tmp) cierresPend.push({ ts0: p.ts, par: p.par, t: p.t, motivo: motivo || "Manual", ts }); // aún no la confirma el servidor
   else enviar("cerrar_pos", { id: p.id, motivo: motivo || "Manual", ts });
@@ -722,8 +748,8 @@ function revisar() { const ahora = ahoraSeg(), tarde = [];
   posiciones.slice().forEach(p => { const c = p.t === "Compra"; let desde = Math.max(p.chk || p.ts, p.ts) + 1;
     if (ahora - desde > 2592000) desde = ahora - 2592000; // más de 30 días: solo revisa el último mes
     // el precio no puede moverse más de L por segundo: salta los segundos en los que es imposible tocar el SL o el TP
-    const L = 2.9 * PARES[p.par].vol, eps = Math.pow(10, -PARES[p.par].d);
-    if (p.sl || p.tp) for (let k = desde; k <= ahora;) { const a = precioEn(p.par, k);
+    const L = LMAX * PARES[p.par].vol, eps = Math.pow(10, -PARES[p.par].d); // una compra se cierra con el Bid; una venta, con el Ask
+    if (p.sl || p.tp) for (let k = desde; k <= ahora;) { const a = c ? precioEn(p.par, k) : askEn(p.par, k);
       const toca = (p.sl && (c ? a <= p.sl : a >= p.sl)) ? "SL" : (p.tp && (c ? a >= p.tp : a <= p.tp)) ? "TP" : "";
       if (toca) { if (ahora - k > 30) tarde.push([p, toca, k]); else cerrar(p.id, toca, k); return; }
       const D = Math.min(p.sl ? Math.abs(a - p.sl) : Infinity, p.tp ? Math.abs(a - p.tp) : Infinity);
@@ -749,7 +775,9 @@ $("b_comprar").addEventListener("click", () => abrir("Compra"));
 $("b_vender").addEventListener("click", () => abrir("Venta"));
 $("par").addEventListener("change", e => { const v = e.target.value;
   if (!activos.has(v)) { e.target.value = par; return ofrecerEval(v); }
-  par = v; iniciarVelas(); $("precio").innerHTML = fmt(precio()) + "<small>precio simulado</small>"; calcular(); dibujar(); });
+  par = v; iniciarVelas(); pintarPrecio(); calcular(); dibujar(); });
+document.querySelectorAll("[data-tf]").forEach(b => b.addEventListener("click", () => { VELA = +b.dataset.tf;
+  document.querySelectorAll("[data-tf]").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false")); iniciarVelas(); dibujar(); }));
 function pintarActivos() { const todos = Object.keys(PARES);
   $("activos").innerHTML = todos.map(a => `<span class="${activos.has(a) ? "on" : "off"}">${activos.has(a) ? "✓" : "🔒"} ${a}</span>`).join("");
   [...$("par").options].forEach(o => { o.textContent = (activos.has(o.value) ? "" : "🔒 ") + o.value + (o.value === "XAUUSD" ? " (Oro)" : o.value === "NAS100" ? " (Índice)" : ""); }); }
@@ -1974,7 +2002,7 @@ document.querySelector(".guia").hidden = true;
 // Al volver a la pestaña o cambiar de día, se pide el estado actualizado.
 document.addEventListener("visibilitychange", () => { if (!document.hidden && TK && !$("app").hidden) api("estado").catch(() => {}); });
 
-iniciarVelas(); $("precio").innerHTML = fmt(precio()) + "<small>precio simulado</small>";
+iniciarVelas(); pintarPrecio();
 pintarActivos(); pintarRuta(); pintar();
 addEventListener("resize", () => { if (!$("app").hidden) dibujar(); });
 setInterval(avanzar, 700);
