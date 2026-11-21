@@ -18,7 +18,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="images/alema_iso.png.png">
     <meta name="theme-color" content="#070B13">
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -58,6 +58,8 @@
                     <a href="#programa">Programa</a>
                     <a href="#propfirm">Prop Firm</a>
                     <a href="#membresia">Membresía</a>
+                    <a href="#valores">Valores</a>
+                    <a href="#alianzas">Alianzas</a>
                 </div>
                 <a href="app/" class="btn btn-oro">🔑 Ingresar al Portal</a>
             </nav>
@@ -296,6 +298,55 @@
             </article>
         </section>
 
+
+        <!-- VALORES -->
+        <section class="contenedor seccion" id="valores">
+            <div class="cabeza"><span class="eti">Nuestros valores</span><h2>Lo que nos guía al enseñar</h2>
+                <p class="lema">ALEMA se enfoca 100% en crear herramientas y métodos de aprendizaje claros y transparentes, para que operes con criterio propio.</p></div>
+            <div class="valores">
+                <article class="vidrio brilla valor"><span class="icono">📘</span><h3>Enseñanza real</h3><p>Explicamos el porqué de cada operación, no solo el qué. Queremos que entiendas el mercado, no que copies entradas.</p></article>
+                <article class="vidrio brilla valor destacado"><span class="icono">🧭</span><h3>Independencia</h3><p>Enseñamos a operar, no a abrir cuentas. ALEMA no recibe comisiones de brokers: tú eliges libremente dónde operar.</p></article>
+                <article class="vidrio brilla valor"><span class="icono">🧪</span><h3>Práctica antes que riesgo</h3><p>Primero practicas con dinero ficticio y gestión de riesgo; el capital real llega cuando tú decidas que estás listo.</p></article>
+                <article class="vidrio brilla valor"><span class="icono">🔍</span><h3>Transparencia</h3><p>Precios claros y sin letras chiquitas. Si te presentamos una herramienta propia de ALEMA, te lo diremos claramente y su uso es opcional.</p></article>
+            </div>
+        </section>
+
+        <!-- ALIANZAS -->
+        <section class="contenedor seccion" id="alianzas">
+            <div class="cabeza"><span class="eti">Alianzas</span><h2>Alianzas y colaboraciones</h2>
+                <p>Recibimos muchas propuestas. Para ahorrarte tiempo, esto es lo que sí y lo que no hacemos.</p></div>
+            <div class="alianzas">
+                <article class="vidrio ali no"><h3><span>✕</span> Lo que no hacemos</h3>
+                    <ul class="lista-x">
+                        <li>Programas de IB (Introducing Broker) o de afiliados con brokers</li>
+                        <li>Comisiones o rebates por referir alumnos a un broker</li>
+                        <li>Venta de señales, cuentas gestionadas o copy trading</li>
+                        <li>Compartir o vender datos de nuestros alumnos</li>
+                    </ul></article>
+                <article class="vidrio ali si"><h3><span>✓</span> Lo que sí aceptamos</h3>
+                    <ul class="lista">
+                        <li>Colaboraciones educativas: talleres, conferencias y contenido</li>
+                        <li>Herramientas que ayuden al alumno a aprender (sin comisión por uso)</li>
+                        <li>Universidades, instituciones y eventos de educación financiera</li>
+                        <li>Medios y prensa</li>
+                    </ul></article>
+            </div>
+            <div class="vidrio aviso-ali">
+                <p><b>No recibimos comisiones de brokers de terceros.</b> Si te presentamos una herramienta propia de ALEMA, te lo diremos claramente y su uso es opcional. No damos seguimiento a propuestas de IB, afiliados o referidos.</p>
+            </div>
+            <div class="vidrio filtro-ali">
+                <h3>¿Tienes una propuesta?</h3>
+                <p>Elige el tipo de propuesta:</p>
+                <div class="opciones-ali" role="radiogroup" aria-label="Tipo de propuesta">
+                    <button type="button" class="btn btn-vidrio" data-tipo="educativa" role="radio" aria-checked="false">🎓 Colaboración educativa</button>
+                    <button type="button" class="btn btn-vidrio" data-tipo="herramienta" role="radio" aria-checked="false">🛠️ Herramienta de aprendizaje</button>
+                    <button type="button" class="btn btn-vidrio" data-tipo="prensa" role="radio" aria-checked="false">📰 Medios / prensa</button>
+                    <button type="button" class="btn btn-vidrio" data-tipo="broker" role="radio" aria-checked="false">💱 Broker, IB o afiliados</button>
+                </div>
+                <div class="resp-ali" id="respAli" aria-live="polite" hidden></div>
+            </div>
+        </section>
+
         <!-- BECAS -->
         <section class="contenedor" style="padding-block: 8px 40px;">
             <div class="vidrio brilla becas">
@@ -313,7 +364,7 @@
         <div class="contenedor">
             <div class="vidrio">
                 <span>&copy; ALEMA Trading Academy. Todos los derechos reservados.</span>
-                <a href="app/">Portal de Alumnos →</a>
+                <span class="pie-links"><a href="#alianzas">Alianzas</a><a href="app/">Portal de Alumnos →</a></span>
             </div>
         </div>
     </footer>
@@ -613,5 +664,30 @@
         });
     })();
     </script>
+
+<script>
+(function () {
+    const MAIL = "alematradingacademymx@gmail.com";
+    const TEXTOS = {
+        educativa: ["Colaboración educativa", "Cuéntanos la idea, a quién va dirigida y en qué fechas."],
+        herramienta: ["Herramienta de aprendizaje", "Cuéntanos qué es, cómo ayuda al alumno a aprender y su costo para él."],
+        prensa: ["Medios y prensa", "Cuéntanos el medio, el tema y tu fecha de entrega."]
+    };
+    const caja = document.getElementById("respAli");
+    document.querySelectorAll(".opciones-ali [data-tipo]").forEach(b => b.addEventListener("click", () => {
+        document.querySelectorAll(".opciones-ali [data-tipo]").forEach(x => { x.classList.toggle("activo", x === b); x.setAttribute("aria-checked", x === b ? "true" : "false"); });
+        const t = b.dataset.tipo; caja.hidden = false;
+        if (t === "broker") {
+            caja.className = "resp-ali no";
+            caja.innerHTML = "<p><b>Gracias, pero no es para nosotros.</b> ALEMA no trabaja con programas de IB, afiliados, rebates ni referidos, y no damos seguimiento a estas propuestas. Nuestros alumnos eligen libremente dónde operar.</p>";
+            return;
+        }
+        const [asunto, guia] = TEXTOS[t];
+        const href = "mailto:" + MAIL + "?subject=" + encodeURIComponent("Alianza ALEMA - " + asunto) + "&body=" + encodeURIComponent(guia + "\n\n");
+        caja.className = "resp-ali si";
+        caja.innerHTML = '<p>' + guia + ' Te respondemos por correo si la propuesta encaja con nuestros valores.</p><a class="btn btn-oro" href="' + href + '">✉️ Enviar propuesta por correo</a>';
+    }));
+})();
+</script>
 </body>
 </html>
