@@ -419,7 +419,7 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
     <nav class="enlaces" aria-label="Enlaces de ALEMA"><a class="web-link" href="https://alematradingacademy.com.mx/" target="_blank" rel="noopener">🌐 Sitio web ↗</a><a class="web-link" href="https://alematradingacademy.com.mx/app/" target="_blank" rel="noopener">🎓 Ingresa al portal ↗</a></nav>
     <div class="stats">
       <span class="stat c" id="s_cred" title="Créditos de hoy"><span class="e">⚡</span><span id="v_cred">10</span><span id="v_max">/10</span></span>
-      <span class="stat v" id="s_vid" title="Vidas de la Ruta"><span class="e">❤️</span><span id="v_vid">5</span></span>
+      <span class="stat v" id="s_vid" title="Vidas"><span class="e">❤️</span><span id="v_vid">5</span></span>
       <span class="stat p" id="s_pts" title="ALEMA Puntos"><span class="e">🪙</span><span id="v_pts">0</span></span>
       <span class="stat r" title="Racha de días"><span class="e">🔥</span><span id="v_racha">0</span></span>
       <span class="usuario"><button type="button" id="salir">Salir</button></span>
@@ -463,7 +463,7 @@ function pixel(tipo, evento, datos) { try { if (window.PIXEL_ID && window.fbq) f
       </div>
       <div class="pos hist"><h3>Historial de operaciones <small id="h_hoy"></small></h3>
         <div class="h-res" id="h_res"></div>
-        <p class="h-regla">Gana ⚡ con operaciones con stop loss que cierren en ganancia: <b>1R = +1 ⚡ · 2R = +2 ⚡ · 3R o más = +3 ⚡</b> (máximo 5 ⚡ al día). 1R es lo que arriesgaste hasta tu stop loss.</p>
+        <p class="h-regla">Gana ⚡ con operaciones con stop loss que cierren en ganancia: <b>1R = +1 ⚡ · 2R = +2 ⚡ · 3R o más = +3 ⚡</b> (máximo 5 ⚡ al día). 1R es lo que arriesgaste hasta tu stop loss. Si cierras en pérdida <b>sin stop loss</b>, pierdes 1 ❤️; perder con tu stop loss no quita vidas.</p>
         <p class="h-aviso">💡 Tus resultados se miden en <b>AlemaCash (AC)</b>, dinero simulado que equivale a dólares de práctica: no es dinero real, no se paga ni se cambia por dinero. Tu premio por operar bien son los <b>⚡ créditos</b>.</p>
         <div class="tabla-x"><table><thead><tr><th>Fecha</th><th>Operación</th><th>Entrada → Cierre</th><th>Motivo</th><th>Resultado (AC)</th><th>Beneficio</th></tr></thead><tbody id="historial"></tbody></table></div>
       </div>
@@ -744,12 +744,13 @@ function abrir(t) {
   if (tp !== null && (compra ? tp <= e : tp >= e)) return error(`En una ${t.toLowerCase()} el take profit va ${compra ? "arriba" : "debajo"} del precio de entrada (${fmt(e)}).`, "tp");
   $("err").hidden = true;
   const nueva = { id: "tmp" + (nId++), tmp: true, par, t, l, e, sl, tp, ts, chk: ts }; posiciones.push(nueva); if (!ilimitado) cred--; pulso("s_cred");
-  const rb2 = sl !== null && tp !== null && Math.abs(tp - e) / Math.abs(e - sl) >= 2;
+  const rb = sl !== null && tp !== null ? Math.abs(tp - e) / Math.abs(e - sl) : null, rb2 = rb !== null && rb >= 2;
   if (sl !== null) { const bono = bonosSL < TOPE_SL; if (bono) { bonosSL++; pts += 5; ganados += 5; pulso("s_pts"); }
     const extra = bono ? " +5 🪙" : ` (ya juntaste los ${TOPE_SL} bonos de stop loss de hoy)`;
     if (rb2) guia("bien", "¡Excelente! Stop loss y riesgo/beneficio 1:2 o más." + extra);
+    else if (rb !== null && rb < 1) guia("mal", "Pusiste stop loss, pero arriesgas más de lo que buscas ganar (riesgo/beneficio menor a 1:1). Busca que tu take profit esté al menos a la misma distancia." + extra);
     else guia("bien", "¡Bien! Pusiste stop loss." + extra + " Prueba un take profit al doble de distancia."); }
-  else guia("mal", "Operaste sin stop loss… así no ganas 🪙 y puedes perder de más.");
+  else guia("mal", "Operaste sin stop loss… así no ganas 🪙 y puedes perder de más." + (vidasInf ? "" : " Si la cierras en pérdida, pierdes 1 ❤️."));
   $("sl").value = ""; $("tp").value = ""; calcular(); pintar();
   enviar("operar", { sl: sl !== null, rb2, pos: { par, t, l, ts, sl, tp } }).then(j => { if (!j.ok) { posiciones = posiciones.filter(p => p !== nueva); pintar(); } });
 }
@@ -760,7 +761,9 @@ function cerrar(id, motivo, ts, silencio) { const p = posiciones.find(x => x.id 
   else enviarCierre({ id: p.id, motivo: motivo || "Manual", ts });
   if (!silencio) {
     if (motivo === "TP") guia("bien", `¡Tu take profit se cumplió! ${r >= 0 ? "+" : ""}${r.toFixed(2)} AlemaCash.`);
-    else if (motivo === "SL") guia("mal", `Se activó tu stop loss: perdiste solo lo que planeaste (${r.toFixed(2)} AlemaCash).`);
+    else if (motivo === "SL") guia("mal", `Se activó tu stop loss: perdiste solo lo que planeaste (${r.toFixed(2)} AlemaCash). Así se hace: no pierdes vidas.`);
+    else if (r < 0 && !p.sl && !vidasInf) { vidas = Math.max(0, vidas - 1); pulso("s_vid");
+      guia("mal", `Cerraste ${p.par} en pérdida sin stop loss (${r.toFixed(2)} AlemaCash): pierdes 1 ❤️. Perdiste sin un plan; siempre pon tu stop loss.`); }
     else guia(r >= 0 ? "bien" : "mal", `Cerraste ${p.par} con ${r >= 0 ? "+" : ""}${r.toFixed(2)} AlemaCash.`); }
   pintar(); return r; }
 // Revisa segundo a segundo desde la última revisión (también lo que pasó mientras la app estaba cerrada).
@@ -1970,7 +1973,7 @@ function pintarHist() { const tb = $("historial"); if (!tb || !EST) return; cons
   const dd = n => String(n).padStart(2, "0"), fecha = t => { const d = new Date(t * 1000); return `${dd(d.getDate())}/${dd(d.getMonth() + 1)} ${dd(d.getHours())}:${dd(d.getMinutes())}`; };
   const mot = { TP: "✅ TP", SL: "🛑 SL", Manual: "✋ Manual" };
   tb.innerHTML = h.slice().sort((a, b) => b.tc - a.tc).map(o => `<tr><td class="num">${fecha(o.tc)}</td><td>${o.par} · ${o.t.toLowerCase()} <span class="tenue">${(+o.l).toFixed(2)}</span></td><td class="num">${fmt(o.e, o.par)} → ${fmt(o.c, o.par)}</td><td>${mot[o.m] || o.m}</td>` +
-    `<td class="num ${o.usd >= 0 ? "g" : "l"}">${o.usd >= 0 ? "+" : ""}${(+o.usd).toFixed(2)} AC</td><td class="num ${o.cr ? "cr" : ""}">${o.cr ? "+" + o.cr + " ⚡" : "—"}</td></tr>`).join(""); }
+    `<td class="num ${o.usd >= 0 ? "g" : "l"}">${o.usd >= 0 ? "+" : ""}${(+o.usd).toFixed(2)} AC</td><td class="num ${o.cr ? "cr" : o.v ? "l" : ""}">${o.cr ? "+" + o.cr + " ⚡" : o.v ? "−1 ❤️" : "—"}</td></tr>`).join(""); }
 
 /* ---------- pintar y pestañas ---------- */
 function pintar() {
