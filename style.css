@@ -206,6 +206,22 @@ h1 em { font-style: normal; background: linear-gradient(90deg, #FFD08A, var(--am
 @media (max-width: 820px) { .seminario { grid-template-columns: 1fr; } }
 
 
+/* 8 años de ALEMA */
+#aniversario .cabeza { margin-inline: auto; text-align: center; justify-items: center; }
+.aniv { padding: 10px; border-radius: 26px; max-width: 760px; margin-inline: auto; }
+.aniv-video { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 16 / 9; background: #05070D; }
+.aniv-video video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.aniv-play { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6%; border: 0; cursor: pointer; background: transparent; font-family: var(--letra); }
+.aniv-play i { display: inline-flex; align-items: center; gap: 12px; padding: 10px 22px 10px 10px; border-radius: 999px; font-style: normal; color: #fff;
+  background: rgb(7 11 19 / .6); border: 1px solid rgb(254 166 33 / .45); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 18px 40px -16px rgb(0 0 0 / .9); transition: transform .25s, border-color .25s; }
+.aniv-play span { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; font-size: 1.05rem; padding-left: 3px; color: #2B1C02;
+  background: linear-gradient(180deg, #FFBE4D, var(--ambar) 55%, #F08F0C); box-shadow: 0 0 0 6px rgb(254 166 33 / .18); }
+.aniv-play b { font-size: 1rem; font-weight: 600; }
+.aniv-play small { font-size: .78rem; color: rgb(255 255 255 / .65); }
+.aniv-play:hover i { transform: translateY(-2px); border-color: var(--ambar); }
+.aniv-play:focus-visible { outline: 2px solid var(--ambar); outline-offset: -4px; }
+@media (max-width: 560px) { .aniv { padding: 6px; } .aniv-play { padding-bottom: 4%; } .aniv-play i { gap: 8px; padding: 6px 14px 6px 6px; } .aniv-play span { width: 34px; height: 34px; font-size: .85rem; } .aniv-play b { font-size: .82rem; } .aniv-play small { display: none; } }
+
 /* Trading Lab */
 .menu a { white-space: nowrap; }
 @media (max-width: 1180px) { .menu { gap: 0; } .menu a { padding: 8px 7px; font-size: .8rem; } .menu-lab span { display: none; } }

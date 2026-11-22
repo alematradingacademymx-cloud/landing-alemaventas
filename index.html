@@ -21,7 +21,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
     <link rel="apple-touch-icon" href="/favicon-192.png">
     <meta name="theme-color" content="#070B13">
-    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="style.css?v=12">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -199,6 +199,20 @@
                     </div>
                 </div>
             </article>
+        </section>
+
+        <!-- 8 AÑOS DE ALEMA (aniversario). Para quitar la franja, borra esta sección. -->
+        <section class="contenedor seccion" id="aniversario">
+            <div class="cabeza"><span class="eti">🎉 2018 — 2026</span><h2>8 años enseñando trading con método</h2>
+                <p>Gracias a cada alumno que ha confiado en nosotros. Mira cómo ha evolucionado ALEMA.</p></div>
+            <div class="vidrio brilla aniv">
+                <div class="aniv-video">
+                    <video id="videoAniv" preload="none" playsinline poster="images/aniversario-poster.jpg" width="1280" height="720">
+                        <source src="videos/alema-8-anos.mp4" type="video/mp4">
+                    </video>
+                    <button type="button" class="aniv-play" id="playAniv" aria-label="Reproducir el video de 8 años de ALEMA"><i><span>▶</span><b>Ver nuestra historia</b><small>52 s · con subtítulos</small></i></button>
+                </div>
+            </div>
         </section>
 
         <!-- OPINIONES DE ALUMNOS (comentarios reales, publicados con autorización de cada alumno) -->
@@ -673,6 +687,19 @@
         caja.className = "resp-ali si";
         caja.innerHTML = '<p>' + guia + ' Te respondemos por correo si la propuesta encaja con nuestros valores.</p><a class="btn btn-oro" href="' + href + '">✉️ Enviar propuesta por correo</a>';
     }));
+})();
+</script>
+
+<script>
+(function () {
+    const v = document.getElementById("videoAniv"), b = document.getElementById("playAniv");
+    if (!v || !b) return;
+    b.addEventListener("click", () => {
+        b.hidden = true; v.controls = true;
+        v.play().catch(() => {});
+        if (typeof rastrear === "function") rastrear("trackCustom", "VideoAniversario");
+    });
+    v.addEventListener("ended", () => { v.controls = false; v.load(); b.hidden = false; });
 })();
 </script>
 </body>
