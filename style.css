@@ -483,3 +483,9 @@ body.temario-abierto { overflow: hidden; }
   .not-rejilla::-webkit-scrollbar { display: none; }
   .not-tarjeta { scroll-snap-align: start; }
 }
+
+/* Barra superior: el logo nunca se encima con el menú */
+.marca { flex: none; }
+.barra .vidrio { gap: 20px; }
+@media (min-width: 1401px) { .menu { gap: 0; } .menu a { padding: 8px 8px; } }
+@media (min-width: 901px) and (max-width: 980px) { .marca span { display: none; } }
