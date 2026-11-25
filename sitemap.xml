@@ -12,4 +12,12 @@
     <loc>https://alematradingacademy.com.mx/lab/privacidad/</loc>
     <lastmod>2026-11-19</lastmod>
   </url>
+  <url><loc>https://alematradingacademy.com.mx/noticias/</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://alematradingacademy.com.mx/noticias/n/video-8-anos/</loc><lastmod>2026-11-23</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://alematradingacademy.com.mx/noticias/n/alema-cumple-8-anos/</loc><lastmod>2026-11-23</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://alematradingacademy.com.mx/noticias/n/video-trading-lab/</loc><lastmod>2026-11-21</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://alematradingacademy.com.mx/noticias/n/llega-alema-trading-lab/</loc><lastmod>2026-11-20</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://alematradingacademy.com.mx/noticias/n/que-es-el-spread/</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://alematradingacademy.com.mx/noticias/n/como-leer-el-calendario-economico/</loc><lastmod>2026-11-15</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://alematradingacademy.com.mx/noticias/n/stop-loss-regla-de-oro/</loc><lastmod>2026-11-12</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Panel · ALEMA Noticias</title>
+    <meta name="theme-color" content="#070B13">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/noticias/estilo.css?v=1">
+    <style>
+    .barra-subida { height: 6px; border-radius: 999px; background: rgb(255 255 255 / .08); overflow: hidden; margin-top: 8px; }
+    .barra-subida i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ambar), var(--naranja)); transition: width .2s; }
+    .estado-subida { font-size: .78rem; color: var(--tenue); margin-top: 6px; }
+    .ocupado { opacity: .6; pointer-events: none; }
+    </style>
+</head>
+<body>
+<header class="barra"><div class="cont"><nav class="vidrio" aria-label="Principal">
+  <a class="marca" href="/noticias/" target="_blank" rel="noopener"><img src="/noticias/img/logo-noticias.png" alt="ALEMA Noticias" width="150" height="97"><span>Panel para<br>publicar</span></a>
+  <div class="menu"><a href="/noticias/" target="_blank" rel="noopener">Ver la página ↗</a></div>
+  <button type="button" class="btn btn-vidrio btn-chico" id="salir" hidden>Salir</button>
+</nav></div></header>
+<main id="vista"><div class="cont"><p class="cargando">Cargando…</p></div></main>
+<div class="toast" id="toast" hidden></div>
+<script src="/noticias/config.js?v=1"></script>
+<script src="/noticias/formato.js?v=1"></script>
+<script src="/noticias/admin/admin.js?v=1"></script>
+</body>
+</html>
