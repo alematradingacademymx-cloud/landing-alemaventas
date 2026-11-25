@@ -68,6 +68,17 @@ input, select { width: 100%; background: rgb(0 0 0 / .3); border: 1px solid var(
 .modal { width: 100%; max-width: 440px; padding: 20px; display: grid; gap: 12px; }
 .modal h3 { margin: 0; } .modal p { margin: 0; color: var(--tenue); font-size: .9rem; }
 .modal .acciones { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+.modal { max-height: calc(100vh - 32px); overflow-y: auto; }
+/* productos de canje en el perfil */
+.regalos { margin-top: 14px; display: grid; gap: 6px; border-top: 1px solid var(--borde); padding-top: 12px; }
+.regalos > b { font-size: .9rem; } .regalos > small { color: var(--tenue); font-size: .78rem; margin-top: -4px; }
+.regalos .niv { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ambar); margin-top: 6px; }
+.regalos .rg { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 10px; border-radius: 12px; background: rgb(0 0 0 / .22); border: 1px solid var(--borde); font-size: .86rem; }
+.regalos .rg.si { border-color: rgb(43 212 154 / .35); }
+.regalos .rg .der { display: flex; align-items: center; gap: 8px; flex: none; }
+.btn.mini { min-height: 32px; padding: 5px 10px; font-size: .78rem; border-radius: 10px; }
+.lnk { background: none; border: 0; padding: 0; color: var(--tenue); font-size: .76rem; text-decoration: underline; cursor: pointer; }
+.lnk.seguro { color: var(--rojo); font-weight: 700; }
 .det { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; font-size: .86rem; } .det dt { color: var(--tenue); } .det dd { margin: 0; overflow-wrap: anywhere; }
 .aviso { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: #10251D; border: 1px solid rgb(43 212 154 / .5); color: var(--tinta); padding: 10px 16px; border-radius: 12px; font-size: .88rem; z-index: 20; max-width: calc(100% - 32px); }
 .nota { color: var(--tenue); font-size: .78rem; text-align: center; }
@@ -182,7 +193,7 @@ const API = "https://script.google.com/macros/s/AKfycbwhJRzfvx5IaeDmqgYYLMChkMvB
 const $ = id => document.getElementById(id);
 const leer = k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
 const guardar = (k, v) => { try { v === null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) {} };
-let TK = leer("alab_admin"), USU = [], PAG = [], COD = [], CAN = [], INV = [];
+let TK = leer("alab_admin"), USU = [], PAG = [], COD = [], CAN = [], INV = [], CATALOGO = [];
 const hoy = () => new Date();
 const fd = v => v ? new Date(v) : null;
 const fecha = d => d ? d.toLocaleDateString("es-MX", { day: "2-digit", month: "short" }) : "—";
@@ -204,7 +215,7 @@ function cargar(j) {
   PAG = j.pagos.map(x => Object.assign(x, { fecha: fd(x.fecha), desde: fd(x.desde), hasta: fd(x.hasta) })).reverse();
   COD = j.codigos.map(x => Object.assign(x, { em: fd(x.em), vence: fd(x.vence), canjeado: fd(x.canjeado) })).reverse();
   CAN = j.canjes.map(x => Object.assign(x, { fecha: fd(x.fecha), entregado: fd(x.entregado) })).reverse();
-  INV = j.invitaciones || [];
+  INV = j.invitaciones || []; CATALOGO = j.catalogo || [];
   if (j.hoja) $("b_hoja").href = j.hoja;
   pintar();
 }
@@ -316,13 +327,34 @@ document.addEventListener("click", e => {
   const k = t.closest("[data-entregado]");
   if (k) { const x = CAN.find(j => j.id === k.dataset.entregado);
     return ventana("¿Marcar como entregado?", `<p>"${esc(x.r)}" para ${esc(usu(x.u).n)} (${esc(usu(x.u).c)}).</p>`, [["Cancelar", cerrar, "sec"], ["Sí, entregado", () => hacer("admin_canje", { id: x.id }, `✓ "${x.r}" marcado como entregado`), "ok"]]); }
+  const rg = t.closest("[data-regalo]");
+  if (rg) return regalo(rg);
   const u = t.closest("[data-usuario]");
-  if (u) { const x = USU.find(j => j.u === u.dataset.usuario);
-    return ventana(x.n, `<dl class="det"><dt>Usuario</dt><dd class="mono">${esc(x.u)}</dd><dt>Correo</dt><dd>${esc(x.c)}</dd><dt>Registro</dt><dd>${fecha(x.reg)}</dd><dt>Último acceso</dt><dd>${fechaH(x.ultimo)}</dd><dt>Avance</dt><dd>Etapa 1: ${x.e1}/30 · Etapa 2: ${x.e2}/20</dd><dt>Puntos</dt><dd>${x.pts} 🪙 (${x.gan} ganados)</dd><dt>Racha</dt><dd>🔥 ${x.racha} días</dd><dt>Programa</dt><dd>${x.prog ? "Sí" : "No"}</dd><dt>Su código</dt><dd class="mono">${esc(x.mio || "—")}</dd><dt>Llegó con</dt><dd class="mono">${esc(x.inv || "Sin código")}</dd><dt>Promociones</dt><dd>${x.promos ? "Sí acepta recibir" : "No"}</dd></dl>
+  if (u) return perfil(u.dataset.usuario);
+});
+// Perfil del alumno: datos, productos de canje (desbloquear sin puntos) y plan.
+function perfil(usuario) { const x = USU.find(j => j.u === usuario); if (!x) return cerrar();
+    return ventana(x.n, `<dl class="det"><dt>Usuario</dt><dd class="mono">${esc(x.u)}</dd><dt>Correo</dt><dd>${esc(x.c)}</dd><dt>Registro</dt><dd>${fecha(x.reg)}</dd><dt>Último acceso</dt><dd>${fechaH(x.ultimo)}</dd><dt>Avance</dt><dd>Etapa 1: ${x.e1}/30 · Etapa 2: ${x.e2}/20</dd><dt>Puntos</dt><dd>${x.pts} 🪙 (${x.gan} ganados)</dd><dt>Racha</dt><dd>🔥 ${x.racha} días</dd><dt>Programa</dt><dd>${x.prog ? "Sí" : "No"}</dd><dt>Su código</dt><dd class="mono">${esc(x.mio || "—")}</dd><dt>Llegó con</dt><dd class="mono">${esc(x.inv || "Sin código")}</dd><dt>Promociones</dt><dd>${x.promos ? "Sí acepta recibir" : "No"}</dd></dl>${regalosHtml(x)}
       <label style="display:grid;gap:4px;margin-top:12px;font-size:.78rem;color:var(--tenue);font-weight:600">Plan (Básico y Pro quedan por 1 mes)<select id="m_plan">${["Gratis", "Básico", "Pro"].map(p => `<option ${p === x.plan ? "selected" : ""}>${p}</option>`).join("")}</select></label>`,
       [[x.estado === "Bloqueado" ? "Desbloquear" : "Bloquear", () => { const nuevo = x.estado === "Bloqueado" ? "Activo" : "Bloqueado"; hacer("admin_usuario", { usuario: x.u, estado: nuevo }, `Cuenta ${nuevo === "Bloqueado" ? "bloqueada" : "desbloqueada"}`); }, "no"],
        ["Cancelar", cerrar, "sec"], ["Guardar plan", () => { const p = $("m_plan").value; if (p === x.plan) return cerrar(); hacer("admin_usuario", { usuario: x.u, plan: p }, `Plan de ${x.n}: ${p}`); }, "ok"]]); }
-});
+function regalosHtml(x) {
+  if (!CATALOGO.length) return "";
+  const tiene = x.canj || [];
+  return `<div class="regalos"><b>Productos de canje</b><small>${x.conAvance ? "Desbloquéalos sin que el alumno gaste puntos. Quedan en la pestaña Canjes para que los entregues." : "Este alumno todavía no entra al Lab. Podrás desbloquearle productos cuando inicie sesión."}</small>
+    ${CATALOGO.map(nv => `<div class="niv">${esc(nv.n)}</div>` + nv.items.map(k => tiene.includes(k)
+      ? `<div class="rg si"><span>${esc(k)}</span><span class="der"><span class="chip ok">✓ Desbloqueado</span><button type="button" class="lnk" data-regalo="${esc(k)}" data-u="${esc(x.u)}" data-quitar="1">Quitar</button></span></div>`
+      : `<div class="rg"><span>${esc(k)}</span><span class="der"><button type="button" class="btn sec mini" data-regalo="${esc(k)}" data-u="${esc(x.u)}" ${x.conAvance ? "" : "disabled"}>🔓 Desbloquear</button></span></div>`).join("")).join("")}</div>`;
+}
+function regalo(b) {
+  const k = b.dataset.regalo, u = b.dataset.u, quitar = !!b.dataset.quitar;
+  if (quitar && !b.classList.contains("seguro")) { b.classList.add("seguro"); b.textContent = "¿Seguro? Quitar"; return; } // pide un segundo clic
+  b.disabled = true;
+  api("admin_regalo", { usuario: u, recompensa: k, quitar }).then(j => {
+    if (!j.ok) { b.disabled = false; return aviso("⚠️ " + (j.error || "No se pudo completar.")); }
+    perfil(u); aviso(quitar ? `Se quitó "${k}"` : `🎁 "${k}" desbloqueado para ${usu(u).n}`);
+  }).catch(err => { b.disabled = false; aviso("⚠️ " + (err.message || "Sin conexión. Intenta de nuevo.")); });
+}
 function entrar() { $("acceso").hidden = true; $("app").hidden = false; }
 function salir() { TK = null; guardar("alab_admin", null); $("app").hidden = true; $("acceso").hidden = false; $("clave").value = ""; cerrar(); }
 $("f_acc").addEventListener("submit", async e => { e.preventDefault(); $("acc_err").hidden = true; const b = e.target.querySelector("button");
