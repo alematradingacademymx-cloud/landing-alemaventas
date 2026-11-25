@@ -21,7 +21,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
     <link rel="apple-touch-icon" href="/favicon-192.png">
     <meta name="theme-color" content="#070B13">
-    <link rel="stylesheet" href="style.css?v=12">
+    <link rel="stylesheet" href="style.css?v=14">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -58,6 +58,7 @@
                 </a>
                 <div class="menu">
                     <a href="#lab" class="menu-lab">Trading Lab <span>Gratis</span></a>
+                    <a href="noticias/">Noticias</a>
                     <a href="#paquetes">Paquetes</a>
                     <a href="#programa">Programa</a>
                     <a href="#propfirm">Prop Firm</a>
@@ -215,6 +216,14 @@
             </div>
         </section>
 
+        <!-- ALEMA NOTICIAS: las 3 noticias más recientes (se cargan solas del panel de noticias). Si no cargan, la sección no se muestra. -->
+        <section class="contenedor seccion" id="noticias" hidden>
+            <div class="cabeza"><span class="eti">ALEMA Noticias</span><h2>Lo último del mercado</h2>
+                <p>Noticias de mercados, educación y comunidad, explicadas por el equipo de ALEMA.</p></div>
+            <div class="not-rejilla" id="notRejilla"></div>
+            <div class="not-mas"><a href="noticias/" class="btn btn-vidrio">Ver todas las noticias →</a></div>
+        </section>
+
         <!-- OPINIONES DE ALUMNOS (comentarios reales, publicados con autorización de cada alumno) -->
         <section class="contenedor seccion" id="opiniones">
             <div class="cabeza"><span class="eti">Opiniones reales</span><h2>Lo que dicen nuestros alumnos</h2>
@@ -364,7 +373,7 @@
         <div class="contenedor">
             <div class="vidrio">
                 <span>&copy; ALEMA Trading Academy. Todos los derechos reservados.</span>
-                <span class="pie-links"><a href="lab/">Trading Lab</a><a href="#alianzas">Alianzas</a><a href="app/">Portal de Alumnos →</a></span>
+                <span class="pie-links"><a href="noticias/">Noticias</a><a href="lab/">Trading Lab</a><a href="#alianzas">Alianzas</a><a href="app/">Portal de Alumnos →</a></span>
             </div>
         </div>
     </footer>
@@ -700,6 +709,26 @@
         if (typeof rastrear === "function") rastrear("trackCustom", "VideoAniversario");
     });
     v.addEventListener("ended", () => { v.controls = false; v.load(); b.hidden = false; });
+})();
+</script>
+<script src="noticias/config.js?v=1"></script>
+<script src="noticias/formato.js?v=1"></script>
+<script>
+(function () {
+    const sec = document.getElementById("noticias"), caja = document.getElementById("notRejilla");
+    if (!sec || !window.NOT || !/^https:\/\/script\.google\.com\//.test(window.NOTICIAS_API || "")) return;
+    const { esc, fechaTxt, imgUrl, imgRespaldo } = window.NOT;
+    fetch(window.NOTICIAS_API + "?accion=lista").then(r => r.json()).then(j => {
+        const ahora = Date.now(), urg = n => n.urgenteHasta > ahora;
+        const notas = (j.notas || []).slice().sort((a, b) => urg(b) - urg(a)).slice(0, 3);
+        if (!notas.length) return;
+        caja.innerHTML = notas.map(n => `<a class="vidrio brilla not-tarjeta" href="noticias/n/${esc(n.id)}/">
+            <span class="not-foto"><img src="${esc(imgUrl(n.imagen, 800))}" data-respaldo="${esc(imgRespaldo(n.imagen))}" alt="" loading="lazy" width="800" height="600">${n.tipo === "video" ? '<i class="not-play">▶ Video</i>' : ""}</span>
+            <span class="not-info"><span class="not-meta">${urg(n) ? '<b class="not-urg">Última hora</b>' : ""}<span class="insignia">${esc(n.cat)}</span><small>${esc(fechaTxt(n.fecha))}</small></span>
+            <strong>${esc(n.titulo)}</strong><span class="not-leer">Leer nota →</span></span></a>`).join("");
+        caja.querySelectorAll("img").forEach(i => i.addEventListener("error", () => { if (i.dataset.respaldo) { i.src = i.dataset.respaldo; i.dataset.respaldo = ""; } }));
+        sec.hidden = false;
+    }).catch(() => {});
 })();
 </script>
 </body>
