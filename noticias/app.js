@@ -114,6 +114,14 @@
     $("vista").innerHTML = htmlNota(n, otras);
     if (esVideo(n) && n.ig && !n.video) cargarInstagram();
     rastrear("track", "ViewContent", { content_name: n.titulo, content_category: n.cat });
+    contarVista(n.id);
+  }
+  // Vistas: cuenta una vez al día por persona y noticia. No cuenta robots ni el navegador donde se usa el panel.
+  function contarVista(id) {
+    if (/bot|crawl|spider|facebookexternalhit|whatsapp|preview/i.test(navigator.userAgent)) return;
+    const k = "vista_" + id, hoy = hoyISO();
+    try { if (localStorage.getItem("not_panel") || localStorage.getItem(k) === hoy) return; localStorage.setItem(k, hoy); } catch (e) {}
+    fetch(API, { method: "POST", body: JSON.stringify({ accion: "visita", id }), keepalive: true }).catch(() => {});
   }
   function cargarInstagram() {
     if (window.instgrm) return window.instgrm.Embeds.process();
