@@ -6,7 +6,9 @@
   const MAX = { imagen: 8, video: 30 };
   const $ = id => document.getElementById(id);
   const sesion = { get: () => { try { return sessionStorage.getItem("not_tk") || ""; } catch (e) { return ""; } }, set: v => { try { v ? sessionStorage.setItem("not_tk", v) : sessionStorage.removeItem("not_tk"); } catch (e) {} } };
-  let TK = sesion.get(), NOTAS = [], editando = null, borrarId = null, subiendo = 0;
+  let TK = sesion.get(), NOTAS = [], editando = null, borrarId = null, subiendo = 0, GH = true;
+  const ENLACE = {}; // id → "listo" | "preparando"
+  const urlCompartir = id => `${window.NOT.SITIO}/noticias/n/${id}/`;
 
   function toast(t, mal) { const e = $("toast"); e.textContent = t; e.style.color = mal ? "#FF9AA4" : ""; e.style.borderColor = mal ? "rgb(244 91 105 / .5)" : ""; e.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => e.hidden = true, 2800); }
   const hoyISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
@@ -55,19 +57,46 @@
   $("salir").onclick = () => { TK = ""; sesion.set(""); verLogin(); };
 
   /* ---------- lista ---------- */
-  function cargarLista() { $("vista").innerHTML = `<div class="cont"><p class="cargando">Cargando tus noticias…</p></div>`; api("lista").then(j => { if (j.ok) { NOTAS = j.notas; verLista(); } }); }
+  function cargarLista() { $("vista").innerHTML = `<div class="cont"><p class="cargando">Cargando tus noticias…</p></div>`; api("lista").then(j => { if (j.ok) { NOTAS = j.notas; GH = j.github !== false; verLista(); revisarEnlaces(); } }); }
+  /* ---------- enlaces para compartir: revisa si ya existe /noticias/n/<id>/ ---------- */
+  function revisarEnlaces() {
+    clearTimeout(revisarEnlaces.t);
+    const pub = NOTAS.filter(n => n.publicada);
+    Promise.all(pub.map(n => fetch(`/noticias/n/${n.id}/?r=${Date.now()}`, { method: "HEAD", cache: "no-store" }).then(r => [n.id, r.ok]).catch(() => [n.id, null]))).then(res => {
+      let faltan = 0;
+      res.forEach(([id, ok]) => { if (ok === null) return; const antes = ENLACE[id]; ENLACE[id] = ok ? "listo" : "preparando"; if (!ok) faltan++;
+        if (ok && antes === "preparando") toast("✓ Enlace listo para compartir"); });
+      pintarEnlaces();
+      if (faltan) revisarEnlaces.t = setTimeout(revisarEnlaces, 20000); // GitHub tarda 1 o 2 minutos
+    });
+  }
+  function pintarEnlaces() {
+    document.querySelectorAll("[data-enlace]").forEach(el => { const id = el.dataset.enlace, st = ENLACE[id];
+      el.innerHTML = st === "listo" ? `<span class="estado pub">✓ Enlace listo</span><button type="button" class="btn btn-vidrio btn-chico" data-copiar="${esc(id)}">🔗 Copiar enlace</button>`
+        : st === "preparando" ? `<span class="estado prep">⏳ Preparando enlace…</span>` : ""; });
+  }
+  function avisoGitHub(g, base) {
+    if (g && g.ok) { NOTAS.filter(n => n.publicada && ENLACE[n.id] !== "listo").forEach(n => ENLACE[n.id] = "preparando"); pintarEnlaces(); revisarEnlaces(); toast(base + " El enlace para compartir estará listo en 1 o 2 minutos."); }
+    else if (g && !g.ok) toast(base + " " + g.error, true);
+    else toast(base);
+  }
   function verLista() {
     $("salir").hidden = false;
     $("vista").innerHTML = `<div class="cont panel">
       <div class="panel-cab"><div><h2>Tus noticias</h2><div class="meta"><span>${NOTAS.filter(n => n.publicada).length} publicadas</span><i></i><span>${NOTAS.filter(n => !n.publicada).length} borradores</span></div></div>
-        <div class="botones"><button type="button" class="btn btn-oro" id="nueva">＋ Nueva noticia</button></div></div>
+        <div class="botones"><button type="button" class="btn btn-vidrio" id="b_enlaces" title="Crea las páginas para compartir de las noticias publicadas">🔄 Preparar enlaces</button><button type="button" class="btn btn-oro" id="nueva">＋ Nueva noticia</button></div></div>
+      ${GH ? "" : `<p class="aviso" style="margin:0 0 12px">Los enlaces para compartir todavía no se preparan solos: falta configurar GITHUB_TOKEN en el servidor. Mientras tanto se crean cada 30 minutos.</p>`}
       <div class="vidrio lista">${NOTAS.length ? NOTAS.map(n => `<div class="fila">${img(n.imagen, 300)}
-        <div style="min-width:0"><h4>${n.tipo === "video" ? "▶ " : ""}${esc(n.titulo)}</h4><div class="meta"><span class="estado ${n.publicada ? "pub" : "bor"}">${n.publicada ? "Publicada" : "Borrador"}</span>${n.destacada ? '<span class="estado dest">★ Principal</span>' : ""}<span>${esc(n.cat)}</span><i></i><span>${fechaTxt(n.fecha)} · ${esc(n.hora)}</span></div></div>
+        <div style="min-width:0"><h4>${n.tipo === "video" ? "▶ " : ""}${esc(n.titulo)}</h4><div class="meta"><span class="estado ${n.publicada ? "pub" : "bor"}">${n.publicada ? "Publicada" : "Borrador"}</span>${n.destacada ? '<span class="estado dest">★ Principal</span>' : ""}<span>${esc(n.cat)}</span><i></i><span>${fechaTxt(n.fecha)} · ${esc(n.hora)}</span></div>${n.publicada ? `<div class="enlace" data-enlace="${esc(n.id)}"></div>` : ""}</div>
         <div class="acc">${borrarId === n.id ? `<div class="confirmar">¿Eliminar esta noticia? También se borran su imagen y video del Drive. <button type="button" class="btn btn-peligro btn-chico" data-sib="${esc(n.id)}">Sí, eliminar</button><button type="button" class="btn btn-vidrio btn-chico" data-no>Cancelar</button></div>` :
           `<button type="button" class="btn btn-vidrio btn-chico" data-editar="${esc(n.id)}">Editar</button>${n.publicada ? `<a class="btn btn-vidrio btn-chico" href="/noticias/?n=${esc(n.id)}" target="_blank" rel="noopener">Ver ↗</a>` : ""}
           <button type="button" class="btn btn-vidrio btn-chico" data-toggle="${esc(n.id)}">${n.publicada ? "Ocultar" : "Publicar"}</button><button type="button" class="btn btn-peligro btn-chico" data-borrar="${esc(n.id)}">Eliminar</button>`}</div></div>`).join("")
         : `<div class="vacio">Todavía no tienes noticias. Crea la primera con <b>＋ Nueva noticia</b>.</div>`}</div></div>`;
     $("nueva").onclick = () => verEditor(null);
+    $("b_enlaces").onclick = ev => { const b = ev.currentTarget; b.disabled = true;
+      api("enlaces").then(j => { b.disabled = false; if (!j.ok) return j.error && toast(j.error, true);
+        if (NOTAS.some(n => n.publicada && ENLACE[n.id] !== "listo")) avisoGitHub({ ok: true }, "Listo."); else toast("✓ Todos los enlaces ya están listos para compartir."); }); };
+    pintarEnlaces();
   }
 
   /* ---------- editor ---------- */
@@ -168,7 +197,7 @@
       img: e.imagen, video: e.tipo === "video" ? e.video : "", ig: e.tipo === "video" ? e.ig : "", destacada: e.destacada, publicada: publicar } }).then(j => {
       const f = $("f_nota"); if (f) f.classList.remove("ocupado");
       if (!j.ok) return j.error && error(j.error);
-      NOTAS = j.notas; verLista(); toast(publicar ? "Noticia publicada" : "Guardada como borrador");
+      NOTAS = j.notas; verLista(); avisoGitHub(j.github, publicar ? "Noticia publicada." : "Guardada como borrador.");
     });
   }
   function verPrevia() {
@@ -184,14 +213,16 @@
 
   /* ---------- acciones de la lista ---------- */
   document.addEventListener("click", ev => {
+    const cp = ev.target.closest("[data-copiar]");
+    if (cp) { const u = urlCompartir(cp.dataset.copiar); (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(() => toast("Enlace copiado. Ya lo puedes pegar en Facebook o WhatsApp."), () => toast(u)); return; }
     const t = ev.target.closest("[data-editar],[data-toggle],[data-borrar],[data-sib],[data-no]"); if (!t) return;
     const d = t.dataset;
     if (d.editar) return verEditor(d.editar);
     if (d.borrar) { borrarId = d.borrar; return verLista(); }
     if ("no" in d) { borrarId = null; return verLista(); }
     t.disabled = true;
-    if (d.toggle) { const n = NOTAS.find(x => x.id === d.toggle); api("publicar", { id: n.id, publicada: !n.publicada }).then(j => { t.disabled = false; if (!j.ok) return j.error && toast(j.error, true); NOTAS = j.notas; verLista(); toast(n.publicada ? "Noticia oculta" : "Noticia publicada"); }); }
-    if (d.sib) api("eliminar", { id: d.sib }).then(j => { borrarId = null; if (!j.ok) return j.error && toast(j.error, true); NOTAS = j.notas; verLista(); toast("Noticia eliminada"); });
+    if (d.toggle) { const n = NOTAS.find(x => x.id === d.toggle); api("publicar", { id: n.id, publicada: !n.publicada }).then(j => { t.disabled = false; if (!j.ok) return j.error && toast(j.error, true); const era = n.publicada; NOTAS = j.notas; verLista(); avisoGitHub(j.github, era ? "Noticia oculta." : "Noticia publicada."); }); }
+    if (d.sib) api("eliminar", { id: d.sib }).then(j => { borrarId = null; if (!j.ok) return j.error && toast(j.error, true); NOTAS = j.notas; delete ENLACE[d.sib]; verLista(); avisoGitHub(j.github, "Noticia eliminada."); });
   });
   addEventListener("beforeunload", ev => { if (subiendo) { ev.preventDefault(); ev.returnValue = ""; } });
 

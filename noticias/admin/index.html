@@ -15,6 +15,9 @@
     .barra-subida i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ambar), var(--naranja)); transition: width .2s; }
     .estado-subida { font-size: .78rem; color: var(--tenue); margin-top: 6px; }
     .ocupado { opacity: .6; pointer-events: none; }
+    .enlace { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+    .enlace:empty { display: none; }
+    .estado.prep { color: #FFD08A; background: rgb(254 166 33 / .12); }
     </style>
 </head>
 <body>
@@ -27,6 +30,6 @@
 <div class="toast" id="toast" hidden></div>
 <script src="/noticias/config.js?v=1"></script>
 <script src="/noticias/formato.js?v=1"></script>
-<script src="/noticias/admin/admin.js?v=2"></script>
+<script src="/noticias/admin/admin.js?v=3"></script>
 </body>
 </html>
