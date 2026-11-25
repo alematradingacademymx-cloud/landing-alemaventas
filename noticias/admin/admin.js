@@ -130,7 +130,7 @@
         <label class="campo"><span id="txt_lbl">${e.tipo === "video" ? "Descripción del video (opcional)" : "Texto de la noticia"}</span><textarea id="e_texto" placeholder="Escribe aquí la noticia…">${esc(e.texto)}</textarea></label>
         <div class="ayuda-formato">Formato fácil: deja una <b>línea en blanco</b> entre párrafos · <code>## Subtítulo</code> · <code>**negrita**</code> · <code>- punto de lista</code> · <code>&gt; frase destacada</code> · los links se activan solos.</div>
         <label class="check"><input type="checkbox" id="e_dest" ${e.destacada ? "checked" : ""}> Poner como noticia principal de la portada</label>
-        <label class="check urgente-check"><input type="checkbox" id="e_urg" ${e.urgenteHasta > Date.now() ? "checked" : ""}> 🔴 Marcar como Última hora <small style="font-weight:400;color:var(--tenue)">(se queda fija arriba de la lista con la etiqueta URGENTE por 24 horas)</small></label>
+        <label class="check urgente-check"><input type="checkbox" id="e_urg" ${e.urgenteHasta > Date.now() ? "checked" : ""}> 🔴 Marcar como Última hora <small style="font-weight:400;color:var(--tenue)">(se queda fija arriba de la lista, en rojo, por 24 horas)</small></label>
         <p class="err" id="e_err" hidden></p>
         <div class="botones"><button type="submit" class="btn btn-oro" id="b_pub">${e.publicada ? "Guardar cambios" : "Publicar"}</button>
           <button type="button" class="btn btn-vidrio" id="e_borr">${e.publicada ? "Pasar a borrador" : "Guardar borrador"}</button>

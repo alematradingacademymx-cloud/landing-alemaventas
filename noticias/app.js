@@ -59,7 +59,7 @@
       cuerpo = `<div class="arriba">${prin ? `<a class="vidrio principal" href="/noticias/n/${esc(prin.id)}/" data-abrir="${esc(prin.id)}"><div class="foto">${img(prin.imagen)}</div>
           <div class="txt"><div class="meta"><span class="cat cat-${esc(prin.cat)}">${esc(prin.cat)}</span><span>${fechaTxt(prin.fecha)}${prin.hora ? " · " + prin.hora : ""}</span><i></i><span>${minutos(prin.texto)} min de lectura</span></div>
           <h2>${esc(prin.titulo)}</h2><p>${esc(prin.resumen)}</p><span class="leer">Leer nota →</span></div></a>` : ""}
-        ${ultimas.length ? `<aside class="vidrio ultima" aria-label="Última hora"><h2>Última hora</h2>${ultimas.map(n => `<a href="/noticias/n/${esc(n.id)}/" data-abrir="${esc(n.id)}"${esUrgente(n) ? ' class="urgente"' : ""}><time>${hace(n)}</time><span><b>${esUrgente(n) ? '<span class="urg">URGENTE</span>' : ""}${esVideo(n) ? "▶ " : ""}${esc(n.titulo)}</b><small>${esc(n.cat)}</small></span></a>`).join("")}</aside>` : ""}</div>
+        ${ultimas.length ? `<aside class="vidrio ultima" aria-label="Última hora"><h2>Última hora</h2>${ultimas.map(n => `<a href="/noticias/n/${esc(n.id)}/" data-abrir="${esc(n.id)}"${esUrgente(n) ? ' class="urgente"' : ""}><time>${hace(n)}</time><span><b>${esVideo(n) ? "▶ " : ""}${esc(n.titulo)}</b><small>${esc(n.cat)}</small></span></a>`).join("")}</aside>` : ""}</div>
         ${seccion("Mercados", "var(--teal)", toma(n => n.cat === "Mercados" && !esVideo(n), 3), "Mercados")}
         ${seccion("ALEMA Noticias en video", "#EC4899", todas.filter(esVideo), "Videos", "reels")}
         ${seccion("ALEMA", "var(--ambar)", toma(n => n.cat === "ALEMA" && !esVideo(n), 3), "ALEMA")}
