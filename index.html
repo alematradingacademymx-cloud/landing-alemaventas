@@ -21,7 +21,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
     <link rel="apple-touch-icon" href="/favicon-192.png">
     <meta name="theme-color" content="#070B13">
-    <link rel="stylesheet" href="style.css?v=14">
+    <link rel="stylesheet" href="style.css?v=15">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -228,7 +228,7 @@
         <section class="contenedor seccion" id="opiniones">
             <div class="cabeza"><span class="eti">Opiniones reales</span><h2>Lo que dicen nuestros alumnos</h2>
                 <p>Comentarios de algunos alumnos este año.</p></div>
-            <div class="opiniones">
+            <div class="opiniones" id="opiCarrusel">
                 <article class="vidrio brilla opinion">
                     <div class="quien"><span class="avatar">CT</span><b>Carlos Torres</b></div>
                     <blockquote>excelente academia, los mentores explican todo con calma y paciencia, mis resutados han sido visibles</blockquote>
@@ -258,6 +258,7 @@
                     <blockquote>La terminal alema es una locura ninguna academia tiene las herramientas que Alema tiene.</blockquote>
                 </article>
             </div>
+            <div class="opi-nav" id="opiNav" hidden><button type="button" class="opi-flecha" data-dir="-1" aria-label="Opiniones anteriores">‹</button><div class="opi-puntos" id="opiPuntos"></div><button type="button" class="opi-flecha" data-dir="1" aria-label="Más opiniones">›</button></div>
             <p class="opiniones-pie">Comentarios publicados con autorización de cada alumno. Los resultados dependen de cada persona.</p>
         </section>
 
@@ -729,6 +730,40 @@
         caja.querySelectorAll("img").forEach(i => i.addEventListener("error", () => { if (i.dataset.respaldo) { i.src = i.dataset.respaldo; i.dataset.respaldo = ""; } }));
         sec.hidden = false;
     }).catch(() => {});
+})();
+</script>
+<script>
+/* Carrusel de opiniones: flechas, puntos, deslizar con el dedo y avance automático lento (se detiene al tocarlo). */
+(function () {
+    const c = document.getElementById("opiCarrusel"), nav = document.getElementById("opiNav"), pts = document.getElementById("opiPuntos");
+    if (!c || !nav) return;
+    const [ant, sig] = nav.querySelectorAll(".opi-flecha"), tarjetas = [...c.children];
+    let paginas = 1, auto = null, quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const porVista = () => Math.max(1, Math.round(c.clientWidth / tarjetas[0].getBoundingClientRect().width));
+    // posición de inicio de cada página (la última llega hasta el final)
+    const destino = i => Math.min(c.scrollWidth - c.clientWidth, tarjetas[Math.min(tarjetas.length - 1, i * porVista())].offsetLeft - tarjetas[0].offsetLeft);
+    const actual = () => { let m = 0; for (let k = 1; k < paginas; k++) if (Math.abs(destino(k) - c.scrollLeft) < Math.abs(destino(m) - c.scrollLeft)) m = k; return m; };
+    const ir = i => { i = Math.max(0, Math.min(paginas - 1, i)); c.scrollTo({ left: destino(i), behavior: quieto ? "auto" : "smooth" }); };
+    function pintar() {
+        const i = actual(); [...pts.children].forEach((b, k) => { b.classList.toggle("activo", k === i); b.setAttribute("aria-current", k === i ? "true" : "false"); });
+        ant.disabled = c.scrollLeft < 4; sig.disabled = c.scrollLeft > c.scrollWidth - c.clientWidth - 4;
+    }
+    function armar() {
+        paginas = Math.ceil(tarjetas.length / porVista()); nav.hidden = paginas < 2;
+        pts.innerHTML = Array.from({ length: paginas }, (_, k) => `<button type="button" aria-label="Ver opiniones ${k + 1} de ${paginas}"></button>`).join("");
+        [...pts.children].forEach((b, k) => b.addEventListener("click", () => { parar(); ir(k); })); pintar();
+    }
+    const parar = () => { clearInterval(auto); auto = false; }; // si la persona lo toca, ya no avanza solo
+    ant.addEventListener("click", () => { parar(); ir(actual() - 1); });
+    sig.addEventListener("click", () => { parar(); ir(actual() + 1); });
+    ["pointerdown", "wheel", "focusin"].forEach(e => c.addEventListener(e, parar, { passive: true }));
+    let t; c.addEventListener("scroll", () => { clearTimeout(t); t = setTimeout(pintar, 60); }, { passive: true });
+    addEventListener("resize", () => { clearTimeout(armar.t); armar.t = setTimeout(armar, 150); });
+    armar();
+    if (!quieto && "IntersectionObserver" in window) {
+        new IntersectionObserver(([e]) => { if (e.isIntersecting && auto === null) auto = setInterval(() => ir(actual() + 1 < paginas ? actual() + 1 : 0), 6000); else if (!e.isIntersecting && auto) { clearInterval(auto); auto = null; } }, { threshold: .5 }).observe(c);
+        c.addEventListener("mouseenter", parar); nav.addEventListener("mouseenter", parar);
+    }
 })();
 </script>
 </body>
