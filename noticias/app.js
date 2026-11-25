@@ -9,6 +9,7 @@
   /* ---------- utilidades ---------- */
   const hoyISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
   const esVideo = n => n.tipo === "video";
+  const esUrgente = n => !!(n.urgenteHasta && n.urgenteHasta > Date.now()); // Última hora: fija arriba 24 h
   const img = (v, ancho) => `<img src="${esc(imgUrl(v, ancho))}" alt="" loading="lazy" data-respaldo="${esc(imgRespaldo(v))}">`;
   function toast(t) { const e = $("toast"); e.textContent = t; e.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => e.hidden = true, 2400); }
   const rastrear = (...a) => { try { if (typeof fbq === "function") fbq(...a); } catch (e) {} };
@@ -54,11 +55,11 @@
       const prin = todas.find(n => n.destacada && !esVideo(n)) || todas.find(n => !esVideo(n));
       const usadas = new Set([prin && prin.id]);
       const toma = (f, k) => { const r = todas.filter(n => !usadas.has(n.id) && f(n)).slice(0, k); r.forEach(n => usadas.add(n.id)); return r; };
-      const ultimas = todas.filter(n => n !== prin).slice(0, 6);
+      const urgentes = todas.filter(esUrgente), ultimas = urgentes.concat(todas.filter(n => n !== prin && !esUrgente(n))).slice(0, Math.max(6, urgentes.length));
       cuerpo = `<div class="arriba">${prin ? `<a class="vidrio principal" href="/noticias/n/${esc(prin.id)}/" data-abrir="${esc(prin.id)}"><div class="foto">${img(prin.imagen)}</div>
           <div class="txt"><div class="meta"><span class="cat cat-${esc(prin.cat)}">${esc(prin.cat)}</span><span>${fechaTxt(prin.fecha)}${prin.hora ? " · " + prin.hora : ""}</span><i></i><span>${minutos(prin.texto)} min de lectura</span></div>
           <h2>${esc(prin.titulo)}</h2><p>${esc(prin.resumen)}</p><span class="leer">Leer nota →</span></div></a>` : ""}
-        ${ultimas.length ? `<aside class="vidrio ultima" aria-label="Última hora"><h2>Última hora</h2>${ultimas.map(n => `<a href="/noticias/n/${esc(n.id)}/" data-abrir="${esc(n.id)}"><time>${hace(n)}</time><span><b>${esVideo(n) ? "▶ " : ""}${esc(n.titulo)}</b><small>${esc(n.cat)}</small></span></a>`).join("")}</aside>` : ""}</div>
+        ${ultimas.length ? `<aside class="vidrio ultima" aria-label="Última hora"><h2>Última hora</h2>${ultimas.map(n => `<a href="/noticias/n/${esc(n.id)}/" data-abrir="${esc(n.id)}"${esUrgente(n) ? ' class="urgente"' : ""}><time>${hace(n)}</time><span><b>${esUrgente(n) ? '<span class="urg">URGENTE</span>' : ""}${esVideo(n) ? "▶ " : ""}${esc(n.titulo)}</b><small>${esc(n.cat)}</small></span></a>`).join("")}</aside>` : ""}</div>
         ${seccion("Mercados", "var(--teal)", toma(n => n.cat === "Mercados" && !esVideo(n), 3), "Mercados")}
         ${seccion("ALEMA Noticias en video", "#EC4899", todas.filter(esVideo), "Videos", "reels")}
         ${seccion("ALEMA", "var(--ambar)", toma(n => n.cat === "ALEMA" && !esVideo(n), 3), "ALEMA")}
@@ -95,7 +96,7 @@
     const url = enlace(n), msg = encodeURIComponent(n.titulo + " " + url);
     return `<div class="cont"><article class="nota">
       <a class="volver" href="/noticias/" data-abrir="">← Todas las noticias</a>
-      <div class="meta"><span class="cat cat-${esc(n.cat)}">${esc(n.cat)}</span><span>${fechaTxt(n.fecha)}</span><i></i><span>${esc(n.autor || "Equipo ALEMA")}</span><i></i><span>${esVideo(n) ? "▶ Video" : minutos(n.texto) + " min de lectura"}</span></div>
+      <div class="meta">${esUrgente(n) ? '<span class="urg">ÚLTIMA HORA</span>' : ""}<span class="cat cat-${esc(n.cat)}">${esc(n.cat)}</span><span>${fechaTxt(n.fecha)}</span><i></i><span>${esc(n.autor || "Equipo ALEMA")}</span><i></i><span>${esVideo(n) ? "▶ Video" : minutos(n.texto) + " min de lectura"}</span></div>
       <h1>${esc(n.titulo)}</h1><p class="bajada">${esc(n.resumen)}</p>
       ${medio(n)}
       <div class="cuerpo">${formato(n.texto)}</div>

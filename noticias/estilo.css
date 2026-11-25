@@ -191,3 +191,13 @@ label.campo { display: grid; gap: 5px; font-size: .78rem; color: var(--tenue); f
 .insta-emb { margin: 18px auto 8px; max-width: 420px; }
 .insta-emb .instagram-media { margin: 0 auto !important; min-width: 0 !important; width: 100% !important; }
 .cargando { padding: 60px 0; text-align: center; color: var(--tenue); }
+/* Última hora (URGENTE) */
+.ultima a.urgente { border-top-color: rgb(244 91 105 / .35); background: rgb(244 91 105 / .07); border-radius: 10px; padding-inline: 8px; margin-inline: -4px; }
+.ultima a.urgente + a.urgente { margin-top: 4px; }
+.ultima a.urgente time { color: #FF8A95; }
+.urg { display: inline-block; font-size: .62rem; font-weight: 800; letter-spacing: .12em; color: #fff; background: var(--rojo); border-radius: 6px; padding: 2px 6px; margin-right: 6px; vertical-align: 2px; animation: urg 1.8s ease-in-out infinite; }
+@keyframes urg { 50% { box-shadow: 0 0 0 4px rgb(244 91 105 / .25); } }
+.check.urgente-check { color: #FFB3BA; }
+.check.urgente-check input { accent-color: var(--rojo); }
+.estado.urg-pill { color: #FF9AA4; background: rgb(244 91 105 / .14); }
+@media (prefers-reduced-motion: reduce) { .urg { animation: none; } }

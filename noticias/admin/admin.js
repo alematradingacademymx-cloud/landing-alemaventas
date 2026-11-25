@@ -87,7 +87,7 @@
         <div class="botones"><button type="button" class="btn btn-vidrio" id="b_enlaces" title="Crea las páginas para compartir de las noticias publicadas">🔄 Preparar enlaces</button><button type="button" class="btn btn-oro" id="nueva">＋ Nueva noticia</button></div></div>
       ${GH ? "" : `<p class="aviso" style="margin:0 0 12px">Los enlaces para compartir todavía no se preparan solos: falta configurar GITHUB_TOKEN en el servidor. Mientras tanto se crean cada 30 minutos.</p>`}
       <div class="vidrio lista">${NOTAS.length ? NOTAS.map(n => `<div class="fila">${img(n.imagen, 300)}
-        <div style="min-width:0"><h4>${n.tipo === "video" ? "▶ " : ""}${esc(n.titulo)}</h4><div class="meta"><span class="estado ${n.publicada ? "pub" : "bor"}">${n.publicada ? "Publicada" : "Borrador"}</span>${n.destacada ? '<span class="estado dest">★ Principal</span>' : ""}<span>${esc(n.cat)}</span><i></i><span>${fechaTxt(n.fecha)} · ${esc(n.hora)}</span></div>${n.publicada ? `<div class="enlace" data-enlace="${esc(n.id)}"></div>` : ""}</div>
+        <div style="min-width:0"><h4>${n.tipo === "video" ? "▶ " : ""}${esc(n.titulo)}</h4><div class="meta"><span class="estado ${n.publicada ? "pub" : "bor"}">${n.publicada ? "Publicada" : "Borrador"}</span>${n.destacada ? '<span class="estado dest">★ Principal</span>' : ""}${n.urgenteHasta > Date.now() ? `<span class="estado urg-pill">🔴 Última hora · hasta ${new Date(n.urgenteHasta).toTimeString().slice(0, 5)}</span>` : ""}<span>${esc(n.cat)}</span><i></i><span>${fechaTxt(n.fecha)} · ${esc(n.hora)}</span></div>${n.publicada ? `<div class="enlace" data-enlace="${esc(n.id)}"></div>` : ""}</div>
         <div class="acc">${borrarId === n.id ? `<div class="confirmar">¿Eliminar esta noticia? También se borran su imagen y video del Drive. <button type="button" class="btn btn-peligro btn-chico" data-sib="${esc(n.id)}">Sí, eliminar</button><button type="button" class="btn btn-vidrio btn-chico" data-no>Cancelar</button></div>` :
           `<button type="button" class="btn btn-vidrio btn-chico" data-editar="${esc(n.id)}">Editar</button>${n.publicada ? `<a class="btn btn-vidrio btn-chico" href="/noticias/?n=${esc(n.id)}" target="_blank" rel="noopener">Ver ↗</a>` : ""}
           <button type="button" class="btn btn-vidrio btn-chico" data-toggle="${esc(n.id)}">${n.publicada ? "Ocultar" : "Publicar"}</button><button type="button" class="btn btn-peligro btn-chico" data-borrar="${esc(n.id)}">Eliminar</button>`}</div></div>`).join("")
@@ -108,7 +108,7 @@
     const n = borrador ? null : id ? NOTAS.find(x => x.id === id) : null;
     editando = borrador ? borrador : { id: n ? n.id : null, titulo: n ? n.titulo : "", cat: n ? n.cat : "ALEMA", fecha: n ? n.fecha : hoyISO(), hora: n ? n.hora : "", autor: n ? n.autor : "Equipo ALEMA",
       resumen: n ? n.resumen : "", texto: n ? n.texto : "", imagen: n ? n.imagen : "", imagenLocal: "", destacada: n ? n.destacada : false, publicada: n ? n.publicada : false,
-      tipo: n ? n.tipo : "nota", video: n ? n.video : "", videoLocal: "", ig: n ? n.ig : "" };
+      tipo: n ? n.tipo : "nota", video: n ? n.video : "", videoLocal: "", ig: n ? n.ig : "", urgenteHasta: n ? n.urgenteHasta || 0 : 0 };
     const e = editando, foto = e.imagenLocal || (e.imagen ? imgUrl(e.imagen, 900) : "");
     $("vista").innerHTML = `<div class="cont panel">
       <div class="panel-cab"><div><button type="button" class="volver" id="a_lista">← Tus noticias</button><h2>${e.id ? "Editar noticia" : "Nueva noticia"}</h2></div></div>
@@ -130,6 +130,7 @@
         <label class="campo"><span id="txt_lbl">${e.tipo === "video" ? "Descripción del video (opcional)" : "Texto de la noticia"}</span><textarea id="e_texto" placeholder="Escribe aquí la noticia…">${esc(e.texto)}</textarea></label>
         <div class="ayuda-formato">Formato fácil: deja una <b>línea en blanco</b> entre párrafos · <code>## Subtítulo</code> · <code>**negrita**</code> · <code>- punto de lista</code> · <code>&gt; frase destacada</code> · los links se activan solos.</div>
         <label class="check"><input type="checkbox" id="e_dest" ${e.destacada ? "checked" : ""}> Poner como noticia principal de la portada</label>
+        <label class="check urgente-check"><input type="checkbox" id="e_urg" ${e.urgenteHasta > Date.now() ? "checked" : ""}> 🔴 Marcar como Última hora <small style="font-weight:400;color:var(--tenue)">(se queda fija arriba de la lista con la etiqueta URGENTE por 24 horas)</small></label>
         <p class="err" id="e_err" hidden></p>
         <div class="botones"><button type="submit" class="btn btn-oro" id="b_pub">${e.publicada ? "Guardar cambios" : "Publicar"}</button>
           <button type="button" class="btn btn-vidrio" id="e_borr">${e.publicada ? "Pasar a borrador" : "Guardar borrador"}</button>
@@ -194,7 +195,7 @@
     if (subiendo) return error("Espera a que termine de subir la imagen o el video.");
     const b = $("b_pub"); $("f_nota").classList.add("ocupado");
     api("guardar", { nota: { id: e.id, titulo: e.titulo, cat: e.cat, fecha: e.fecha, hora: e.hora, autor: e.autor, resumen: e.resumen, texto: e.texto, tipo: e.tipo,
-      img: e.imagen, video: e.tipo === "video" ? e.video : "", ig: e.tipo === "video" ? e.ig : "", destacada: e.destacada, publicada: publicar } }).then(j => {
+      img: e.imagen, video: e.tipo === "video" ? e.video : "", ig: e.tipo === "video" ? e.ig : "", destacada: e.destacada, urgente: $("e_urg").checked, publicada: publicar } }).then(j => {
       const f = $("f_nota"); if (f) f.classList.remove("ocupado");
       if (!j.ok) return j.error && error(j.error);
       NOTAS = j.notas; verLista(); avisoGitHub(j.github, publicar ? "Noticia publicada." : "Guardada como borrador.");
