@@ -20,14 +20,18 @@
       .catch(err => { if (err.message !== "salir") toast("No se pudo conectar con el servidor. Revisa tu conexión.", true); return { ok: false }; });
   }
   // Sube un archivo con barra de progreso. Devuelve "drive:ID".
+  // Sin escuchar x.upload: eso obliga al navegador a pedir permiso (CORS) y Apps Script lo rechaza. El avance es estimado.
   function subirArchivo(blob, nombre, alAvanzar) {
     return new Promise(res => {
       const r = new FileReader();
       r.onload = () => {
         const datos = String(r.result).split(",")[1], x = new XMLHttpRequest();
-        x.open("POST", API); x.upload.onprogress = e => e.lengthComputable && alAvanzar && alAvanzar(e.loaded / e.total);
-        x.onload = () => { try { const j = JSON.parse(x.responseText); if (j.salir) { verLogin(j.error); return res(null); } if (!j.ok) toast(j.error || "No se pudo subir el archivo.", true); res(j.ok ? j.ref : null); } catch (e) { toast("No se pudo subir el archivo.", true); res(null); } };
-        x.onerror = () => { toast("Se cortó la conexión al subir el archivo. Intenta de nuevo.", true); res(null); };
+        x.open("POST", API);
+        const t0 = Date.now(), seg = Math.max(2, datos.length / 900000); // ~0.9 MB por segundo
+        const reloj = setInterval(() => alAvanzar && alAvanzar(Math.min(.95, (Date.now() - t0) / 1000 / seg)), 250);
+        const fin = v => { clearInterval(reloj); res(v); };
+        x.onload = () => { clearInterval(reloj); try { const j = JSON.parse(x.responseText); if (j.salir) { verLogin(j.error); return res(null); } if (!j.ok) toast(j.error || "No se pudo subir el archivo.", true); res(j.ok ? j.ref : null); } catch (e) { toast("No se pudo subir el archivo.", true); res(null); } };
+        x.onerror = () => { toast("Se cortó la conexión al subir el archivo. Intenta de nuevo.", true); fin(null); };
         x.send(JSON.stringify({ accion: "subir", token: TK, nombre, mime: blob.type, datos }));
       };
       r.readAsDataURL(blob);
@@ -134,6 +138,7 @@
     subiendo++; const av = progreso("zona", "Subiendo imagen…"); const ref = await subirArchivo(blob, "portada.jpg", av); subiendo--;
     const z = $("zona"); if (z) z.querySelectorAll(".barra-subida,.estado-subida").forEach(x => x.remove());
     if (editando === e && ref) { e.imagen = ref; toast("Imagen guardada"); }
+    else if (editando === e && z) { e.imagenLocal = ""; z.innerHTML = `<span>📷 <b>No se pudo subir la imagen</b><br>Vuelve a elegirla o arrástrala aquí</span>`; $("previa").innerHTML = tarjeta(e); error("La imagen no se subió. Vuelve a elegirla."); }
   }
   function cargarImg(f) {
     if (!f) return; if (!/^image\/(jpeg|png|webp)$/.test(f.type)) return error("Ese archivo no es una imagen. Sube un JPG o PNG.");
@@ -151,7 +156,8 @@
     v.addEventListener("seeked", async () => { const j = await aJPEG(v, 900); const pv = $("vid_zona").querySelector("video"); if (pv) pv.poster = j.url; if ((!e.imagen && !e.imagenLocal) || e.imagenAuto) { e.imagenAuto = true; subirPortada(j.blob, j.url); } }, { once: true });
     subiendo++; const av = progreso("vid_zona", "Subiendo video…");
     subirArchivo(f, f.name, av).then(ref => { subiendo--; const z = $("vid_zona"); if (z) z.querySelectorAll(".barra-subida,.estado-subida").forEach(x => x.remove());
-      if (editando === e && ref) { e.video = ref; toast("Video guardado en tu Drive"); } else if (editando === e) { e.videoLocal = ""; } });
+      if (editando === e && ref) { e.video = ref; toast("Video guardado en tu Drive"); }
+      else if (editando === e && z) { e.videoLocal = ""; z.innerHTML = `<label class="subir video" for="e_vid"><span>🎬 <b>No se pudo subir el video</b><br>Vuelve a elegirlo (MP4 · hasta ${MAX.video} MB)</span></label>`; error("El video no se subió. Vuelve a elegirlo."); } });
   }
   function guardar(publicar) {
     const e = editando;
