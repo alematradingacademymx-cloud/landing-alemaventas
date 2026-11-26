@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ALEMA Gráficas</title>
+<meta name="theme-color" content="#131722">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<style>/* ALEMA Gráficas · estilo tipo TradingView (tema oscuro) */
+:root { --logo: url("data:image/png;base64,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"); --bg: #131722; --panel: #1E222D; --panel2: #2A2E39; --linea: #2A2E39; --tinta: #D1D4DC; --tenue: #787B86; --azul: #2962FF; --sube: #089981; --baja: #F23645; --ambar: #FEA621; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--tinta); font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, sans-serif; overflow: hidden; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+[hidden] { display: none !important; }
+#app { display: grid; grid-template-columns: 52px 1fr; grid-template-rows: 44px 1fr; height: 100vh; }
+#arriba { grid-column: 1 / -1; display: flex; align-items: center; gap: 2px; padding: 0 8px; border-bottom: 4px solid #0C0E15; background: var(--bg); overflow-x: auto; scrollbar-width: none; }
+#arriba::-webkit-scrollbar { display: none; }
+.sep { width: 1px; height: 24px; background: var(--linea); margin: 0 6px; flex: none; }
+.tb { height: 34px; padding: 0 9px; border-radius: 4px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex: none; }
+.tb:hover { background: var(--panel2); }
+.tb.on { color: var(--azul); }
+.tb svg { width: 20px; height: 20px; }
+.marca { display: flex; align-items: center; gap: 6px; padding: 0 8px 0 2px; font-weight: 700; letter-spacing: .12em; color: var(--ambar); font-size: 12px; flex: none; }
+.marca i { width: 22px; height: 20px; background: var(--ambar); -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat; }
+#simbolo { font-weight: 700; font-size: 14px; }
+.tf { min-width: 34px; justify-content: center; font-weight: 600; }
+.espacio { flex: 1; }
+#tvbtn { border: 1px solid var(--linea); }
+#izq { background: var(--bg); border-right: 4px solid #0C0E15; display: flex; flex-direction: column; align-items: center; padding: 6px 0; gap: 2px; overflow-y: auto; scrollbar-width: none; }
+#izq::-webkit-scrollbar { display: none; }
+.herr { width: 38px; height: 38px; border-radius: 4px; display: grid; place-items: center; color: var(--tinta); flex: none; position: relative; }
+.herr:hover { background: var(--panel2); }
+.herr.on { color: var(--azul); background: rgb(41 98 255 / .12); }
+.herr svg { width: 26px; height: 26px; }
+.herr .tip { position: absolute; left: 46px; top: 50%; transform: translateY(-50%); background: #363A45; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .12s; z-index: 30; }
+.herr:hover .tip { opacity: 1; }
+.herr-sep { width: 30px; height: 1px; background: var(--linea); margin: 4px 0; flex: none; }
+#zona { position: relative; overflow: hidden; }
+#cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+#leyenda { position: absolute; left: 10px; top: 8px; pointer-events: none; display: grid; gap: 3px; z-index: 5; max-width: calc(100% - 90px); }
+.ley-top { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-size: 13px; }
+.ley-top b { font-size: 15px; font-weight: 600; }
+.ley-top span.v { color: var(--tenue); } .ley-top em { font-style: normal; }
+.ley-ind { display: flex; gap: 6px; align-items: center; pointer-events: auto; width: max-content; padding: 1px 4px; border-radius: 4px; border: 1px solid transparent; }
+.ley-ind:hover { border-color: var(--linea); background: rgb(19 23 34 / .8); }
+.ley-ind .nom { color: var(--tinta); } .ley-ind .val { font-variant-numeric: tabular-nums; }
+.ley-ind .acc { display: none; gap: 2px; } .ley-ind:hover .acc { display: flex; }
+.ley-ind .acc button { width: 22px; height: 22px; border-radius: 3px; display: grid; place-items: center; color: var(--tinta); }
+.ley-ind .acc button:hover { background: var(--panel2); }
+.ley-ind.oculto .nom, .ley-ind.oculto .val { opacity: .4; }
+.ley-sub { position: absolute; left: 10px; z-index: 5; pointer-events: none; }
+.ley-sub .ley-ind { pointer-events: auto; }
+#muestra { position: absolute; right: 80px; bottom: 34px; font-size: 11px; color: var(--tenue); background: rgb(30 34 45 / .8); padding: 3px 8px; border-radius: 4px; pointer-events: none; z-index: 4; }
+/* barra de dibujo seleccionado */
+#barraDib { position: absolute; z-index: 20; display: flex; gap: 2px; align-items: center; background: var(--panel); border: 1px solid var(--linea); border-radius: 6px; padding: 4px; box-shadow: 0 6px 20px rgb(0 0 0 / .5); }
+#barraDib .col { width: 18px; height: 18px; border-radius: 3px; border: 2px solid transparent; }
+#barraDib .col.on { border-color: #fff; }
+#barraDib button { height: 26px; min-width: 26px; padding: 0 6px; border-radius: 4px; display: grid; place-items: center; }
+#barraDib button:hover { background: var(--panel2); }
+/* repetición */
+#replay { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); z-index: 20; display: flex; align-items: center; gap: 4px; background: var(--panel); border: 1px solid var(--linea); border-radius: 8px; padding: 5px 8px; box-shadow: 0 8px 24px rgb(0 0 0 / .55); }
+#replay button { height: 32px; min-width: 32px; padding: 0 8px; border-radius: 5px; display: grid; place-items: center; }
+#replay button:hover { background: var(--panel2); }
+#replay select { background: var(--panel2); color: var(--tinta); border: 0; border-radius: 5px; height: 30px; padding: 0 6px; font: inherit; }
+#replay .rt { font-size: 12px; color: var(--tenue); padding: 0 6px; white-space: nowrap; }
+#replayAviso { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); z-index: 20; background: var(--azul); color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 13px; pointer-events: none; }
+/* ventanas */
+.velo { position: fixed; inset: 0; background: rgb(0 0 0 / .55); z-index: 50; display: grid; place-items: center; padding: 16px; }
+.ven { background: var(--panel); border-radius: 8px; width: min(560px, 100%); max-height: min(640px, 92vh); display: flex; flex-direction: column; box-shadow: 0 20px 60px rgb(0 0 0 / .6); }
+.ven header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; font-size: 18px; font-weight: 600; }
+.ven header button { width: 32px; height: 32px; border-radius: 5px; font-size: 20px; } .ven header button:hover { background: var(--panel2); }
+.ven .buscar { margin: 0 18px 10px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--linea); padding-bottom: 8px; }
+.ven .buscar input { flex: 1; background: none; border: 0; outline: 0; color: var(--tinta); font: inherit; font-size: 15px; padding: 6px 0; }
+.ven .pest { display: flex; gap: 4px; padding: 0 18px 8px; flex-wrap: wrap; }
+.ven .pest button { padding: 5px 12px; border-radius: 99px; background: var(--panel2); font-size: 12px; } .ven .pest button.on { background: #D1D4DC; color: #131722; }
+.ven .lista { overflow-y: auto; padding: 0 8px 10px; }
+.ven .fila { display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 10px; border-radius: 5px; text-align: left; }
+.ven .fila:hover { background: var(--panel2); }
+.ven .fila b { min-width: 86px; } .ven .fila span { color: var(--tenue); flex: 1; } .ven .fila small { color: var(--tenue); font-size: 11px; }
+.ven .cuerpo { padding: 0 18px 12px; display: grid; gap: 10px; overflow-y: auto; }
+.ven .cuerpo label { display: grid; grid-template-columns: 1fr 120px; align-items: center; gap: 10px; }
+.ven .cuerpo input { background: var(--bg); border: 1px solid var(--linea); color: var(--tinta); border-radius: 4px; padding: 6px 8px; font: inherit; width: 100%; }
+.ven .cuerpo input[type=color] { padding: 0; height: 30px; }
+.ven footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px 16px; }
+.ven footer button { padding: 7px 16px; border-radius: 5px; background: var(--panel2); } .ven footer button.pri { background: var(--azul); color: #fff; }
+#textoIn { position: absolute; z-index: 25; background: var(--panel); color: var(--tinta); border: 1px solid var(--azul); border-radius: 4px; padding: 4px 6px; font: inherit; outline: 0; min-width: 160px; }
+@media (max-width: 700px) { #app { grid-template-columns: 44px 1fr; } .herr { width: 34px; height: 34px; } .herr svg { width: 22px; height: 22px; } .tb { padding: 0 6px; } }
+
+/* grupos de herramientas */
+.grupo { position: relative; display: flex; flex: none; }
+.grupo .mas { position: absolute; right: -5px; bottom: 2px; width: 12px; height: 16px; font-size: 13px; line-height: 1; color: var(--tenue); border-radius: 3px; display: grid; place-items: center; }
+.grupo .mas:hover { color: var(--tinta); background: var(--panel2); }
+.menuF { position: fixed; z-index: 60; background: var(--panel); border: 1px solid var(--linea); border-radius: 6px; padding: 6px; box-shadow: 0 12px 32px rgb(0 0 0 / .55); min-width: 250px; max-height: 80vh; overflow-y: auto; }
+.menuF .menuT { font-size: 11px; color: var(--tenue); text-transform: uppercase; letter-spacing: .08em; padding: 4px 8px 6px; }
+.menuF button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 7px 8px; border-radius: 4px; text-align: left; }
+.menuF button:hover { background: var(--panel2); } .menuF button.on { color: var(--azul); }
+#avisoHerr { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); z-index: 15; background: rgb(30 34 45 / .92); border: 1px solid var(--linea); color: var(--tinta); padding: 5px 12px; border-radius: 6px; font-size: 12px; pointer-events: none; }
+/* configuración de dibujos */
+.ven-d { width: min(500px, 100%); }
+.tabs-d { display: flex; gap: 18px; padding: 0 18px; border-bottom: 2px solid var(--panel2); margin-bottom: 10px; }
+.tabs-d button { padding: 8px 0; font-weight: 600; color: var(--tenue); border-bottom: 2px solid transparent; margin-bottom: -2px; }
+.tabs-d button.on { color: var(--tinta); border-color: var(--tinta); }
+.cfg section { display: grid; gap: 10px; }
+.cfila { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 34px; }
+.cfila > div { display: flex; gap: 6px; align-items: center; }
+.cfg select, .cfg input[type=text], .cfg input[type=number] { background: var(--bg); border: 1px solid var(--linea); color: var(--tinta); border-radius: 4px; padding: 6px 8px; font: inherit; }
+.cfg input[type=color] { width: 34px; height: 30px; padding: 0; border: 1px solid var(--linea); border-radius: 4px; background: none; }
+.chk { display: inline-flex !important; grid-template-columns: none !important; gap: 8px; align-items: center; cursor: pointer; }
+.chk input { width: 16px; height: 16px; accent-color: var(--azul); }
+.niveles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; margin: 4px 0; }
+.niv { display: flex; gap: 6px; align-items: center; }
+.niv input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--azul); flex: none; }
+.niv input[type=number] { width: 100%; min-width: 0; }
+.fecha-p { color: var(--tenue); font-size: 12px; white-space: nowrap; }
+.nota-v { color: var(--tenue); margin: 0; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="arriba">
+    <span class="marca"><i></i>ALEMA</span>
+    <button class="tb" id="bSimbolo" title="Buscar activo"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="1.6"/></svg><span id="simbolo">EURUSD</span></button>
+    <span class="sep"></span><span id="tfs" style="display:flex;gap:2px"></span><span class="sep"></span>
+    <select id="tipo" class="tb" title="Tipo de gráfica" style="background:#131722;color:#D1D4DC;border:0;outline:0"><option value="velas">Velas</option><option value="heikin">Heikin Ashi</option><option value="barras">Barras</option><option value="linea">Línea</option><option value="area">Área</option></select>
+    <span class="sep"></span>
+    <button class="tb" id="bInd" title="Indicadores"><svg viewBox="0 0 24 24"><path d="M3 18l5-6 4 3 6-8 3 3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Indicadores</button>
+    <button class="tb" id="bReplay" title="Repetición: avanza vela por vela"><svg viewBox="0 0 24 24"><path d="M4 5v14M8 12l10-7v14z" fill="currentColor"/></svg>Repetición</button>
+    <span class="espacio"></span>
+    <button class="tb" id="tvbtn" title="Ver este activo en TradingView en tiempo real">Ver en vivo en TradingView ↗</button>
+    <button class="tb" id="bFoto" title="Guardar imagen"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 7l1.5-2h5L16 7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+    <button class="tb" id="bPantalla" title="Pantalla completa"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+  </header>
+  <nav id="izq" aria-label="Herramientas de dibujo"></nav>
+  <main id="zona">
+    <canvas id="cv"></canvas>
+    <div id="leyenda"></div>
+    <div id="muestra">Datos de muestra</div>
+    <div id="barraDib" hidden></div>
+    <div id="avisoHerr" hidden></div>
+    <div id="replayAviso" hidden>Haz clic en la gráfica para elegir desde dónde empieza la repetición</div>
+    <div id="replay" hidden><button id="rInicio" title="Elegir otro inicio">⏮</button><button id="rPlay" title="Reproducir / pausar">▶</button><button id="rPaso" title="Siguiente vela (→)">⏭</button>
+      <select id="rVel" title="Velocidad"><option value="1">1 vela/s</option><option value="2">2 velas/s</option><option value="5">5 velas/s</option><option value="10">10 velas/s</option></select><span class="rt" id="rFecha"></span><button id="rSalir" title="Salir de la repetición">✕</button></div>
+  </main>
+</div>
+
+<script>
+// Velas reales: las guarda la tarea automática "ALEMA Gráficas (velas)" en la rama graficas-datos del repositorio.
+window.GRAFICAS_DATOS = "https://raw.githubusercontent.com/alematradingacademymx-cloud/landing-alemaventas/graficas-datos/";
+</script>
+<script>
+/* ALEMA Gráficas · activos, temporalidades y datos.
+   Fuente de velas: velas reales (window.GRAFICAS_DATOS); si no cargan, datos de muestra realistas con el aviso "Datos de muestra". */
+"use strict";
+const ACTIVOS = [
+  // Forex
+  { s: "EURUSD", n: "Euro / Dólar estadounidense", m: "Forex", d: 5, p: 1.0962, v: .0011, tv: "FX:EURUSD" },
+  { s: "GBPUSD", n: "Libra esterlina / Dólar", m: "Forex", d: 5, p: 1.2690, v: .0013, tv: "FX:GBPUSD" },
+  { s: "USDJPY", n: "Dólar / Yen japonés", m: "Forex", d: 3, p: 151.40, v: .0013, tv: "FX:USDJPY" },
+  { s: "USDCHF", n: "Dólar / Franco suizo", m: "Forex", d: 5, p: 0.8840, v: .0011, tv: "FX:USDCHF" },
+  { s: "AUDUSD", n: "Dólar australiano / Dólar", m: "Forex", d: 5, p: 0.6560, v: .0014, tv: "FX:AUDUSD" },
+  { s: "USDCAD", n: "Dólar / Dólar canadiense", m: "Forex", d: 5, p: 1.3820, v: .0010, tv: "FX:USDCAD" },
+  { s: "NZDUSD", n: "Dólar neozelandés / Dólar", m: "Forex", d: 5, p: 0.5960, v: .0015, tv: "FX:NZDUSD" },
+  { s: "EURJPY", n: "Euro / Yen japonés", m: "Forex", d: 3, p: 165.90, v: .0014, tv: "FX:EURJPY" },
+  { s: "GBPJPY", n: "Libra esterlina / Yen", m: "Forex", d: 3, p: 192.10, v: .0017, tv: "FX:GBPJPY" },
+  { s: "USDMXN", n: "Dólar / Peso mexicano", m: "Forex", d: 4, p: 18.95, v: .0018, tv: "FX_IDC:USDMXN" },
+  // Índices
+  { s: "US500", n: "S&P 500", m: "Índices", d: 2, p: 5870, v: .0016, tv: "SP:SPX", sesion: true },
+  { s: "US100", n: "Nasdaq 100", m: "Índices", d: 2, p: 20650, v: .0021, tv: "NASDAQ:NDX", sesion: true },
+  { s: "US30", n: "Dow Jones 30", m: "Índices", d: 2, p: 43800, v: .0014, tv: "TVC:DJI", sesion: true },
+  { s: "GER40", n: "DAX 40 (Alemania)", m: "Índices", d: 2, p: 19300, v: .0017, tv: "XETR:DAX", sesion: true },
+  { s: "JP225", n: "Nikkei 225 (Japón)", m: "Índices", d: 2, p: 38600, v: .0020, tv: "TVC:NI225", sesion: true },
+  // Materias primas
+  { s: "XAUUSD", n: "Oro / Dólar", m: "Materias primas", d: 2, p: 2650, v: .0017, tv: "OANDA:XAUUSD" },
+  { s: "XAGUSD", n: "Plata / Dólar", m: "Materias primas", d: 3, p: 30.80, v: .0026, tv: "OANDA:XAGUSD" },
+  { s: "USOIL", n: "Petróleo WTI", m: "Materias primas", d: 2, p: 69.40, v: .0030, tv: "TVC:USOIL" },
+  { s: "UKOIL", n: "Petróleo Brent", m: "Materias primas", d: 2, p: 73.10, v: .0028, tv: "TVC:UKOIL" },
+  { s: "NATGAS", n: "Gas natural", m: "Materias primas", d: 3, p: 3.150, v: .0055, tv: "TVC:NATURALGAS" },
+  // Cripto
+  { s: "BTCUSD", n: "Bitcoin / Dólar", m: "Cripto", d: 1, p: 92500, v: .0045, tv: "BITSTAMP:BTCUSD", cripto: true },
+  { s: "ETHUSD", n: "Ethereum / Dólar", m: "Cripto", d: 2, p: 3350, v: .0055, tv: "BITSTAMP:ETHUSD", cripto: true },
+  { s: "SOLUSD", n: "Solana / Dólar", m: "Cripto", d: 2, p: 235, v: .0075, tv: "COINBASE:SOLUSD", cripto: true },
+  { s: "XRPUSD", n: "XRP / Dólar", m: "Cripto", d: 4, p: 1.42, v: .0085, tv: "BITSTAMP:XRPUSD", cripto: true },
+  // Acciones
+  { s: "AAPL", n: "Apple Inc.", m: "Acciones", d: 2, p: 232.5, v: .0030, tv: "NASDAQ:AAPL", sesion: true },
+  { s: "NVDA", n: "NVIDIA Corporation", m: "Acciones", d: 2, p: 141.9, v: .0050, tv: "NASDAQ:NVDA", sesion: true },
+  { s: "TSLA", n: "Tesla, Inc.", m: "Acciones", d: 2, p: 338.5, v: .0060, tv: "NASDAQ:TSLA", sesion: true },
+  { s: "MSFT", n: "Microsoft Corporation", m: "Acciones", d: 2, p: 427.0, v: .0028, tv: "NASDAQ:MSFT", sesion: true },
+  { s: "AMZN", n: "Amazon.com, Inc.", m: "Acciones", d: 2, p: 207.9, v: .0035, tv: "NASDAQ:AMZN", sesion: true },
+  { s: "META", n: "Meta Platforms, Inc.", m: "Acciones", d: 2, p: 565.0, v: .0038, tv: "NASDAQ:META", sesion: true },
+  { s: "GOOGL", n: "Alphabet Inc. (Google)", m: "Acciones", d: 2, p: 169.2, v: .0032, tv: "NASDAQ:GOOGL", sesion: true },
+];
+const MERCADOS = ["Forex", "Índices", "Materias primas", "Cripto", "Acciones"];
+const TFS = [
+  { k: "1", l: "1m", min: 1, n: 20000 }, { k: "5", l: "5m", min: 5, n: 15000 }, { k: "15", l: "15m", min: 15, n: 10000 },
+  { k: "45", l: "45m", min: 45, n: 7000 }, { k: "60", l: "1h", min: 60, n: 8000 }, { k: "240", l: "4h", min: 240, n: 5000 },
+];
+
+/* ---------- datos de muestra realistas ---------- */
+function azarSemilla(txt) { let h = 1779033703 ^ txt.length; for (let i = 0; i < txt.length; i++) { h = Math.imul(h ^ txt.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; }
+  return () => { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; }; }
+function velasMuestra(a, tf) {
+  const r = azarSemilla(a.s + "|" + tf.k), g = () => { let u = 0, v = 0; while (!u) u = r(); while (!v) v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+  const ms = tf.min * 60000, n = tf.n, base = a.v * Math.sqrt(tf.min / 60); // volatilidad por vela
+  const hayHueco = t => { if (a.cripto) return false; const d = new Date(t), dia = d.getUTCDay(), h = d.getUTCHours();
+    if (dia === 6 || (dia === 0 && h < 22) || (dia === 5 && h >= 22)) return true; // fin de semana
+    return !!a.sesion && tf.min < 1440 && (h < 13 || h >= 21) && !/GER40|JP225/.test(a.s); };
+  // tiempos hacia atrás desde ahora, saltando fines de semana / horas sin sesión
+  const tiempos = new Array(n); let t = Math.floor(Date.now() / ms) * ms;
+  for (let i = n - 1; i >= 0; i--) { while (hayHueco(t)) t -= ms; tiempos[i] = t; t -= ms; }
+  const out = new Array(n); let p = 1, s2 = base * base, deriva = 0, resta = 0, ret = 0;
+  for (let i = 0; i < n; i++) {
+    if (resta <= 0) { resta = 15 + Math.floor(r() * 160); const x = r(); deriva = (x < .36 ? 1 : x < .72 ? -1 : 0) * base * (.02 + r() * .08); }
+    resta--;
+    s2 = base * base * .06 + .1 * ret * ret + .84 * s2; if (r() < .004) s2 *= 2.5; s2 = Math.min(s2, base * base * 6); // volatilidad que se agrupa (calma y explosiones)
+    const h = new Date(tiempos[i]).getUTCHours(), estac = a.cripto ? 1 : (h >= 7 && h < 17 ? 1.25 : h >= 22 || h < 2 ? .7 : 1);
+    const sig = Math.sqrt(s2) * (tf.min < 240 ? estac : 1);
+    ret = deriva + sig * g() * (1 + (r() < .015 ? .8 : 0));
+    const o = p, c = o * Math.exp(ret), hi = Math.max(o, c) * Math.exp(Math.abs(g()) * sig * .55), lo = Math.min(o, c) * Math.exp(-Math.abs(g()) * sig * .55);
+    out[i] = { t: tiempos[i], o, h: hi, l: lo, c, v: Math.round((400 + 2600 * r()) * (1 + Math.abs(ret) / (sig || 1)) * estac) };
+    p = c;
+  }
+  const f = a.p / out[n - 1].c; out.forEach(b => { b.o *= f; b.h *= f; b.l *= f; b.c *= f; });
+  return out;
+}
+
+/* ---------- datos reales (velas de Yahoo Finanzas que guarda la tarea automática de GitHub) ---------- */
+const CACHE_VELAS = {};
+// Decodifica el formato compacto: [minutos desde la anterior, apertura−cierre anterior, máximo−apertura, apertura−mínimo, cierre−apertura, volumen] en ticks de 10^-d
+function decodificar(j) { const e = 10 ** j.d, out = []; let t = j.t0, pc = null;
+  for (const [dt, a, b, c, x, v] of j.k) { t += dt * 60; const o = pc === null ? a : pc + a; out.push({ t: t * 1000, o: o / e, h: (o + b) / e, l: (o - c) / e, c: (o + x) / e, v }); pc = o + x; } return out; }
+async function cargarVelas(a, tf) {
+  const k = a.s + "|" + tf.k; if (CACHE_VELAS[k]) return CACHE_VELAS[k];
+  const base = window.GRAFICAS_DATOS || "";
+  if (base) {
+    try { const j = await fetch(`${base}${a.s}_${tf.k}.json?h=${Math.floor(Date.now() / 36e5)}`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+      const v = decodificar(j); if (v.length > 50) { v.real = true; v.act = j.act * 1000; return (CACHE_VELAS[k] = v); } }
+    catch (e) { console.warn("Sin velas reales de " + a.s + ", uso datos de muestra", e); }
+  }
+  return (CACHE_VELAS[k] = velasMuestra(a, tf));
+}
+
+/* ALEMA Gráficas · indicadores y osciladores (cálculo puro sobre las velas). */
+"use strict";
+const NaNs = n => new Array(n).fill(NaN);
+function sma(x, n) { const o = NaNs(x.length); let s = 0, c = 0; for (let i = 0; i < x.length; i++) { const v = x[i]; if (!isNaN(v)) { s += v; c++; } if (i >= n) { const w = x[i - n]; if (!isNaN(w)) { s -= w; c--; } } if (i >= n - 1 && c === n) o[i] = s / n; } return o; }
+function ema(x, n) { const o = NaNs(x.length), k = 2 / (n + 1); let e = NaN, s = 0, c = 0;
+  for (let i = 0; i < x.length; i++) { const v = x[i]; if (isNaN(v)) continue; if (isNaN(e)) { s += v; c++; if (c === n) { e = s / n; o[i] = e; } } else { e = v * k + e * (1 - k); o[i] = e; } } return o; }
+function rma(x, n) { const o = NaNs(x.length); let e = NaN, s = 0, c = 0;
+  for (let i = 0; i < x.length; i++) { const v = x[i]; if (isNaN(v)) continue; if (isNaN(e)) { s += v; c++; if (c === n) { e = s / n; o[i] = e; } } else { e = (e * (n - 1) + v) / n; o[i] = e; } } return o; }
+function wma(x, n) { const o = NaNs(x.length), den = n * (n + 1) / 2; for (let i = n - 1; i < x.length; i++) { let s = 0; for (let j = 0; j < n; j++) s += x[i - j] * (n - j); o[i] = s / den; } return o; }
+function desv(x, n) { const m = sma(x, n), o = NaNs(x.length); for (let i = n - 1; i < x.length; i++) { let s = 0; for (let j = 0; j < n; j++) s += (x[i - j] - m[i]) ** 2; o[i] = Math.sqrt(s / n); } return o; }
+function maxN(x, n, i) { let m = -Infinity; for (let j = Math.max(0, i - n + 1); j <= i; j++) m = Math.max(m, x[j]); return m; }
+function minN(x, n, i) { let m = Infinity; for (let j = Math.max(0, i - n + 1); j <= i; j++) m = Math.min(m, x[j]); return m; }
+const fuente = (b, f) => b.map(f === "open" ? x => x.o : f === "high" ? x => x.h : f === "low" ? x => x.l : f === "hl2" ? x => (x.h + x.l) / 2 : f === "hlc3" ? x => (x.h + x.l + x.c) / 3 : x => x.c);
+function tr(b) { return b.map((x, i) => i ? Math.max(x.h - x.l, Math.abs(x.h - b[i - 1].c), Math.abs(x.l - b[i - 1].c)) : x.h - x.l); }
+
+// Cada indicador: n (nombre), corto, panel ("precio" o "propio"), p (parámetros), lineas (estilo), calc(b, p) → arreglo de series
+const INDICADORES = {
+  VOL: { n: "Volumen", corto: "Vol", panel: "volumen", p: { ma: 20 }, lineas: [{ c: "#2962FF", t: "Media" }], calc: (b, p) => [sma(b.map(x => x.v), p.ma)] },
+  SMA: { n: "Media móvil simple (SMA)", corto: "SMA", panel: "precio", p: { periodo: 20, fuente: "close" }, lineas: [{ c: "#2962FF" }], calc: (b, p) => [sma(fuente(b, p.fuente), p.periodo)] },
+  EMA: { n: "Media móvil exponencial (EMA)", corto: "EMA", panel: "precio", p: { periodo: 50, fuente: "close" }, lineas: [{ c: "#FF9800" }], calc: (b, p) => [ema(fuente(b, p.fuente), p.periodo)] },
+  WMA: { n: "Media móvil ponderada (WMA)", corto: "WMA", panel: "precio", p: { periodo: 20 }, lineas: [{ c: "#E040FB" }], calc: (b, p) => [wma(fuente(b, "close"), p.periodo)] },
+  BB: { n: "Bandas de Bollinger", corto: "BB", panel: "precio", p: { periodo: 20, desv: 2 }, lineas: [{ c: "#2962FF", t: "Media" }, { c: "#F23645", t: "Superior" }, { c: "#089981", t: "Inferior" }], relleno: [1, 2, "rgba(33,150,243,.07)"],
+    calc: (b, p) => { const c = fuente(b, "close"), m = sma(c, p.periodo), d = desv(c, p.periodo); return [m, m.map((v, i) => v + p.desv * d[i]), m.map((v, i) => v - p.desv * d[i])]; } },
+  VWAP: { n: "VWAP (precio promedio por volumen)", corto: "VWAP", panel: "precio", p: {}, lineas: [{ c: "#2962FF" }],
+    calc: b => { const o = NaNs(b.length); let pv = 0, vv = 0, dia = -1; b.forEach((x, i) => { const d = Math.floor(x.t / 864e5); if (d !== dia) { dia = d; pv = 0; vv = 0; } const tp = (x.h + x.l + x.c) / 3; pv += tp * x.v; vv += x.v; o[i] = vv ? pv / vv : tp; }); return [o]; } },
+  ICHI: { n: "Nube de Ichimoku", corto: "Ichimoku", panel: "precio", p: { tenkan: 9, kijun: 26, senkou: 52, desplaz: 26 },
+    lineas: [{ c: "#2962FF", t: "Tenkan" }, { c: "#B71C1C", t: "Kijun" }, { c: "#43A047", t: "Chikou" }, { c: "#A5D6A7", t: "Senkou A" }, { c: "#EF9A9A", t: "Senkou B" }], nube: [3, 4],
+    calc: (b, p) => { const H = b.map(x => x.h), L = b.map(x => x.l), n = b.length, med = k => b.map((_, i) => i >= k - 1 ? (maxN(H, k, i) + minN(L, k, i)) / 2 : NaN);
+      const t = med(p.tenkan), k = med(p.kijun), sb0 = med(p.senkou), d = p.desplaz, ext = n + d;
+      const A = NaNs(ext), B = NaNs(ext), C = NaNs(ext); for (let i = 0; i < n; i++) { A[i + d - 1] = (t[i] + k[i]) / 2; B[i + d - 1] = sb0[i]; if (i - d + 1 >= 0) C[i - d + 1] = b[i].c; }
+      return [t, k, C, A, B]; } },
+  SAR: { n: "SAR parabólico", corto: "SAR", panel: "precio", p: { inicio: .02, paso: .02, max: .2 }, lineas: [{ c: "#2962FF", estilo: "puntos" }],
+    calc: (b, p) => { const o = NaNs(b.length); if (b.length < 3) return [o]; let alza = b[1].c >= b[0].c, sar = alza ? b[0].l : b[0].h, ep = alza ? b[0].h : b[0].l, af = p.inicio;
+      for (let i = 1; i < b.length; i++) { sar = sar + af * (ep - sar);
+        if (alza) { sar = Math.min(sar, b[i - 1].l, i > 1 ? b[i - 2].l : b[i - 1].l); if (b[i].l < sar) { alza = false; sar = ep; ep = b[i].l; af = p.inicio; } else if (b[i].h > ep) { ep = b[i].h; af = Math.min(af + p.paso, p.max); } }
+        else { sar = Math.max(sar, b[i - 1].h, i > 1 ? b[i - 2].h : b[i - 1].h); if (b[i].h > sar) { alza = true; sar = ep; ep = b[i].h; af = p.inicio; } else if (b[i].l < ep) { ep = b[i].l; af = Math.min(af + p.paso, p.max); } }
+        o[i] = sar; } return [o]; } },
+  PIV: { n: "Puntos pivote estándar (diarios)", corto: "Pivotes", panel: "precio", p: {}, lineas: [{ c: "#FF9800", t: "P" }, { c: "#F23645", t: "R1" }, { c: "#089981", t: "S1" }, { c: "#F23645", t: "R2" }, { c: "#089981", t: "S2" }], escalon: true,
+    calc: b => { const s = [0, 1, 2, 3, 4].map(() => NaNs(b.length)); let dia = -1, ph = 0, pl = 0, pc = 0, h = -Infinity, l = Infinity, c = 0, piv = null;
+      b.forEach((x, i) => { const d = Math.floor(x.t / 864e5); if (d !== dia) { if (dia >= 0) { ph = h; pl = l; pc = c; const P = (ph + pl + pc) / 3; piv = [P, 2 * P - pl, 2 * P - ph, P + (ph - pl), P - (ph - pl)]; } dia = d; h = -Infinity; l = Infinity; }
+        h = Math.max(h, x.h); l = Math.min(l, x.l); c = x.c; if (piv) piv.forEach((v, k) => s[k][i] = v); }); return s; } },
+  RSI: { n: "Índice de fuerza relativa (RSI)", corto: "RSI", panel: "propio", p: { periodo: 14 }, lineas: [{ c: "#7E57C2" }], niveles: [70, 50, 30], rango: [0, 100], zona: [30, 70],
+    calc: (b, p) => { const c = fuente(b, "close"), up = c.map((v, i) => i ? Math.max(v - c[i - 1], 0) : NaN), dn = c.map((v, i) => i ? Math.max(c[i - 1] - v, 0) : NaN);
+      const u = rma(up, p.periodo), d = rma(dn, p.periodo); return [u.map((v, i) => d[i] === 0 ? 100 : 100 - 100 / (1 + v / d[i]))]; } },
+  MACD: { n: "MACD", corto: "MACD", panel: "propio", p: { rapida: 12, lenta: 26, senal: 9 }, lineas: [{ c: "#2962FF", t: "MACD" }, { c: "#FF6D00", t: "Señal" }, { c: "#26A69A", t: "Histograma", estilo: "hist" }], niveles: [0],
+    calc: (b, p) => { const c = fuente(b, "close"), f = ema(c, p.rapida), s = ema(c, p.lenta), m = f.map((v, i) => v - s[i]), sg = ema(m, p.senal); return [m, sg, m.map((v, i) => v - sg[i])]; } },
+  STOCH: { n: "Estocástico", corto: "Stoch", panel: "propio", p: { k: 14, suavizar: 3, d: 3 }, lineas: [{ c: "#2962FF", t: "%K" }, { c: "#FF6D00", t: "%D" }], niveles: [80, 20], rango: [0, 100], zona: [20, 80],
+    calc: (b, p) => { const H = b.map(x => x.h), L = b.map(x => x.l), raw = b.map((x, i) => { if (i < p.k - 1) return NaN; const hh = maxN(H, p.k, i), ll = minN(L, p.k, i); return hh === ll ? 50 : 100 * (x.c - ll) / (hh - ll); });
+      const k = sma(raw, p.suavizar); return [k, sma(k, p.d)]; } },
+  ATR: { n: "Rango verdadero promedio (ATR)", corto: "ATR", panel: "propio", p: { periodo: 14 }, lineas: [{ c: "#B71C1C" }], calc: (b, p) => [rma(tr(b), p.periodo)] },
+  CCI: { n: "Índice de canal de materias primas (CCI)", corto: "CCI", panel: "propio", p: { periodo: 20 }, lineas: [{ c: "#2962FF" }], niveles: [100, 0, -100], zona: [-100, 100],
+    calc: (b, p) => { const tp = fuente(b, "hlc3"), m = sma(tp, p.periodo); return [tp.map((v, i) => { if (isNaN(m[i])) return NaN; let s = 0; for (let j = 0; j < p.periodo; j++) s += Math.abs(tp[i - j] - m[i]); const md = s / p.periodo; return md ? (v - m[i]) / (.015 * md) : 0; })]; } },
+  ADX: { n: "Índice de movimiento direccional (ADX/DMI)", corto: "ADX", panel: "propio", p: { periodo: 14 }, lineas: [{ c: "#FF6D00", t: "ADX" }, { c: "#2962FF", t: "+DI" }, { c: "#F23645", t: "-DI" }], niveles: [25],
+    calc: (b, p) => { const n = p.periodo, pd = b.map((x, i) => { if (!i) return NaN; const u = x.h - b[i - 1].h, d = b[i - 1].l - x.l; return u > d && u > 0 ? u : 0; }), md = b.map((x, i) => { if (!i) return NaN; const u = x.h - b[i - 1].h, d = b[i - 1].l - x.l; return d > u && d > 0 ? d : 0; });
+      const t = rma(tr(b).map((v, i) => i ? v : NaN), n), P = rma(pd, n).map((v, i) => 100 * v / t[i]), M = rma(md, n).map((v, i) => 100 * v / t[i]), dx = P.map((v, i) => { const s = v + M[i]; return s ? 100 * Math.abs(v - M[i]) / s : 0; });
+      return [rma(dx, n), P, M]; } },
+  WILLR: { n: "Williams %R", corto: "%R", panel: "propio", p: { periodo: 14 }, lineas: [{ c: "#7E57C2" }], niveles: [-20, -80], rango: [-100, 0], zona: [-80, -20],
+    calc: (b, p) => { const H = b.map(x => x.h), L = b.map(x => x.l); return [b.map((x, i) => { if (i < p.periodo - 1) return NaN; const hh = maxN(H, p.periodo, i), ll = minN(L, p.periodo, i); return hh === ll ? -50 : -100 * (hh - x.c) / (hh - ll); })]; } },
+  MOM: { n: "Momentum", corto: "Mom", panel: "propio", p: { periodo: 10 }, lineas: [{ c: "#2962FF" }], niveles: [0], calc: (b, p) => [b.map((x, i) => i >= p.periodo ? x.c - b[i - p.periodo].c : NaN)] },
+  OBV: { n: "Volumen en balance (OBV)", corto: "OBV", panel: "propio", p: {}, lineas: [{ c: "#2962FF" }], calc: b => { let s = 0; return [b.map((x, i) => { if (i) s += x.c > b[i - 1].c ? x.v : x.c < b[i - 1].c ? -x.v : 0; return s; })]; } },
+};
+const NOMBRES_PARAM = { periodo: "Periodo", fuente: "Fuente", desv: "Desviación estándar", ma: "Media del volumen", tenkan: "Tenkan (conversión)", kijun: "Kijun (base)", senkou: "Senkou B", desplaz: "Desplazamiento",
+  inicio: "Inicio", paso: "Incremento", max: "Máximo", rapida: "Media rápida", lenta: "Media lenta", senal: "Señal", k: "%K periodo", suavizar: "%K suavizado", d: "%D periodo" };
+
+/* ALEMA Gráficas · motor de la gráfica (canvas): escalas, velas, paneles, indicadores, dibujos y repetición. */
+"use strict";
+const $ = s => document.querySelector(s);
+const COL = { bg: "#131722", rejilla: "rgba(42,46,57,.55)", texto: "#B2B5BE", tenue: "#787B86", sube: "#089981", baja: "#F23645", cruz: "#9598A1", eje: "#2A2E39", azul: "#2962FF" };
+const EJE_P = 68, EJE_T = 28, SEPARA = 1;
+const guardar = (k, v) => { try { localStorage.setItem("alema_graf_" + k, JSON.stringify(v)); } catch (e) {} };
+const leer = (k, d) => { try { const v = JSON.parse(localStorage.getItem("alema_graf_" + k)); return v == null ? d : v; } catch (e) { return d; } };
+
+const S = { a: ACTIVOS[0], tf: TFS[5], todo: [], b: [], sp: 8, der: 0, tipo: leer("tipo", "velas"), inds: [], dib: [], herr: "cursor", sel: null, iman: false, ocultar: false,
+  pesos: {}, escalas: {}, raton: { x: -1, y: -1, dentro: false }, colocando: null, arrastre: null, replay: null, historial: [], idSig: 1 };
+const cv = $("#cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1, PANES = [], SERIES = {};
+
+/* ---------- utilidades de formato ---------- */
+const fmtP = p => isFinite(p) ? p.toFixed(S.a.d) : "—";
+const fmtV = v => !isFinite(v) ? "—" : Math.abs(v) >= 1e9 ? (v / 1e9).toFixed(2) + "B" : Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(2) + "M" : Math.abs(v) >= 1e3 ? (v / 1e3).toFixed(2) + "K" : v.toFixed(Math.abs(v) < 10 ? 2 : 0);
+// Formato de valores de los osciladores: los que se miden en precio (MACD, ATR, Momentum) usan los decimales del activo.
+const fmtInd = (v, ind) => !isFinite(v) ? "∅" : ["MACD", "ATR", "MOM"].includes(ind.tipo) ? v.toFixed(S.a.d) : ind.tipo === "OBV" ? fmtV(v) : v.toFixed(2);
+const fmtEje = (v, paso) => { if (Math.abs(v) >= 1e4) return fmtV(v); const d = paso >= 1 ? 0 : Math.min(8, Math.ceil(-Math.log10(paso) - 1e-9)); return (Math.abs(v) < paso / 2 ? 0 : v).toFixed(d); };
+const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"], DIAS = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+const dosD = n => String(n).padStart(2, "0");
+const fmtT = (t, larga) => { const d = new Date(t); return larga ? `${DIAS[d.getDay()]} ${d.getDate()} ${MESES[d.getMonth()]} '${String(d.getFullYear()).slice(2)}  ${dosD(d.getHours())}:${dosD(d.getMinutes())}` : `${dosD(d.getHours())}:${dosD(d.getMinutes())}`; };
+
+/* ---------- tiempo ↔ índice ↔ x ---------- */
+const tfMs = () => S.tf.min * 60000;
+function idxDeT(t) { const b = S.b, n = b.length; if (!n) return 0; if (t <= b[0].t) return (t - b[0].t) / tfMs(); if (t >= b[n - 1].t) return n - 1 + (t - b[n - 1].t) / tfMs();
+  let lo = 0, hi = n - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (b[m].t <= t) lo = m; else hi = m; } return lo + (t - b[lo].t) / (b[hi].t - b[lo].t); }
+function tDeIdx(f) { const b = S.b, n = b.length; if (!n) return 0; if (f <= 0) return b[0].t + f * tfMs(); if (f >= n - 1) return b[n - 1].t + (f - (n - 1)) * tfMs();
+  const i = Math.floor(f); return b[i].t + (f - i) * (b[i + 1].t - b[i].t); }
+const plotW = () => W - EJE_P;
+const xDeI = i => plotW() - (S.der - i) * S.sp - S.sp / 2;
+const iDeX = x => S.der - (plotW() - S.sp / 2 - x) / S.sp;
+const yDeP = (p, pa) => pa.top + (pa.max - p) / (pa.max - pa.min) * pa.h;
+const pDeY = (y, pa) => pa.max - (y - pa.top) / pa.h * (pa.max - pa.min);
+const paneEn = y => PANES.find(p => y >= p.top && y < p.top + p.h) || null;
+
+/* ---------- datos mostrados ---------- */
+function heikin(b) { const o = []; b.forEach((x, i) => { const c = (x.o + x.h + x.l + x.c) / 4, op = i ? (o[i - 1].o + o[i - 1].c) / 2 : (x.o + x.c) / 2; o.push({ t: x.t, o: op, c, h: Math.max(x.h, op, c), l: Math.min(x.l, op, c), v: x.v }); }); return o; }
+function armarDatos() {
+  const base = S.replay ? S.todo.slice(0, S.replay.fin + 1) : S.todo;
+  S.b = S.tipo === "heikin" ? heikin(base) : base;
+  SERIES = {}; S.inds.forEach(ind => { const def = INDICADORES[ind.tipo]; try { SERIES[ind.id] = def.calc(S.b, ind.p); } catch (e) { SERIES[ind.id] = []; } });
+}
+
+/* ---------- paneles ---------- */
+function armarPaneles() {
+  const subs = S.inds.filter(i => INDICADORES[i.tipo].panel === "propio"), total = H - EJE_T;
+  const lista = [{ id: "main", w: S.pesos.main || 3 }].concat(subs.map(i => ({ id: i.id, ind: i, w: S.pesos[i.id] || 1 })));
+  const suma = lista.reduce((s, p) => s + p.w, 0); let y = 0;
+  PANES = lista.map((p, k) => { const h = Math.round(total * p.w / suma) - (k ? SEPARA : 0); const pa = Object.assign(p, { top: y + (k ? SEPARA : 0), h }); y = pa.top + h; return pa; });
+}
+function rangoVisible() { const n = S.b.length; return [Math.max(0, Math.floor(iDeX(0)) - 1), Math.min(n - 1, Math.ceil(iDeX(plotW())) + 1)]; }
+function escalar() {
+  const [i0, i1] = rangoVisible();
+  PANES.forEach(pa => {
+    const esc = S.escalas[pa.id] || (S.escalas[pa.id] = { auto: true });
+    if (!esc.auto) { pa.min = esc.min; pa.max = esc.max; return; }
+    let lo = Infinity, hi = -Infinity;
+    const meter = arr => { if (!arr) return; for (let i = i0; i <= i1 + 30 && i < arr.length; i++) { const v = arr[i]; if (isFinite(v)) { if (v < lo) lo = v; if (v > hi) hi = v; } } };
+    if (pa.id === "main") { for (let i = i0; i <= i1; i++) { const x = S.b[i]; if (!x) continue; if (x.l < lo) lo = x.l; if (x.h > hi) hi = x.h; }
+      S.inds.forEach(ind => { if (INDICADORES[ind.tipo].panel === "precio" && ind.visible !== false && ind.tipo !== "PIV") (SERIES[ind.id] || []).forEach(meter); }); }
+    else { const def = INDICADORES[pa.ind.tipo]; if (def.rango) { lo = def.rango[0]; hi = def.rango[1]; } else (SERIES[pa.ind.id] || []).forEach(meter); (def.niveles || []).forEach(v => { if (!def.rango) { lo = Math.min(lo, v); hi = Math.max(hi, v); } }); }
+    if (!isFinite(lo)) { lo = 0; hi = 1; } if (hi - lo < 1e-12) { hi += Math.abs(hi) * .001 + 1e-9; lo -= Math.abs(lo) * .001 + 1e-9; }
+    const m = (hi - lo) * (pa.id === "main" ? .08 : .1); pa.min = lo - m; pa.max = hi + m; esc.min = pa.min; esc.max = pa.max;
+  });
+}
+function pasoBonito(r, n) { const raw = r / Math.max(n, 1), mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag; return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mag; }
+
+/* ---------- dibujo de la gráfica ---------- */
+let pendiente = false;
+function pedirDibujo() { if (!pendiente) { pendiente = true; requestAnimationFrame(() => { pendiente = false; dibujar(); }); } }
+function medir() { const r = cv.getBoundingClientRect(); DPR = window.devicePixelRatio || 1; W = Math.max(200, r.width); H = Math.max(200, r.height); cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); }
+function linea(x1, y1, x2, y2, c, w = 1, dash) { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]); }
+function etiqueta(txt, x, y, fondo, color = "#fff", alinear = "left") { ctx.font = "12px -apple-system, Roboto, sans-serif"; const w = ctx.measureText(txt).width + 10;
+  const x0 = alinear === "center" ? x - w / 2 : alinear === "right" ? x - w : x; ctx.fillStyle = fondo; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x0, y - 10, w, 20, 3) : ctx.rect(x0, y - 10, w, 20); ctx.fill();
+  ctx.fillStyle = color; ctx.textBaseline = "middle"; ctx.textAlign = "left"; ctx.fillText(txt, x0 + 5, y + .5); return w; }
+
+function dibujar() {
+  if (!W) medir(); armarPaneles(); escalar();
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, W, H);
+  const [i0, i1] = rangoVisible(), pw = plotW();
+  // rejilla horizontal y eje de precios
+  PANES.forEach(pa => { const paso = pasoBonito(pa.max - pa.min, pa.h / 46);
+    ctx.font = "12px -apple-system, Roboto, sans-serif"; ctx.textBaseline = "middle"; ctx.textAlign = "left";
+    for (let v = Math.ceil(pa.min / paso) * paso; v <= pa.max; v += paso) { const y = Math.round(yDeP(v, pa)) + .5; if (y < pa.top + 6 || y > pa.top + pa.h - 6) continue;
+      linea(0, y, pw, y, COL.rejilla); ctx.fillStyle = COL.texto; ctx.fillText(pa.id === "main" ? fmtP(v) : fmtEje(v, paso), pw + 8, y); }
+    if (pa.top > 0) linea(0, pa.top - .5, W, pa.top - .5, COL.eje, 1); });
+  // rejilla vertical y eje de tiempo
+  const marcas = marcasTiempo(i0, i1); ctx.textAlign = "center";
+  marcas.forEach(m => { const x = Math.round(xDeI(m.i)) + .5; linea(x, 0, x, H - EJE_T, COL.rejilla); ctx.fillStyle = m.fuerte ? "#D1D4DC" : COL.texto; ctx.font = (m.fuerte ? "600 " : "") + "12px -apple-system, Roboto, sans-serif"; ctx.fillText(m.txt, x, H - EJE_T / 2); });
+  linea(pw + .5, 0, pw + .5, H, COL.eje); linea(0, H - EJE_T + .5, W, H - EJE_T + .5, COL.eje);
+  // paneles
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, pw, H - EJE_T); ctx.clip();
+  const main = PANES[0];
+  const vol = S.inds.find(i => i.tipo === "VOL" && i.visible !== false); if (vol) dibujarVolumen(main, vol, i0, i1);
+  S.inds.filter(i => INDICADORES[i.tipo].panel === "precio" && i.visible !== false).forEach(i => dibujarIndicador(i, main, i0, i1));
+  dibujarPrecio(main, i0, i1);
+  PANES.slice(1).forEach(pa => { ctx.save(); ctx.beginPath(); ctx.rect(0, pa.top, pw, pa.h); ctx.clip(); if (pa.ind.visible !== false) dibujarIndicador(pa.ind, pa, i0, i1); ctx.restore(); });
+  if (!S.ocultar) { ctx.save(); ctx.beginPath(); ctx.rect(0, main.top, pw, main.h); ctx.clip(); S.dib.forEach(d => pintarDibujo(d, main)); if (S.colocando) pintarDibujo(S.colocando, main, true); ctx.restore(); }
+  ctx.restore();
+  // etiquetas en el eje de las líneas horizontales y del dibujo seleccionado
+  if (!S.ocultar) S.dib.forEach(d => { if ((d.tipo === "horizontal" || d.tipo === "rayoH") && d.etiquetaPrecio !== false || S.sel === d && d.tipo !== "texto") {
+    const ps = d.tipo === "horizontal" || d.tipo === "rayoH" ? [d.pts[0]] : d.pts; ps.forEach(p => { const y = yDeP(p.p, main); if (y > main.top && y < main.top + main.h) etiqueta(fmtP(p.p), pw + 1, y, d.color || COL.azul); }); } });
+  // precio actual
+  const ult = S.b[S.b.length - 1];
+  if (ult) { const y = yDeP(ult.c, main), c = ult.c >= ult.o ? COL.sube : COL.baja; if (y > main.top && y < main.top + main.h) { linea(0, y, pw, y, c, 1, [1, 2]);
+      const fin = S.replay ? null : siguienteCierre(); etiqueta(fmtP(ult.c), pw + 1, y, c);
+      if (fin) etiqueta(fin, pw + 1, y + 20, c); } }
+  // valores actuales de los indicadores en el eje
+  S.inds.forEach(ind => { if (ind.visible === false) return; const def = INDICADORES[ind.tipo], pa = def.panel === "precio" ? main : PANES.find(p => p.id === ind.id); if (!pa || def.panel === "volumen") return;
+    const s = SERIES[ind.id] || []; s.forEach((arr, k) => { const st = (ind.lineas || def.lineas)[k]; if (!st || st.estilo === "hist" || def.escalon) return; const v = arr[S.b.length - 1]; if (!isFinite(v)) return; const y = yDeP(v, pa);
+      if (y > pa.top + 4 && y < pa.top + pa.h - 4) { ctx.font = "11px -apple-system, Roboto, sans-serif"; etiqueta(pa.id === "main" ? fmtP(v) : fmtInd(v, ind), pw + 1, y, st.c); } }); });
+  cruz(); actualizarLeyenda();
+}
+function siguienteCierre() { const ult = S.b[S.b.length - 1]; if (!ult) return ""; const resta = ult.t + tfMs() - Date.now(); if (resta <= 0 || resta > tfMs()) return "";
+  const s = Math.floor(resta / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sg = s % 60; return (h ? dosD(h) + ":" : "") + dosD(m) + ":" + dosD(sg); }
+function marcasTiempo(i0, i1) {
+  const unidades = [1, 5, 15, 30, 60, 120, 240, 360, 720, 1440, 2880, 10080, 43200, 525600], minPx = 92;
+  const u = unidades.find(x => x >= S.tf.min && x / S.tf.min * S.sp >= minPx) || 525600, off = new Date().getTimezoneOffset() * 60000, out = [];
+  const clave = t => { const d = new Date(t); if (u >= 525600) return d.getFullYear(); if (u >= 43200) return d.getFullYear() * 12 + d.getMonth(); if (u >= 10080) return Math.floor((t - off + 3 * 864e5) / (7 * 864e5)); return Math.floor((t - off) / (u * 60000)); };
+  let ant = null, ultX = -1e9, mesAnt = S.b[Math.max(0, i0)] ? new Date(S.b[Math.max(0, i0)].t).getMonth() : -1, diaAnt = -1;
+  for (let i = Math.max(1, i0); i <= i1; i++) { const b = S.b[i]; if (!b) continue; const k = clave(b.t); if (ant !== null && k !== ant) { const x = xDeI(i); if (x - ultX >= minPx * .7) { const d = new Date(b.t);
+        const diaNuevo = diaAnt !== d.getDate() && new Date(S.b[i - 1].t).getDate() !== d.getDate(), mesNuevo = mesAnt !== d.getMonth(); mesAnt = d.getMonth(); diaAnt = d.getDate();
+        let txt = u >= 1440 ? (mesNuevo ? (d.getMonth() ? MESES[d.getMonth()][0].toUpperCase() + MESES[d.getMonth()].slice(1) : String(d.getFullYear())) : String(d.getDate())) : diaNuevo ? String(d.getDate()) : fmtT(b.t);
+        if (u >= 43200 && !d.getMonth()) txt = String(d.getFullYear());
+        out.push({ i, txt, fuerte: diaNuevo && u < 1440 || mesNuevo && u >= 1440 }); ultX = x; } } ant = k; }
+  return out;
+}
+function dibujarPrecio(pa, i0, i1) {
+  const b = S.b, sp = S.sp, cw = Math.max(1, Math.floor(sp * .72)) | 0;
+  if (S.tipo === "linea" || S.tipo === "area") { ctx.beginPath(); let ini = true; for (let i = i0; i <= i1; i++) { const x = xDeI(i), y = yDeP(b[i].c, pa); ini ? ctx.moveTo(x, y) : ctx.lineTo(x, y); ini = false; }
+    ctx.strokeStyle = COL.azul; ctx.lineWidth = 2; ctx.stroke();
+    if (S.tipo === "area") { ctx.lineTo(xDeI(i1), pa.top + pa.h); ctx.lineTo(xDeI(i0), pa.top + pa.h); ctx.closePath(); const g = ctx.createLinearGradient(0, pa.top, 0, pa.top + pa.h); g.addColorStop(0, "rgba(41,98,255,.28)"); g.addColorStop(1, "rgba(41,98,255,0)"); ctx.fillStyle = g; ctx.fill(); } return; }
+  for (let i = i0; i <= i1; i++) { const x = b[i]; if (!x) continue; const cx = Math.round(xDeI(i)), sube = x.c >= x.o, c = sube ? COL.sube : COL.baja;
+    const yo = yDeP(x.o, pa), yc = yDeP(x.c, pa), yh = yDeP(x.h, pa), yl = yDeP(x.l, pa);
+    ctx.fillStyle = c; ctx.strokeStyle = c;
+    if (S.tipo === "barras") { ctx.lineWidth = Math.max(1, Math.min(2, sp / 6)); ctx.beginPath(); ctx.moveTo(cx + .5, yh); ctx.lineTo(cx + .5, yl); ctx.moveTo(cx - cw / 2, yo); ctx.lineTo(cx + .5, yo); ctx.moveTo(cx + .5, yc); ctx.lineTo(cx + cw / 2 + 1, yc); ctx.stroke(); continue; }
+    ctx.fillRect(cx, Math.round(yh), 1, Math.max(1, Math.round(yl - yh)));
+    if (cw >= 2) { const top = Math.round(Math.min(yo, yc)), alto = Math.max(1, Math.round(Math.abs(yc - yo))); ctx.fillRect(cx - (cw >> 1), top, cw | 0 || 1, alto); }
+  }
+}
+function dibujarVolumen(pa, ind, i0, i1) {
+  let mx = 0; for (let i = i0; i <= i1; i++) if (S.b[i]) mx = Math.max(mx, S.b[i].v); if (!mx) return;
+  const alto = pa.h * .2, base = pa.top + pa.h, cw = Math.max(1, Math.floor(S.sp * .72)), ma = (SERIES[ind.id] || [])[0];
+  for (let i = i0; i <= i1; i++) { const x = S.b[i]; if (!x) continue; const h = x.v / mx * alto; ctx.fillStyle = x.c >= x.o ? "rgba(8,153,129,.45)" : "rgba(242,54,69,.45)"; ctx.fillRect(Math.round(xDeI(i)) - (cw >> 1), base - h, cw, h); }
+  if (ma) { ctx.beginPath(); let ini = true; for (let i = i0; i <= i1; i++) { if (!isFinite(ma[i])) { ini = true; continue; } const y = base - ma[i] / mx * alto; ini ? ctx.moveTo(xDeI(i), y) : ctx.lineTo(xDeI(i), y); ini = false; }
+    ctx.strokeStyle = ((ind.lineas || INDICADORES.VOL.lineas)[0] || {}).c || COL.azul; ctx.lineWidth = 1; ctx.stroke(); }
+}
+function dibujarIndicador(ind, pa, i0, i1) {
+  const def = INDICADORES[ind.tipo], series = SERIES[ind.id] || [], est = ind.lineas || def.lineas, j1 = i1 + (ind.tipo === "ICHI" ? ind.p.desplaz : 0);
+  if (def.panel === "propio") { if (def.zona) { const y1 = yDeP(def.zona[1], pa), y2 = yDeP(def.zona[0], pa); ctx.fillStyle = "rgba(126,87,194,.08)"; ctx.fillRect(0, y1, plotW(), y2 - y1); }
+    (def.niveles || []).forEach(v => { const y = Math.round(yDeP(v, pa)) + .5; linea(0, y, plotW(), y, "rgba(120,123,134,.6)", 1, [4, 4]); }); }
+  if (def.relleno) { const [a, b, c] = def.relleno; rellenar(series[a], series[b], c, pa, i0, j1); }
+  if (def.nube) { const [a, b] = def.nube; rellenarNube(series[a], series[b], pa, i0, j1); }
+  series.forEach((arr, k) => { const st = est[k] || {}; if (st.oculta) return; const c = st.c || COL.azul;
+    if (st.estilo === "hist") { const cw = Math.max(1, Math.floor(S.sp * .6)), y0 = yDeP(0, pa); for (let i = i0; i <= i1; i++) { const v = arr[i]; if (!isFinite(v)) continue; const prev = arr[i - 1];
+        ctx.fillStyle = v >= 0 ? (v >= prev ? "#26A69A" : "#B2DFDB") : (v <= prev ? "#FF5252" : "#FFCDD2"); const y = yDeP(v, pa); ctx.fillRect(Math.round(xDeI(i)) - (cw >> 1), Math.min(y, y0), cw, Math.max(1, Math.abs(y - y0))); } return; }
+    if (st.estilo === "puntos") { ctx.fillStyle = c; for (let i = i0; i <= i1; i++) { const v = arr[i]; if (isFinite(v)) { ctx.beginPath(); ctx.arc(xDeI(i), yDeP(v, pa), Math.max(1.2, Math.min(2.5, S.sp / 5)), 0, 7); ctx.fill(); } } return; }
+    ctx.beginPath(); let ini = true;
+    for (let i = i0; i <= Math.min(j1, arr.length - 1); i++) { const v = arr[i]; if (!isFinite(v)) { ini = true; continue; } const x = xDeI(i), y = yDeP(v, pa);
+      if (def.escalon) { if (ini || arr[i - 1] !== v) ctx.moveTo(x - S.sp / 2, y); ctx.lineTo(x + S.sp / 2, y); }
+      else if (ini) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      ini = false; }
+    ctx.strokeStyle = c; ctx.lineWidth = st.w || (ind.tipo === "ICHI" ? 1 : 1.5); ctx.stroke(); });
+}
+function rellenar(a, b, color, pa, i0, i1) { if (!a || !b) return; ctx.beginPath(); let ok = false; const pts = [];
+  for (let i = i0; i <= Math.min(i1, a.length - 1); i++) if (isFinite(a[i]) && isFinite(b[i])) pts.push(i); if (pts.length < 2) return;
+  pts.forEach((i, k) => k ? ctx.lineTo(xDeI(i), yDeP(a[i], pa)) : ctx.moveTo(xDeI(i), yDeP(a[i], pa))); for (let k = pts.length - 1; k >= 0; k--) ctx.lineTo(xDeI(pts[k]), yDeP(b[pts[k]], pa)); ctx.closePath(); ctx.fillStyle = color; ctx.fill(); ok = true; return ok; }
+function rellenarNube(a, b, pa, i0, i1) { if (!a || !b) return; for (let i = Math.max(i0, 1); i <= Math.min(i1, a.length - 1); i++) { if (![a[i], b[i], a[i - 1], b[i - 1]].every(isFinite)) continue;
+  ctx.fillStyle = a[i] >= b[i] ? "rgba(67,160,71,.12)" : "rgba(244,67,54,.12)"; ctx.beginPath(); ctx.moveTo(xDeI(i - 1), yDeP(a[i - 1], pa)); ctx.lineTo(xDeI(i), yDeP(a[i], pa)); ctx.lineTo(xDeI(i), yDeP(b[i], pa)); ctx.lineTo(xDeI(i - 1), yDeP(b[i - 1], pa)); ctx.closePath(); ctx.fill(); } }
+
+/* ---------- cruz (crosshair) ---------- */
+function cruz() {
+  const r = S.raton; if (!r.dentro || S.arrastre && S.arrastre.tipo === "pan") return; const pw = plotW(); if (r.x > pw || r.y > H - EJE_T) return;
+  const i = Math.round(iDeX(r.x)), x = Math.round(xDeI(i)) + .5, pa = paneEn(r.y);
+  linea(x, 0, x, H - EJE_T, COL.cruz, 1, [4, 4]); if (pa) linea(0, Math.round(r.y) + .5, pw, Math.round(r.y) + .5, COL.cruz, 1, [4, 4]);
+  if (pa) { let p = pDeY(r.y, pa); if (S.iman && pa.id === "main") p = iman(i, p, r.y, pa).p; etiqueta(pa.id === "main" ? fmtP(p) : fmtInd(p, pa.ind), pw + 1, r.y, "#363A45"); }
+  etiqueta(fmtT(tDeIdx(i), true), x, H - EJE_T / 2, "#363A45", "#fff", "center");
+}
+function iman(i, p, y, pa) { const b = S.b[Math.max(0, Math.min(S.b.length - 1, Math.round(i)))]; if (!b) return { p, ok: false };
+  let mejor = p, dm = 22; [b.o, b.h, b.l, b.c].forEach(v => { const d = Math.abs(yDeP(v, pa) - y); if (d < dm) { dm = d; mejor = v; } }); return { p: mejor, ok: mejor !== p }; }
+
+/* ALEMA Gráficas · herramientas de dibujo (como en TradingView). Los puntos se guardan como {t: tiempo, p: precio}. */
+"use strict";
+// pts: puntos que se colocan con clic ("multi" = los que quieras, se termina con doble clic o Enter)
+const HERRAMIENTAS = {
+  linea: { n: "Línea de tendencia", pts: 2 }, angulo: { n: "Ángulo de tendencia", pts: 2 }, rayo: { n: "Rayo", pts: 2 }, extendida: { n: "Línea extendida", pts: 2 },
+  horizontal: { n: "Línea horizontal", pts: 1 }, rayoH: { n: "Rayo horizontal", pts: 1 }, vertical: { n: "Línea vertical", pts: 1 }, canal: { n: "Canal paralelo", pts: 3 },
+  fib: { n: "Retroceso de Fibonacci", pts: 2, niveles: "FIB" }, fibExt: { n: "Extensión de Fibonacci basada en tendencias", pts: 3, niveles: "FIB" },
+  fibCanal: { n: "Canal de Fibonacci", pts: 3, niveles: "FIB" }, fibZona: { n: "Zona horaria de Fibonacci", pts: 2, niveles: "ZONA" },
+  fibAbanico: { n: "Abanico de Fibonacci de resistencia de velocidad", pts: 2, niveles: "VEL" }, fibCuna: { n: "Cuña de Fibonacci", pts: 3, niveles: "CUNA" },
+  gannCaja: { n: "Cuadrícula de Gann", pts: 2, niveles: "GANN" }, gannAbanico: { n: "Abanico de Gann", pts: 2 },
+  xabcd: { n: "Patrón XABCD", pts: 5 }, hch: { n: "Cabeza y hombros", pts: 7 }, abc: { n: "Patrón ABCD", pts: 4 },
+  elliott5: { n: "Onda de impulso de Elliott (1 2 3 4 5)", pts: 6 }, elliottABC: { n: "Onda de corrección de Elliott (A B C)", pts: 4 },
+  rect: { n: "Rectángulo", pts: 2 }, triangulo: { n: "Triángulo", pts: 3 }, ruta: { n: "Ruta", pts: "multi" }, flecha: { n: "Flecha", pts: 2 }, texto: { n: "Texto", pts: 1 },
+  largo: { n: "Posición larga", pts: 1 }, corto: { n: "Posición corta", pts: 1 }, medir: { n: "Rango de precio y fecha", pts: 2 },
+};
+// Niveles por defecto (valor, color, activo) como en TradingView
+const NIVELES = {
+  FIB: [[0, "#787B86", 1], [.236, "#F23645", 1], [.382, "#FF9800", 1], [.5, "#4CAF50", 1], [.618, "#089981", 1], [.786, "#00BCD4", 1], [1, "#787B86", 1], [1.618, "#2962FF", 1],
+    [2.618, "#F23645", 1], [3.618, "#9C27B0", 1], [4.236, "#E91E63", 1], [1.272, "#FF9800", 0], [1.414, "#F23645", 0], [2.272, "#FF9800", 0], [2.414, "#4CAF50", 0], [2, "#089981", 0],
+    [3, "#00BCD4", 0], [3.272, "#787B86", 0], [3.414, "#2962FF", 0], [4, "#F23645", 0], [4.272, "#9C27B0", 0], [4.414, "#E91E63", 0], [4.618, "#FF9800", 0], [4.764, "#089981", 0]],
+  ZONA: [[0, "#787B86", 1], [1, "#2962FF", 1], [2, "#2962FF", 1], [3, "#2962FF", 1], [5, "#2962FF", 1], [8, "#2962FF", 1], [13, "#2962FF", 1], [21, "#2962FF", 1], [34, "#2962FF", 1], [55, "#2962FF", 1], [89, "#2962FF", 1]],
+  VEL: [[0, "#787B86", 1], [.25, "#F23645", 1], [.382, "#FF9800", 1], [.5, "#4CAF50", 1], [.618, "#089981", 1], [.75, "#00BCD4", 1], [1, "#787B86", 1]],
+  CUNA: [[.236, "#F23645", 1], [.382, "#FF9800", 1], [.5, "#4CAF50", 1], [.618, "#089981", 1], [.786, "#00BCD4", 1], [1, "#787B86", 1]],
+  GANN: [[0, "#787B86", 1], [.25, "#FF9800", 1], [.382, "#4CAF50", 1], [.5, "#089981", 1], [.618, "#00BCD4", 1], [.75, "#2962FF", 1], [1, "#787B86", 1]],
+};
+const GANN_FAN = [[1, 8, "#FF9800"], [1, 4, "#4CAF50"], [1, 3, "#089981"], [1, 2, "#00BCD4"], [1, 1, "#2962FF"], [2, 1, "#9C27B0"], [3, 1, "#E91E63"], [4, 1, "#F23645"], [8, 1, "#FF9800"]];
+const COLORES = ["#2962FF", "#F23645", "#089981", "#FF9800", "#E040FB", "#FFFFFF", "#FEA621", "#FFEB3B"];
+
+const XY = (pt, pa) => ({ x: xDeI(idxDeT(pt.t)), y: yDeP(pt.p, pa) });
+function rgba(hex, a) { const n = parseInt(String(hex).slice(1, 7), 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; }
+function extender(a, b, ambos) { const dx = b.x - a.x, dy = b.y - a.y; if (!dx && !dy) return [a, b]; const L = 1e5 / Math.hypot(dx, dy);
+  return [ambos ? { x: a.x - dx * L, y: a.y - dy * L } : a, { x: b.x + dx * L, y: b.y + dy * L }]; }
+function txt(t, x, y, color, alinear = "left", base = "bottom", tam = 12, negrita) { ctx.font = `${negrita ? "600 " : ""}${tam}px -apple-system, Roboto, sans-serif`; ctx.fillStyle = color; ctx.textAlign = alinear; ctx.textBaseline = base; ctx.fillText(t, x, y); }
+const yEnLinea = (a, b, x) => b.x === a.x ? a.y : a.y + (b.y - a.y) * (x - a.x) / (b.x - a.x);
+const DASH = { solida: [], guiones: [6, 4], puntos: [2, 3] };
+function nivelesDe(d) { const k = HERRAMIENTAS[d.tipo].niveles; if (!d.niveles && k) d.niveles = NIVELES[k].map(([v, c, on]) => ({ v, c, on: !!on })); return (d.niveles || []).filter(n => n.on).sort((a, b) => a.v - b.v); }
+function fmtNivel(d, v, precio) { const n = d.pct ? `${(v * 100).toFixed(1).replace(/\.0$/, "")}%` : String(v); return d.precios === false || precio === undefined ? n : `${n} (${fmtP(precio)})`; }
+
+// Puntos de agarre de cada dibujo (en pantalla). Devuelve [{x, y, k}] donde k identifica el punto.
+function agarres(d, pa) {
+  const P = d.pts.map(p => XY(p, pa));
+  if (d.tipo === "largo" || d.tipo === "corto") return [{ ...P[0], k: 0 }, { x: P[0].x, y: P[1].y, k: 1 }, { x: P[0].x, y: P[2].y, k: 2 }, { x: P[1].x, y: P[0].y, k: 3 }];
+  if (d.tipo === "horizontal") return [{ x: Math.min(plotW() - 30, Math.max(30, S.raton.x)), y: P[0].y, k: 0 }];
+  if (d.tipo === "vertical") return [{ x: P[0].x, y: pa.top + pa.h / 2, k: 0 }];
+  if (d.tipo === "rect" || d.tipo === "gannCaja" || d.tipo === "fibAbanico") return [{ ...P[0], k: 0 }, { ...P[1], k: 1 }, { x: P[0].x, y: P[1].y, k: "a" }, { x: P[1].x, y: P[0].y, k: "b" }];
+  return P.map((p, k) => ({ ...p, k }));
+}
+
+/* ---------- pintar ---------- */
+function pintarDibujo(d, pa, previa) {
+  const P = d.pts.map(p => XY(p, pa)), c = d.color || COL.azul, w = d.ancho || 2, sel = S.sel === d;
+  ctx.lineWidth = w; ctx.strokeStyle = c; ctx.setLineDash(DASH[d.estilo] || []);
+  const seg = (a, b) => { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); };
+  const poli = (ps, cerrar) => { if (ps.length < 2) return; ctx.beginPath(); ps.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); if (cerrar) ctx.closePath(); };
+  switch (d.tipo) {
+    case "linea": case "flecha": if (P[1]) { seg(P[0], P[1]); if (d.tipo === "flecha") punta(P[0], P[1], c, w); } break;
+    case "angulo": if (P[1]) { seg(P[0], P[1]); const L = Math.hypot(P[1].x - P[0].x, P[1].y - P[0].y), an = Math.atan2(P[1].y - P[0].y, P[1].x - P[0].x);
+      ctx.setLineDash([4, 4]); ctx.lineWidth = 1; seg(P[0], { x: P[0].x + Math.max(40, L), y: P[0].y }); ctx.setLineDash([]); ctx.beginPath(); ctx.arc(P[0].x, P[0].y, 34, Math.min(0, an), Math.max(0, an)); ctx.stroke();
+      const g = -an * 180 / Math.PI; txt(`${g.toFixed(2)}°`, P[0].x + 40, P[0].y + (g > 0 ? -6 : 16), c, "left", "bottom", 12, true); } break;
+    case "rayo": if (P[1]) { const [a, b] = extender(P[0], P[1], false); seg(a, b); } break;
+    case "extendida": if (P[1]) { const [a, b] = extender(P[0], P[1], true); seg(a, b); } break;
+    case "horizontal": seg({ x: 0, y: P[0].y }, { x: plotW(), y: P[0].y }); if (d.texto) txt(d.texto, 12, P[0].y - 4, c); break;
+    case "rayoH": seg(P[0], { x: plotW(), y: P[0].y }); if (d.texto) txt(d.texto, P[0].x + 6, P[0].y - 4, c); break;
+    case "vertical": seg({ x: P[0].x, y: pa.top }, { x: P[0].x, y: pa.top + pa.h }); break;
+    case "rect": if (P[1]) { ctx.fillStyle = rgba(c, .14); const r = [Math.min(P[0].x, P[1].x), Math.min(P[0].y, P[1].y), Math.abs(P[1].x - P[0].x), Math.abs(P[1].y - P[0].y)]; ctx.fillRect(...r); ctx.strokeRect(...r); } break;
+    case "triangulo": if (P[1]) { poli(P, P.length > 2); ctx.fillStyle = rgba(c, .14); if (P.length > 2) ctx.fill(); ctx.stroke(); } break;
+    case "ruta": poli(P); ctx.stroke(); if (P.length > 1 && !previa) punta(P[P.length - 2], P[P.length - 1], c, w); break;
+    case "canal": if (P[1]) { seg(P[0], P[1]); if (P[2]) { const dy = P[2].y - yEnLinea(P[0], P[1], P[2].x), a = { x: P[0].x, y: P[0].y + dy }, b = { x: P[1].x, y: P[1].y + dy };
+        seg(a, b); ctx.fillStyle = rgba(c, .1); poli([P[0], P[1], b, a], true); ctx.fill();
+        ctx.setLineDash([4, 4]); ctx.lineWidth = 1; seg({ x: P[0].x, y: P[0].y + dy / 2 }, { x: P[1].x, y: P[1].y + dy / 2 }); ctx.setLineDash([]); } } break;
+    case "fib": if (P[1]) pintarFibLineas(d, pa, d.pts[0], d.pts[1], Math.min(P[0].x, P[1].x), Math.max(P[0].x, P[1].x), P); break;
+    case "fibExt": if (P[1]) { ctx.setLineDash([4, 4]); ctx.lineWidth = 1; ctx.strokeStyle = "rgba(149,152,161,.8)"; seg(P[0], P[1]); if (P[2]) seg(P[1], P[2]); ctx.setLineDash([]);
+        if (P[2]) { const r = d.pts[1].p - d.pts[0].p; pintarFibLineas(d, pa, { p: d.pts[2].p + r }, { p: d.pts[2].p }, P[2].x, Math.max(P[2].x + 160, P[1].x), null, true); } } break;
+    case "fibCanal": if (P[1]) pintarFibCanal(d, P); break;
+    case "fibZona": if (P[1]) pintarFibZona(d, pa); break;
+    case "fibAbanico": if (P[1]) pintarAbanicoVel(d, P, pa); break;
+    case "fibCuna": if (P[1]) pintarCuna(d, P); break;
+    case "gannCaja": if (P[1]) pintarGannCaja(d, P); break;
+    case "gannAbanico": if (P[1]) pintarGannAbanico(d, P, pa); break;
+    case "xabcd": pintarPatron(d, P, ["X", "A", "B", "C", "D"], [[0, 1, 2], [2, 3, 4]], [[0, 2, "AB"], [1, 3, "BC"], [2, 4, "CD"], [0, 4, "XD"]]); break;
+    case "abc": pintarPatron(d, P, ["A", "B", "C", "D"], [], [[0, 2, "BC"], [1, 3, "CD"]]); break;
+    case "hch": pintarHCH(d, P); break;
+    case "elliott5": pintarOndas(d, P, ["", "1", "2", "3", "4", "5"]); break;
+    case "elliottABC": pintarOndas(d, P, ["", "A", "B", "C"]); break;
+    case "largo": case "corto": pintarPosicion(d, P); break;
+    case "medir": if (P[1]) pintarMedir(d, P); break;
+    case "texto": { const tam = 14 + (w - 2) * 2; txt(d.texto || "Texto", P[0].x, P[0].y, c, "left", "middle", tam); break; }
+  }
+  ctx.setLineDash([]);
+  if (sel || previa) agarres(d, pa).forEach(h => { ctx.beginPath(); ctx.arc(h.x, h.y, 5, 0, 7); ctx.fillStyle = COL.bg; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = COL.azul; ctx.stroke(); });
+}
+function punta(a, b, c, w) { const an = Math.atan2(b.y - a.y, b.x - a.x), L = 12 + w * 2; ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(b.x, b.y);
+  ctx.lineTo(b.x - L * Math.cos(an - .45), b.y - L * Math.sin(an - .45)); ctx.lineTo(b.x - L * Math.cos(an + .45), b.y - L * Math.sin(an + .45)); ctx.closePath(); ctx.fillStyle = c; ctx.fill(); }
+// Retroceso / extensión: nivel v → precio = fin + (inicio - fin) * v (0 en el segundo punto, 1 en el primero, como TradingView)
+function pintarFibLineas(d, pa, ini, fin, xa, xb, P, esExt) {
+  const nv = nivelesDe(d), rev = !!d.revertir, base = rev ? ini.p : fin.p, rango = rev ? fin.p - ini.p : ini.p - fin.p, op = d.fondo === false ? 0 : (d.opacidad ?? .1);
+  let x1 = xa, x2 = xb; if (d.ext === "izq" || d.ext === "ambos") x1 = 0; if (d.ext === "der" || d.ext === "ambos") x2 = plotW();
+  let ant = null;
+  nv.forEach(n => { const precio = base + rango * n.v, y = yDeP(precio, pa);
+    if (ant && op) { ctx.fillStyle = rgba(n.c, op); ctx.fillRect(x1, Math.min(ant, y), x2 - x1, Math.abs(y - ant)); }
+    ctx.strokeStyle = n.c; ctx.lineWidth = d.ancho > 2 ? 2 : 1; ctx.setLineDash(DASH[d.estilo] || []); ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke(); ctx.setLineDash([]);
+    if (d.niveles_txt !== false) { const der = d.etiq === "der"; txt(fmtNivel(d, n.v, precio), der ? x2 + 4 : x1 - 4, y, n.c, der ? "left" : "right", "middle", d.tam || 11); }
+    ant = y; });
+  if (P && d.tendencia !== false) { ctx.setLineDash([4, 4]); ctx.strokeStyle = d.colorTend || "rgba(149,152,161,.8)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(P[0].x, P[0].y); ctx.lineTo(P[1].x, P[1].y); ctx.stroke(); ctx.setLineDash([]); }
+}
+function pintarFibCanal(d, P) {
+  const nv = nivelesDe(d), op = d.fondo === false ? 0 : (d.opacidad ?? .1), dy = P[2] ? P[2].y - yEnLinea(P[0], P[1], P[2].x) : 0; let ant = null;
+  let A = P[0], B = P[1]; if (d.ext === "der" || d.ext === "ambos" || d.ext === "izq") { const e = extender(P[0], P[1], d.ext !== "der"); A = d.ext === "der" ? P[0] : e[0]; B = d.ext === "izq" ? P[1] : e[1]; }
+  nv.forEach(n => { const o = dy * (d.revertir ? 1 - n.v : n.v), a = { x: A.x, y: A.y + o }, b = { x: B.x, y: B.y + o };
+    if (ant && op) { ctx.fillStyle = rgba(n.c, op); ctx.beginPath(); ctx.moveTo(ant[0].x, ant[0].y); ctx.lineTo(ant[1].x, ant[1].y); ctx.lineTo(b.x, b.y); ctx.lineTo(a.x, a.y); ctx.closePath(); ctx.fill(); }
+    ctx.strokeStyle = n.c; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    txt(fmtNivel(d, n.v), Math.min(P[0].x, P[1].x) - 4, yEnLinea(P[0], P[1], Math.min(P[0].x, P[1].x)) + o, n.c, "right", "middle", d.tam || 11); ant = [a, b]; });
+}
+function pintarFibZona(d, pa) {
+  const i0 = idxDeT(d.pts[0].t), di = idxDeT(d.pts[1].t) - i0; let ant = null;
+  nivelesDe(d).forEach(n => { const x = xDeI(i0 + di * n.v); if (ant !== null && d.fondo !== false) { ctx.fillStyle = rgba(n.c, d.opacidad ?? .06); ctx.fillRect(ant, pa.top, x - ant, pa.h); }
+    ctx.strokeStyle = n.c; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, pa.top); ctx.lineTo(x, pa.top + pa.h); ctx.stroke(); txt(String(n.v), x + 4, pa.top + pa.h - 6, n.c, "left", "bottom", d.tam || 11); ant = x; });
+}
+function pintarAbanicoVel(d, P, pa) {
+  const nv = nivelesDe(d), [a, b] = P, dx = b.x - a.x, dy = b.y - a.y, op = d.fondo === false ? 0 : (d.opacidad ?? .08);
+  ctx.lineWidth = 1; nv.forEach(n => { ctx.strokeStyle = rgba(n.c, .5); const y = a.y + dy * n.v, x = a.x + dx * n.v; ctx.beginPath(); ctx.moveTo(a.x, y); ctx.lineTo(b.x, y); ctx.moveTo(x, a.y); ctx.lineTo(x, b.y); ctx.stroke();
+    txt(String(n.v), a.x - 4, y, n.c, "right", "middle", 10); txt(String(n.v), x, b.y + (dy > 0 ? 12 : -4), n.c, "center", "middle", 10); });
+  const rayo = (tx, ty, col) => { const [, f] = extender(a, { x: tx, y: ty }, false); ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(f.x, f.y); ctx.stroke(); return f; };
+  let antP = null, antT = null;
+  nv.filter(n => n.v > 0).forEach(n => { const fp = rayo(b.x, a.y + dy * n.v, n.c), ft = rayo(a.x + dx * n.v, b.y, n.c);
+    if (op && antP) { ctx.fillStyle = rgba(n.c, op); ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(antP.x, antP.y); ctx.lineTo(fp.x, fp.y); ctx.closePath(); ctx.fill(); ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(antT.x, antT.y); ctx.lineTo(ft.x, ft.y); ctx.closePath(); ctx.fill(); }
+    antP = fp; antT = ft; });
+}
+function pintarCuna(d, P) {
+  const [o, p1, p2] = P, R = Math.hypot(p1.x - o.x, p1.y - o.y), a1 = Math.atan2(p1.y - o.y, p1.x - o.x), a2 = p2 ? Math.atan2(p2.y - o.y, p2.x - o.x) : a1, op = d.fondo === false ? 0 : (d.opacidad ?? .1);
+  let ant = 0; const ccw = ((a2 - a1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI < 0;
+  nivelesDe(d).forEach(n => { const r = R * n.v; if (op) { ctx.fillStyle = rgba(n.c, op); ctx.beginPath(); ctx.arc(o.x, o.y, r, a1, a2, ccw); ctx.arc(o.x, o.y, ant, a2, a1, !ccw); ctx.closePath(); ctx.fill(); }
+    ctx.strokeStyle = n.c; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(o.x, o.y, r, a1, a2, ccw); ctx.stroke(); txt(String(n.v), o.x + r * Math.cos(a1) + 4, o.y + r * Math.sin(a1), n.c, "left", "middle", 10); ant = r; });
+  ctx.strokeStyle = d.color || COL.azul; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(o.x + R * Math.cos(a1), o.y + R * Math.sin(a1)); ctx.moveTo(o.x, o.y); ctx.lineTo(o.x + R * Math.cos(a2), o.y + R * Math.sin(a2)); ctx.stroke();
+}
+function pintarGannCaja(d, P) {
+  const [a, b] = P, nv = nivelesDe(d), op = d.fondo === false ? 0 : (d.opacidad ?? .08); let antY = null, antX = null;
+  nv.forEach(n => { const y = a.y + (b.y - a.y) * n.v, x = a.x + (b.x - a.x) * n.v;
+    if (op && antY !== null) { ctx.fillStyle = rgba(n.c, op); ctx.fillRect(Math.min(a.x, b.x), Math.min(antY, y), Math.abs(b.x - a.x), Math.abs(y - antY)); }
+    ctx.strokeStyle = n.c; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, y); ctx.lineTo(b.x, y); ctx.moveTo(x, a.y); ctx.lineTo(x, b.y); ctx.stroke();
+    txt(String(n.v), Math.min(a.x, b.x) - 4, y, n.c, "right", "middle", 10); txt(String(n.v), x, Math.max(a.y, b.y) + 12, n.c, "center", "middle", 10); antY = y; antX = x; });
+  ctx.strokeStyle = rgba(d.color || "#2962FF", .7); ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.moveTo(a.x, b.y); ctx.lineTo(b.x, a.y); ctx.stroke(); ctx.setLineDash([]);
+}
+function pintarGannAbanico(d, P) {
+  const [a, b] = P, dx = b.x - a.x, dy = b.y - a.y; let ant = null;
+  GANN_FAN.forEach(([pr, ti, col]) => { const [, f] = extender(a, { x: a.x + dx * ti, y: a.y + dy * pr }, false);
+    if (ant && d.fondo !== false) { ctx.fillStyle = rgba(col, d.opacidad ?? .06); ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(ant.x, ant.y); ctx.lineTo(f.x, f.y); ctx.closePath(); ctx.fill(); }
+    ctx.strokeStyle = col; ctx.lineWidth = pr === 1 && ti === 1 ? 1.5 : 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(f.x, f.y); ctx.stroke();
+    const lx = a.x + dx * ti * 1.05, ly = a.y + dy * pr * 1.05; txt(`${pr}x${ti}`, lx, ly, col, "left", "middle", 10); ant = f; });
+}
+// ¿El punto es un pico (etiqueta arriba) o un valle (etiqueta abajo)?
+function esPico(P, i) { const v = [P[i - 1], P[i + 1]].filter(Boolean); return v.length ? v.every(q => P[i].y <= q.y) : i === 0 ? (P[1] ? P[0].y < P[1].y : true) : true; }
+function rotulo(t, p, arriba, c) { ctx.font = "600 12px -apple-system, Roboto, sans-serif"; const w = Math.max(20, ctx.measureText(t).width + 10), y = arriba ? p.y - 16 : p.y + 16;
+  ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(p.x - w / 2, y - 10, w, 20, 4) : ctx.rect(p.x - w / 2, y - 10, w, 20); ctx.fill(); txt(t, p.x, y + 1, "#fff", "center", "middle", 12, true); }
+function pintarPatron(d, P, nombres, triangulos, razones) {
+  const c = d.color || COL.azul;
+  triangulos.forEach(tr => { if (tr.every(i => P[i])) { ctx.fillStyle = rgba(c, .16); ctx.beginPath(); tr.forEach((i, k) => k ? ctx.lineTo(P[i].x, P[i].y) : ctx.moveTo(P[i].x, P[i].y)); ctx.closePath(); ctx.fill(); } });
+  ctx.strokeStyle = c; ctx.lineWidth = d.ancho || 2; ctx.beginPath(); P.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+  razones.forEach(([i, j, nom]) => { if (!P[j]) return; const pr = d.pts, k = i + 1, r = nom === "XD" ? Math.abs((pr[1].p - pr[4].p) / ((pr[1].p - pr[0].p) || 1e-12)) : Math.abs((pr[j].p - pr[j - 1].p) / ((pr[k].p - pr[i].p) || 1e-12));
+    ctx.setLineDash([4, 4]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(P[i].x, P[i].y); ctx.lineTo(P[j].x, P[j].y); ctx.stroke(); ctx.setLineDash([]);
+    const m = { x: (P[i].x + P[j].x) / 2, y: (P[i].y + P[j].y) / 2 }; ctx.font = "11px -apple-system, Roboto, sans-serif"; const t = r.toFixed(3), w = ctx.measureText(t).width + 8;
+    ctx.fillStyle = rgba(c, .85); ctx.fillRect(m.x - w / 2, m.y - 8, w, 16); txt(t, m.x, m.y + 1, "#fff", "center", "middle", 11); });
+  P.forEach((p, i) => rotulo(nombres[i], p, esPico(P, i), c));
+}
+function pintarHCH(d, P) {
+  const c = d.color || "#089981"; ctx.fillStyle = rgba(c, .14);
+  if (P.length >= 5) { [[0, 1, 2], [2, 3, 4]].concat(P.length >= 7 ? [[4, 5, 6]] : []).forEach(tr => { ctx.beginPath(); tr.forEach((i, k) => k ? ctx.lineTo(P[i].x, P[i].y) : ctx.moveTo(P[i].x, P[i].y)); ctx.closePath(); ctx.fill(); }); }
+  ctx.strokeStyle = c; ctx.lineWidth = d.ancho || 2; ctx.beginPath(); P.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+  if (P[4]) { const [a, b] = extender(P[2], P[4], true); ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.setLineDash([]);
+    txt("Línea cuello", (P[2].x + P[4].x) / 2, yEnLinea(P[2], P[4], (P[2].x + P[4].x) / 2) + 16, c, "center", "middle", 11); }
+  const arriba = P[3] ? P[3].y < (P[2] || P[3]).y : true;
+  [[1, "Hombro izquierdo"], [3, "Cabeza"], [5, "Hombro derecho"]].forEach(([i, t]) => { if (P[i]) rotulo(t, P[i], arriba, c); });
+}
+function pintarOndas(d, P, nombres) {
+  const c = d.color || "#2962FF"; ctx.strokeStyle = c; ctx.lineWidth = d.ancho || 2; ctx.beginPath(); P.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+  P.forEach((p, i) => { if (!nombres[i]) return; const arriba = esPico(P, i), y = arriba ? p.y - 16 : p.y + 16; ctx.beginPath(); ctx.arc(p.x, y, 10, 0, 7); ctx.fillStyle = COL.bg; ctx.fill(); ctx.strokeStyle = c; ctx.lineWidth = 1.5; ctx.stroke();
+    txt(nombres[i], p.x, y + 1, c, "center", "middle", 12, true); });
+}
+function pintarPosicion(d, P) {
+  const [e, tp, sl] = d.pts, x1 = Math.min(P[0].x, P[1].x), x2 = Math.max(P[0].x, P[1].x), ye = P[0].y, yt = P[1].y, ys = P[2].y, ww = Math.max(x2 - x1, 4);
+  ctx.fillStyle = "rgba(8,153,129,.22)"; ctx.fillRect(x1, Math.min(ye, yt), ww, Math.abs(yt - ye));
+  ctx.fillStyle = "rgba(242,54,69,.22)"; ctx.fillRect(x1, Math.min(ye, ys), ww, Math.abs(ys - ye));
+  ctx.strokeStyle = "#787B86"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x1, ye); ctx.lineTo(x1 + ww, ye); ctx.stroke();
+  const dist = Math.abs(tp.p - e.p), ries = Math.abs(e.p - sl.p), rr = ries ? (dist / ries) : 0, pct = v => (v / e.p * 100).toFixed(2), cx = x1 + ww / 2;
+  const caja = (t, y, fondo) => { ctx.font = "12px -apple-system, Roboto, sans-serif"; const w = ctx.measureText(t).width + 14; ctx.fillStyle = fondo; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(cx - w / 2, y - 10, w, 20, 3) : ctx.rect(cx - w / 2, y - 10, w, 20); ctx.fill(); txt(t, cx, y + 1, "#fff", "center", "middle"); };
+  const arriba = Math.min(ye, yt, ys), abajo = Math.max(ye, yt, ys);
+  caja(`Objetivo: ${fmtP(tp.p)} (${pct(dist)}%)`, yt < ye ? arriba - 14 : abajo + 14, "#089981");
+  caja(`Stop: ${fmtP(sl.p)} (${pct(ries)}%)`, ys < ye ? arriba - 14 : abajo + 14, "#F23645");
+  caja(`${d.tipo === "largo" ? "Largo" : "Corto"} · Riesgo/Beneficio: ${rr.toFixed(2)}`, ye, "#363A45");
+}
+function pintarMedir(d, P) {
+  const [a, b] = d.pts, sube = b.p >= a.p, c = sube ? "#2962FF" : "#F23645", x1 = Math.min(P[0].x, P[1].x), y1 = Math.min(P[0].y, P[1].y);
+  ctx.fillStyle = rgba(c, .18); ctx.fillRect(x1, y1, Math.abs(P[1].x - P[0].x), Math.abs(P[1].y - P[0].y));
+  ctx.strokeStyle = c; ctx.lineWidth = 1.5; const mx = (P[0].x + P[1].x) / 2, my = (P[0].y + P[1].y) / 2;
+  ctx.beginPath(); ctx.moveTo(mx, P[0].y); ctx.lineTo(mx, P[1].y); ctx.moveTo(P[0].x, my); ctx.lineTo(P[1].x, my); ctx.stroke();
+  const barras = Math.round(idxDeT(b.t) - idxDeT(a.t)), min = Math.abs(barras) * S.tf.min, dif = b.p - a.p;
+  const tiempo = min >= 1440 ? `${Math.floor(min / 1440)}d ${Math.round(min % 1440 / 60)}h` : min >= 60 ? `${Math.floor(min / 60)}h ${min % 60}m` : `${min}m`;
+  const t1 = `${dif >= 0 ? "+" : ""}${fmtP(dif)} (${(dif / a.p * 100).toFixed(2)}%)`, t2 = `${barras} velas, ${tiempo}`;
+  ctx.font = "12px -apple-system, Roboto, sans-serif"; const w = Math.max(ctx.measureText(t1).width, ctx.measureText(t2).width) + 16, y = sube ? Math.min(P[0].y, P[1].y) - 44 : Math.max(P[0].y, P[1].y) + 6;
+  ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(mx - w / 2, y, w, 38, 4) : ctx.rect(mx - w / 2, y, w, 38); ctx.fill();
+  txt(t1, mx, y + 11, "#fff", "center", "middle"); txt(t2, mx, y + 27, "#fff", "center", "middle");
+}
+
+/* ---------- selección: distancia del ratón a un dibujo ---------- */
+function distSeg(p, a, b) { const dx = b.x - a.x, dy = b.y - a.y, L = dx * dx + dy * dy; let t = L ? ((p.x - a.x) * dx + (p.y - a.y) * dy) / L : 0; t = Math.max(0, Math.min(1, t)); return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy)); }
+function distPoli(m, P, cerrar) { let d = 99; for (let i = 1; i < P.length; i++) d = Math.min(d, distSeg(m, P[i - 1], P[i])); if (cerrar && P.length > 2) d = Math.min(d, distSeg(m, P[P.length - 1], P[0])); return d; }
+function dentroPoli(m, P) { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) if ((P[i].y > m.y) !== (P[j].y > m.y) && m.x < (P[j].x - P[i].x) * (m.y - P[i].y) / (P[j].y - P[i].y) + P[i].x) c = !c; return c; }
+function tocar(d, m, pa) {
+  const P = d.pts.map(p => XY(p, pa)), dentro = (x1, y1, x2, y2) => m.x >= Math.min(x1, x2) - 4 && m.x <= Math.max(x1, x2) + 4 && m.y >= Math.min(y1, y2) - 4 && m.y <= Math.max(y1, y2) + 4;
+  if (!P[0]) return 99;
+  switch (d.tipo) {
+    case "linea": case "flecha": case "angulo": return P[1] ? distSeg(m, P[0], P[1]) : 99;
+    case "rayo": case "extendida": { const [a, b] = extender(P[0], P[1], d.tipo === "extendida"); return distSeg(m, a, b); }
+    case "horizontal": return Math.abs(m.y - P[0].y);
+    case "rayoH": return m.x >= P[0].x - 4 ? Math.abs(m.y - P[0].y) : 99;
+    case "vertical": return Math.abs(m.x - P[0].x);
+    case "rect": case "medir": case "gannCaja": case "fibAbanico": return dentro(P[0].x, P[0].y, P[1].x, P[1].y) ? 0 : 99;
+    case "triangulo": return dentroPoli(m, P) ? 0 : distPoli(m, P, true);
+    case "ruta": case "xabcd": case "abc": case "hch": case "elliott5": case "elliottABC": return distPoli(m, P);
+    case "canal": case "fibCanal": { const dy = P[2] ? P[2].y - yEnLinea(P[0], P[1], P[2].x) : 0; if (distSeg(m, P[0], P[1]) < 6 || distSeg(m, { x: P[0].x, y: P[0].y + dy }, { x: P[1].x, y: P[1].y + dy }) < 6) return 0;
+      return m.x >= Math.min(P[0].x, P[1].x) && m.x <= Math.max(P[0].x, P[1].x) && (m.y - yEnLinea(P[0], P[1], m.x)) * (m.y - yEnLinea(P[0], P[1], m.x) - dy) <= 0 ? 0 : 99; }
+    case "fib": { const x1 = Math.min(P[0].x, P[1].x), x2 = Math.max(P[0].x, P[1].x), y1 = Math.min(P[0].y, P[1].y), y2 = Math.max(P[0].y, P[1].y); if (m.x < x1 - 4 || m.x > x2 + 4) return 99;
+      return m.y >= y1 - 4 && m.y <= y2 + 4 ? 0 : Math.min(...nivelesDe(d).map(n => Math.abs(m.y - yDeP(d.pts[1].p + (d.pts[0].p - d.pts[1].p) * n.v, pa)))); }
+    case "fibExt": { if (!P[2]) return 99; const r = d.pts[1].p - d.pts[0].p, xe = Math.max(P[2].x + 160, P[1].x), enX = m.x >= P[2].x - 4 && m.x <= xe;
+      return Math.min(distSeg(m, P[0], P[1]), distSeg(m, P[1], P[2]), enX ? Math.min(...nivelesDe(d).map(n => Math.abs(m.y - yDeP(d.pts[2].p + r * n.v, pa)))) : 99); }
+    case "fibZona": { const i0 = idxDeT(d.pts[0].t), di = idxDeT(d.pts[1].t) - i0; return Math.min(...nivelesDe(d).map(n => Math.abs(m.x - xDeI(i0 + di * n.v)))); }
+    case "fibCuna": { const R = Math.hypot(P[1].x - P[0].x, P[1].y - P[0].y), r = Math.hypot(m.x - P[0].x, m.y - P[0].y); return r <= R + 4 && (distSeg(m, P[0], P[1]) < 8 || (P[2] && dentroPoli(m, [P[0], P[1], P[2]]))) ? 0 : 99; }
+    case "gannAbanico": { const dx = P[1].x - P[0].x, dy = P[1].y - P[0].y; return Math.min(...GANN_FAN.map(([pr, ti]) => { const [a, b] = extender(P[0], { x: P[0].x + dx * ti, y: P[0].y + dy * pr }, false); return distSeg(m, a, b); })); }
+    case "largo": case "corto": return dentro(P[0].x, Math.min(P[1].y, P[2].y), P[1].x, Math.max(P[1].y, P[2].y)) ? 0 : 99;
+    case "texto": { ctx.font = `${14 + ((d.ancho || 2) - 2) * 2}px -apple-system, Roboto, sans-serif`; const w = ctx.measureText(d.texto || "Texto").width; return dentro(P[0].x, P[0].y - 10, P[0].x + w, P[0].y + 10) ? 0 : 99; }
+  }
+  return 99;
+}
+
+/* ---------- crear y mover ---------- */
+const COLOR_INICIAL = { texto: "#FFFFFF", hch: "#089981", horizontal: "#2962FF" };
+function nuevoDibujo(tipo, pt) {
+  const d = { id: S.idSig++, tipo, pts: [pt], color: COLOR_INICIAL[tipo] || "#2962FF", ancho: 2 };
+  if (HERRAMIENTAS[tipo].niveles) nivelesDe(d);
+  if (tipo === "largo" || tipo === "corto") { const pa = PANES[0], dp = (pa.max - pa.min) * .08, s = tipo === "largo" ? 1 : -1, t2 = tDeIdx(idxDeT(pt.t) + Math.max(12, Math.round(140 / S.sp)));
+    d.pts = [pt, { t: t2, p: pt.p + s * dp * 1.5 }, { t: pt.t, p: pt.p - s * dp }]; }
+  return d;
+}
+function moverAgarre(d, k, pt) {
+  if (d.tipo === "largo" || d.tipo === "corto") { const [e, tp, sl] = d.pts;
+    if (k === 0) { const dp = pt.p - e.p, dt = idxDeT(pt.t) - idxDeT(e.t); e.p = pt.p; tp.p += dp; sl.p += dp; e.t = pt.t; tp.t = tDeIdx(idxDeT(tp.t) + dt); sl.t = pt.t; }
+    else if (k === 1) tp.p = pt.p; else if (k === 2) sl.p = pt.p; else if (k === 3) tp.t = pt.t; return; }
+  if (k === "a" || k === "b") { if (k === "a") { d.pts[0].t = pt.t; d.pts[1].p = pt.p; } else { d.pts[1].t = pt.t; d.pts[0].p = pt.p; } return; }
+  d.pts[k] = pt;
+}
+function moverTodo(d, base, di, dp) { d.pts = base.map(p => ({ t: tDeIdx(idxDeT(p.t) + di), p: p.p + dp })); }
+
+/* ALEMA Gráficas · barra de herramientas, ratón/teclado, leyenda, ventanas, repetición y guardado. */
+"use strict";
+const ICON = {
+  cursor: '<path d="M14 4v20M4 14h20" stroke="currentColor" stroke-width="1.4"/><circle cx="14" cy="14" r="2" fill="currentColor"/>',
+  linea: '<path d="M6 21L22 7" stroke="currentColor" stroke-width="1.4"/><circle cx="6" cy="21" r="2.2" fill="none" stroke="currentColor"/><circle cx="22" cy="7" r="2.2" fill="none" stroke="currentColor"/>',
+  rayo: '<path d="M6 21L25 5" stroke="currentColor" stroke-width="1.4"/><circle cx="6" cy="21" r="2.2" fill="none" stroke="currentColor"/><circle cx="14" cy="14" r="2.2" fill="none" stroke="currentColor"/>',
+  extendida: '<path d="M3 24L25 4" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="18" r="2.2" fill="none" stroke="currentColor"/><circle cx="18" cy="11" r="2.2" fill="none" stroke="currentColor"/>',
+  horizontal: '<path d="M3 14h22" stroke="currentColor" stroke-width="1.4"/><circle cx="14" cy="14" r="2.2" fill="#131722" stroke="currentColor"/>',
+  rayoH: '<path d="M9 14h16" stroke="currentColor" stroke-width="1.4"/><circle cx="7" cy="14" r="2.2" fill="none" stroke="currentColor"/>',
+  vertical: '<path d="M14 3v22" stroke="currentColor" stroke-width="1.4"/><circle cx="14" cy="14" r="2.2" fill="#131722" stroke="currentColor"/>',
+  canal: '<path d="M4 17L20 5M8 23L24 11" stroke="currentColor" stroke-width="1.4"/><circle cx="4" cy="17" r="2" fill="#131722" stroke="currentColor"/><circle cx="20" cy="5" r="2" fill="#131722" stroke="currentColor"/>',
+  rect: '<rect x="5" y="8" width="18" height="12" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="5" cy="8" r="2" fill="#131722" stroke="currentColor"/><circle cx="23" cy="20" r="2" fill="#131722" stroke="currentColor"/>',
+  fib: '<path d="M4 6h20M4 11h20M4 16h20M4 22h20" stroke="currentColor" stroke-width="1.2"/><path d="M5 22L23 6" stroke="currentColor" stroke-dasharray="2 2"/>',
+  fibExt: '<path d="M10 6h15M10 12h15M10 18h15" stroke="currentColor" stroke-width="1.2"/><path d="M3 24L8 10L12 18" stroke="currentColor" stroke-width="1.2" fill="none"/>',
+  largo: '<rect x="5" y="5" width="18" height="9" fill="rgba(8,153,129,.4)" stroke="#089981"/><rect x="5" y="14" width="18" height="7" fill="rgba(242,54,69,.4)" stroke="#F23645"/>',
+  corto: '<rect x="5" y="7" width="18" height="7" fill="rgba(242,54,69,.4)" stroke="#F23645"/><rect x="5" y="14" width="18" height="9" fill="rgba(8,153,129,.4)" stroke="#089981"/>',
+  medir: '<path d="M14 4v20M9 9l5-5 5 5M4 14h20" stroke="currentColor" stroke-width="1.3" fill="none"/>',
+  flecha: '<path d="M6 22L21 7M13 7h8v8" stroke="currentColor" stroke-width="1.6" fill="none"/>',
+  texto: '<path d="M7 7h14M14 7v15" stroke="currentColor" stroke-width="1.8"/>',
+  angulo: '<path d="M5 22L22 8M5 22h18" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M13 22a8 8 0 00-2-5" stroke="currentColor" fill="none"/>',
+  fibCanal: '<path d="M3 14L20 4M5 19L22 9M7 24L24 14" stroke="currentColor" stroke-width="1.2"/>',
+  fibZona: '<path d="M5 4v20M8 4v20M11 4v20M15 4v20M21 4v20" stroke="currentColor" stroke-width="1.2"/>',
+  fibAbanico: '<path d="M4 24L24 4M4 24L24 10M4 24L24 16M4 24L18 4M4 24L12 4" stroke="currentColor" stroke-width="1.1"/>',
+  fibCuna: '<path d="M4 24L24 6M4 24L24 20" stroke="currentColor" stroke-width="1.2"/><path d="M12 16a9 9 0 010 6M18 11a15 15 0 010 12" stroke="currentColor" fill="none"/>',
+  gannCaja: '<rect x="4" y="4" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M4 11h20M4 17h20M11 4v20M17 4v20M4 24L24 4" stroke="currentColor" stroke-width=".9"/>',
+  gannAbanico: '<path d="M4 24L24 2M4 24L24 8M4 24L24 14M4 24L24 20M4 24L10 2M4 24L16 2" stroke="currentColor" stroke-width="1.1"/>',
+  xabcd: '<path d="M3 20L8 8L12 16L18 6L24 18" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M3 20L12 16M12 16L24 18" stroke="currentColor" stroke-dasharray="2 2"/>',
+  hch: '<path d="M2 20L6 13L9 17L14 6L18 17L22 13L26 20" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M5 17h20" stroke="currentColor" stroke-dasharray="2 2"/>',
+  abc: '<path d="M3 21L10 7L16 15L25 4" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M3 21L16 15M10 7L25 4" stroke="currentColor" stroke-dasharray="2 2"/>',
+  elliott5: '<path d="M2 22L7 13L10 17L17 5L20 10L26 3" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="7" cy="13" r="1.6" fill="currentColor"/><circle cx="17" cy="5" r="1.6" fill="currentColor"/><circle cx="26" cy="3" r="1.6" fill="currentColor"/>',
+  elliottABC: '<path d="M3 6L10 18L16 11L25 24" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="10" cy="18" r="1.6" fill="currentColor"/><circle cx="16" cy="11" r="1.6" fill="currentColor"/><circle cx="25" cy="24" r="1.6" fill="currentColor"/>',
+  ruta: '<path d="M4 22L10 12L16 18L24 6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M19 6h5v5" stroke="currentColor" stroke-width="1.4" fill="none"/>',
+  triangulo: '<path d="M5 22L14 5L23 22Z" stroke="currentColor" stroke-width="1.4" fill="none"/>',
+  iman: '<path d="M8 6v8a6 6 0 0012 0V6" stroke="currentColor" stroke-width="2.6" fill="none"/><path d="M8 6h3M17 6h3" stroke="currentColor" stroke-width="3"/>',
+  ojo: '<path d="M3 14s4-7 11-7 11 7 11 7-4 7-11 7S3 14 3 14z" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="14" cy="14" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/>',
+  basura: '<path d="M7 9h14M11 9V6h6v3M9 9l1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="1.4"/>',
+};
+const svg = (k, s = 28) => `<svg viewBox="0 0 28 28" width="${s}" height="${s}">${ICON[k]}</svg>`;
+// Grupos de herramientas (como TradingView): el botón usa la última herramienta elegida; la flechita abre la lista completa.
+const GRUPOS = [
+  { n: "Líneas", h: ["linea", "angulo", "rayo", "extendida", "horizontal", "rayoH", "vertical", "canal"] },
+  { n: "Fibonacci y Gann", h: ["fib", "fibExt", "fibCanal", "fibZona", "fibAbanico", "fibCuna", "gannCaja", "gannAbanico"] },
+  { n: "Patrones", h: ["xabcd", "hch", "abc", "elliott5", "elliottABC"] },
+  { n: "Formas", h: ["rect", "triangulo", "ruta", "flecha", "texto"] },
+  { n: "Predicción y medición", h: ["largo", "corto", "medir"] }];
+const ACTUAL = leer("grupos", {});
+
+/* ---------- barra izquierda ---------- */
+function armarIzquierda() {
+  const iz = $("#izq"); let h = "";
+  h += `<button class="herr" data-herr="cursor" aria-label="Cruz">${svg("cursor")}<span class="tip">Cruz</span></button><div class="herr-sep"></div>`;
+  GRUPOS.forEach((g, k) => { const t = ACTUAL[k] && g.h.includes(ACTUAL[k]) ? ACTUAL[k] : g.h[0];
+    h += `<div class="grupo"><button class="herr" data-herr="${t}" data-grupo="${k}" aria-label="${HERRAMIENTAS[t].n}">${svg(t)}<span class="tip">${HERRAMIENTAS[t].n}</span></button><button class="mas" data-menu="${k}" aria-label="Más herramientas de ${g.n}">›</button></div>`; });
+  h += '<div class="herr-sep"></div>' + `<button class="herr" id="bIman" aria-label="Modo imán">${svg("iman")}<span class="tip">Modo imán (pega a OHLC)</span></button>`
+    + `<button class="herr" id="bOcultar" aria-label="Ocultar dibujos">${svg("ojo")}<span class="tip">Ocultar / mostrar dibujos</span></button>`
+    + `<div class="herr-sep"></div><button class="herr" id="bBasura" aria-label="Eliminar">${svg("basura")}<span class="tip">Eliminar dibujos o indicadores</span></button>`;
+  iz.innerHTML = h;
+  iz.addEventListener("click", e => {
+    const mn = e.target.closest("[data-menu]"); if (mn) return menuGrupo(+mn.dataset.menu, mn);
+    const b = e.target.closest("[data-herr]"); if (b) return elegirHerr(b.dataset.herr);
+    if (e.target.closest("#bIman")) { S.iman = !S.iman; $("#bIman").classList.toggle("on", S.iman); }
+    if (e.target.closest("#bOcultar")) { S.ocultar = !S.ocultar; $("#bOcultar").classList.toggle("on", S.ocultar); S.sel = null; barraDib(); pedirDibujo(); }
+    if (e.target.closest("#bBasura")) menuBasura($("#bBasura")); });
+  iz.addEventListener("contextmenu", e => { const b = e.target.closest("[data-grupo]"); if (b) { e.preventDefault(); menuGrupo(+b.dataset.grupo, b); } });
+}
+function menuFlotante(ancla, html, alClic) { cerrarMenu(); const m = document.createElement("div"); m.id = "menuF"; m.className = "menuF"; m.innerHTML = html; document.body.appendChild(m);
+  const r = ancla.getBoundingClientRect(); m.style.left = (r.right + 6) + "px"; m.style.top = Math.max(6, Math.min(innerHeight - m.offsetHeight - 6, r.top)) + "px";
+  m.addEventListener("click", e => { const b = e.target.closest("[data-op]"); if (b) { cerrarMenu(); alClic(b.dataset.op); } });
+  setTimeout(() => document.addEventListener("pointerdown", fueraMenu), 0); }
+function fueraMenu(e) { if (!e.target.closest("#menuF")) cerrarMenu(); }
+function cerrarMenu() { const m = $("#menuF"); if (m) m.remove(); document.removeEventListener("pointerdown", fueraMenu); }
+function menuGrupo(k, ancla) { const g = GRUPOS[k];
+  menuFlotante(ancla.closest(".grupo") || ancla, `<div class="menuT">${g.n}</div>` + g.h.map(t => `<button data-op="${t}" class="${S.herr === t ? "on" : ""}">${svg(t, 22)}<span>${HERRAMIENTAS[t].n}</span></button>`).join(""), t => {
+    ACTUAL[k] = t; guardar("grupos", ACTUAL); const b = document.querySelector(`[data-grupo="${k}"]`); b.dataset.herr = t; b.innerHTML = `${svg(t)}<span class="tip">${HERRAMIENTAS[t].n}</span>`; elegirHerr(t); }); }
+function menuBasura(ancla) {
+  menuFlotante(ancla, `<div class="menuT">Eliminar</div><button data-op="dib">🗑 Eliminar ${S.dib.length} dibujo${S.dib.length === 1 ? "" : "s"}</button><button data-op="ind">📉 Eliminar ${S.inds.length} indicador${S.inds.length === 1 ? "" : "es"}</button><button data-op="todo">✖ Eliminar dibujos e indicadores</button>`, op => {
+    if (op === "dib" || op === "todo") { historia(); S.dib = []; S.sel = null; barraDib(); guardarDib(); }
+    if (op === "ind" || op === "todo") { S.inds = []; S.pesos = {}; guardarInds(); armarDatos(); armarLeyenda(); }
+    pedirDibujo(); }); }
+function confirmar(t) { return window.confirm(t); }
+function elegirHerr(t) { S.herr = t; S.colocando = null; if (t !== "cursor" && S.sel) { S.sel = null; barraDib(); } document.querySelectorAll("[data-herr]").forEach(b => b.classList.toggle("on", b.dataset.herr === t)); cv.style.cursor = "crosshair";
+  const av = $("#avisoHerr"); if (av) { av.hidden = !(t !== "cursor" && HERRAMIENTAS[t] && HERRAMIENTAS[t].pts !== 1); if (!av.hidden) av.textContent = HERRAMIENTAS[t].pts === "multi" ? `${HERRAMIENTAS[t].n}: clic para cada punto · doble clic o Enter para terminar` : `${HERRAMIENTAS[t].n}: marca ${HERRAMIENTAS[t].pts} puntos con clic · Esc para cancelar`; } }
+
+/* ---------- barra de arriba ---------- */
+function armarArriba() {
+  $("#tfs").innerHTML = TFS.map(t => `<button class="tb tf" data-tf="${t.k}">${t.l}</button>`).join("");
+  $("#tfs").addEventListener("click", e => { const b = e.target.closest("[data-tf]"); if (b) cambiarTf(TFS.find(t => t.k === b.dataset.tf)); });
+  $("#bSimbolo").onclick = ventanaSimbolos; $("#bInd").onclick = ventanaIndicadores; $("#bReplay").onclick = iniciarReplay;
+  $("#tipo").onchange = e => { S.tipo = e.target.value; guardar("tipo", S.tipo); armarDatos(); pedirDibujo(); }; $("#tipo").value = S.tipo;
+  $("#tvbtn").onclick = () => window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(S.a.tv)}&interval=${S.tf.k}`, "_blank", "noopener");
+  $("#bFoto").onclick = () => { const a = document.createElement("a"); a.download = `ALEMA_${S.a.s}_${S.tf.l}.png`; a.href = cv.toDataURL("image/png"); a.click(); };
+  $("#bPantalla").onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); } catch (e) {} };
+}
+function marcarArriba() { $("#simbolo").textContent = S.a.s; document.querySelectorAll("[data-tf]").forEach(b => b.classList.toggle("on", b.dataset.tf === S.tf.k)); }
+
+/* ---------- cambiar activo / temporalidad ---------- */
+async function cargar(a, tf, mantenerT) {
+  const tFin = S.replay ? S.todo[S.replay.fin] && S.todo[S.replay.fin].t : null, tDer = mantenerT ? tDeIdx(S.der) : null;
+  S.a = a; S.tf = tf; marcarArriba(); guardar("ultimo", { s: a.s, tf: tf.k });
+  S.todo = await cargarVelas(a, tf); const mu = $("#muestra"); mu.hidden = false;
+  mu.textContent = S.todo.real ? `Velas reales · Yahoo Finanzas · actualizado ${new Date(S.todo.act).toLocaleString("es-MX", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}` : "Datos de muestra";
+  if (S.replay && tFin) { let i = S.todo.findIndex(x => x.t > tFin); S.replay.fin = (i < 0 ? S.todo.length : i) - 1; }
+  S.dib = (leer("dib_" + a.s, []) || []).filter(d => d && d.pts); S.idSig = S.dib.reduce((m, d) => Math.max(m, d.id || 0), 0) + 1; S.sel = null; barraDib();
+  S.escalas = {}; armarDatos();
+  if (tDer && !S.replay) S.der = idxDeT(tDer); else S.der = S.b.length - 1 + 6;
+  armarLeyenda(); pedirDibujo();
+}
+const cambiarTf = tf => cargar(S.a, tf, true);
+const cambiarActivo = a => cargar(a, S.tf, false);
+
+/* ---------- ratón ---------- */
+function posRaton(e) { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+function ptDe(m, conIman = true) { const pa = PANES[0]; let i = Math.round(iDeX(m.x)), p = pDeY(m.y, pa); if (S.iman && conIman) p = iman(i, p, m.y, pa).p; return { t: tDeIdx(i), p }; }
+function separadorEn(y) { return PANES.slice(1).find(p => Math.abs(y - p.top) <= 4); }
+cv.addEventListener("pointerdown", e => {
+  const m = posRaton(e), pw = plotW(); cv.setPointerCapture(e.pointerId); cerrarTexto();
+  if (S.replay && S.replay.eligiendo && m.x < pw) { const i = Math.max(10, Math.min(S.todo.length - 1, Math.round(iDeX(m.x)) + (S.todo.length - S.b.length)));
+    S.replay.eligiendo = false; S.replay.fin = i; $("#replayAviso").hidden = true; $("#replay").hidden = false; armarDatos(); pedirDibujo(); textoReplay(); return; }
+  const sep = separadorEn(m.y); if (sep && m.x < pw) { S.arrastre = { tipo: "separa", pa: sep, y0: m.y }; return; }
+  if (m.x >= pw) { const pa = paneEn(m.y); if (pa) S.arrastre = { tipo: "escalaP", pa, y0: m.y, min: pa.min, max: pa.max }; return; }
+  if (m.y >= H - EJE_T) { S.arrastre = { tipo: "escalaT", x0: m.x, sp: S.sp, iRef: iDeX(pw) }; return; }
+  const pa = paneEn(m.y);
+  // colocar un dibujo
+  if (S.herr !== "cursor" && pa && pa.id === "main") {
+    const pt = ptDe(m), def = HERRAMIENTAS[S.herr];
+    if (S.herr === "texto") { e.preventDefault(); setTimeout(() => abrirTexto(m, pt), 0); return; }
+    if (!S.colocando) { S.colocando = nuevoDibujo(S.herr, pt); if (def.pts === 1) return terminarColocar(); S.colocando.pts.push({ ...pt }); S.arrastre = { tipo: "colocar", x0: m.x, y0: m.y }; pedirDibujo(); return; }
+    if (def.pts === "multi" || S.colocando.pts.length < def.pts) { S.colocando.pts.push({ ...pt }); pedirDibujo(); return; }
+    return terminarColocar();
+  }
+  // tomar un dibujo
+  if (pa && pa.id === "main" && !S.ocultar) {
+    if (S.sel) { const h = agarres(S.sel, pa).find(h => Math.hypot(h.x - m.x, h.y - m.y) <= 8); if (h) { historia(); S.arrastre = { tipo: "agarre", d: S.sel, k: h.k }; return; } }
+    const d = [...S.dib].reverse().find(d => tocar(d, m, pa) <= 6);
+    if (d) { S.sel = d; barraDib(); historia(); S.arrastre = { tipo: "mover", d, base: d.pts.map(p => ({ ...p })), i0: iDeX(m.x), p0: pDeY(m.y, pa), movio: false }; pedirDibujo(); return; }
+  }
+  if (S.sel) { S.sel = null; barraDib(); }
+  S.arrastre = { tipo: "pan", x0: m.x, y0: m.y, der: S.der, pa, min: pa && pa.min, max: pa && pa.max }; cv.style.cursor = "grabbing";
+});
+cv.addEventListener("pointermove", e => {
+  const m = posRaton(e); S.raton = { x: m.x, y: m.y, dentro: true }; const A = S.arrastre;
+  if (!A) { // cursor según zona
+    const pw = plotW(); cv.style.cursor = m.x >= pw ? "ns-resize" : m.y >= H - EJE_T ? "ew-resize" : separadorEn(m.y) ? "row-resize" : S.herr !== "cursor" ? "crosshair" : (PANES[0] && !S.ocultar && S.dib.some(d => tocar(d, m, PANES[0]) <= 6)) ? "pointer" : "crosshair";
+    if (S.colocando) { const k = S.colocando.pts.length - 1; if (S.colocando.tipo !== "largo" && S.colocando.tipo !== "corto") S.colocando.pts[k] = ptDe(m); }
+    return pedirDibujo(); }
+  if (A.tipo === "pan") { S.der = A.der - (m.x - A.x0) / S.sp; limitarDer();
+    const esc = A.pa && S.escalas[A.pa.id]; if (esc && !esc.auto) { const dp = (m.y - A.y0) / A.pa.h * (A.max - A.min); esc.min = A.min + dp; esc.max = A.max + dp; } }
+  else if (A.tipo === "escalaP") { const f = Math.exp((m.y - A.y0) / 120), mid = (A.min + A.max) / 2, r = (A.max - A.min) * f / 2; S.escalas[A.pa.id] = { auto: false, min: mid - r, max: mid + r }; }
+  else if (A.tipo === "escalaT") { S.sp = Math.max(.4, Math.min(60, A.sp * Math.exp((m.x - A.x0) / 160))); S.der = A.iRef; limitarDer(); }
+  else if (A.tipo === "separa") { const i = PANES.indexOf(A.pa), arriba = PANES[i - 1], abajo = A.pa, dy = m.y - A.y0, ha = arriba.h + dy, hb = abajo.h - dy; if (ha > 60 && hb > 50) { const t = arriba.w + abajo.w; S.pesos[arriba.id] = t * ha / (ha + hb); S.pesos[abajo.id] = t * hb / (ha + hb); A.y0 = m.y; } }
+  else if (A.tipo === "colocar") { const k = S.colocando.pts.length - 1; S.colocando.pts[k] = ptDe(m); if (Math.hypot(m.x - A.x0, m.y - A.y0) > 6) A.movio = true; }
+  else if (A.tipo === "agarre") { moverAgarre(A.d, A.k, ptDe(m)); }
+  else if (A.tipo === "mover") { const pa = PANES[0], di = Math.round(iDeX(m.x) - A.i0), dp = pDeY(m.y, pa) - A.p0; moverTodo(A.d, A.base, di, dp); A.movio = true; barraDib(); }
+  pedirDibujo();
+});
+cv.addEventListener("pointerup", e => { const A = S.arrastre; S.arrastre = null; cv.style.cursor = "crosshair";
+  if (A && A.tipo === "colocar" && A.movio && HERRAMIENTAS[S.colocando.tipo].pts === 2) return terminarColocar();
+  if (A && (A.tipo === "agarre" || A.tipo === "mover")) { if (A.tipo === "mover" && !A.movio) S.historial.pop(); guardarDib(); barraDib(); }
+  pedirDibujo(); });
+cv.addEventListener("pointerleave", () => { S.raton.dentro = false; pedirDibujo(); });
+cv.addEventListener("dblclick", e => { const m = posRaton(e);
+  if (m.x >= plotW()) { const pa = paneEn(m.y); if (pa) { S.escalas[pa.id] = { auto: true }; pedirDibujo(); } return; }
+  if (m.y >= H - EJE_T) { S.sp = 8; S.der = S.b.length - 1 + 6; return pedirDibujo(); }
+  if (S.colocando && HERRAMIENTAS[S.colocando.tipo].pts === "multi") return terminarRuta();
+  const pa = PANES[0]; if (!pa || S.ocultar || m.y > pa.top + pa.h) return; const d = [...S.dib].reverse().find(d => tocar(d, m, pa) <= 6); if (!d) return;
+  if (d.tipo === "texto") abrirTexto(m, d.pts[0], d); else ventanaDibujo(d); });
+function terminarRuta() { const d = S.colocando; if (!d) return; d.pts.pop(); // quita el punto que seguía al ratón
+  while (d.pts.length > 2 && Math.abs(idxDeT(d.pts[d.pts.length - 1].t) - idxDeT(d.pts[d.pts.length - 2].t)) < .5 && Math.abs(d.pts[d.pts.length - 1].p - d.pts[d.pts.length - 2].p) < 1e-12) d.pts.pop();
+  if (d.pts.length < 2) { S.colocando = null; return pedirDibujo(); } terminarColocar(); }
+cv.addEventListener("wheel", e => { e.preventDefault(); const m = posRaton(e);
+  if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) { S.der += (e.deltaX || e.deltaY) / S.sp * .6; limitarDer(); return pedirDibujo(); }
+  const ref = m.x < plotW() ? iDeX(m.x) : S.der, xr = m.x < plotW() ? m.x : plotW(); S.sp = Math.max(.4, Math.min(60, S.sp * Math.exp(-e.deltaY * .0015)));
+  S.der = ref + (plotW() - S.sp / 2 - xr) / S.sp; limitarDer(); pedirDibujo(); }, { passive: false });
+function limitarDer() { const n = S.b.length, visibles = plotW() / S.sp; S.der = Math.max(Math.min(10, visibles * .2), Math.min(n - 1 + Math.max(5, visibles * .35), S.der)); }
+function terminarColocar() { const d = S.colocando; S.colocando = null; historia(); S.dib.push(d); S.sel = d; guardarDib(); elegirHerr("cursor"); cv.style.cursor = "crosshair"; barraDib(); pedirDibujo(); }
+document.addEventListener("keydown", e => {
+  if (e.target.closest("input, select, textarea")) return;
+  if (e.key === "Enter" && S.colocando && HERRAMIENTAS[S.colocando.tipo].pts === "multi") return terminarRuta();
+  if (e.key === "Escape") { if (S.colocando && HERRAMIENTAS[S.colocando.tipo].pts === "multi" && S.colocando.pts.length > 2) return terminarRuta(); if (S.colocando) { S.colocando = null; } elegirHerr("cursor"); S.sel = null; barraDib(); cerrarVentana(); cerrarMenu(); pedirDibujo(); }
+  if ((e.key === "Delete" || e.key === "Backspace") && S.sel) { historia(); S.dib = S.dib.filter(d => d !== S.sel); S.sel = null; barraDib(); guardarDib(); pedirDibujo(); }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); deshacer(); }
+  if (e.key === "ArrowRight" && S.replay && !S.replay.eligiendo) { pasoReplay(); }
+  if (e.altKey && /^[a-z]$/i.test(e.key)) { const mapa = { t: "linea", h: "horizontal", v: "vertical", f: "fib", r: "rect" }; if (mapa[e.key.toLowerCase()]) { e.preventDefault(); elegirHerr(mapa[e.key.toLowerCase()]); } }
+});
+window.addEventListener("resize", () => { medir(); pedirDibujo(); });
+
+/* ---------- historial (deshacer) y guardado ---------- */
+function historia() { S.historial.push(JSON.stringify(S.dib)); if (S.historial.length > 60) S.historial.shift(); }
+function deshacer() { const h = S.historial.pop(); if (h == null) return; S.dib = JSON.parse(h); S.sel = null; barraDib(); guardarDib(); pedirDibujo(); }
+function guardarDib() { guardar("dib_" + S.a.s, S.dib); }
+function guardarInds() { guardar("inds", S.inds.map(i => ({ id: i.id, tipo: i.tipo, p: i.p, lineas: i.lineas, visible: i.visible }))); }
+
+/* ---------- texto ---------- */
+function abrirTexto(m, pt, d) { cerrarTexto(); const inp = document.createElement("input"); inp.id = "textoIn"; inp.value = d ? d.texto || "" : ""; inp.placeholder = "Escribe y presiona Enter";
+  inp.style.left = Math.min(m.x, plotW() - 180) + "px"; inp.style.top = (m.y - 14) + "px"; $("#zona").appendChild(inp); inp.focus();
+  let hecho = false;
+  const listo = ok => { if (hecho) return; hecho = true; const v = inp.value.trim(); if (inp.isConnected) inp.remove(); if (!ok || !v) return elegirHerr("cursor");
+    historia(); if (d) d.texto = v; else { const n = nuevoDibujo("texto", pt); n.texto = v; S.dib.push(n); S.sel = n; } guardarDib(); elegirHerr("cursor"); barraDib(); pedirDibujo(); };
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") listo(true); if (e.key === "Escape") listo(false); e.stopPropagation(); }); inp.addEventListener("blur", () => listo(true)); }
+function cerrarTexto() { const t = $("#textoIn"); if (t) t.blur(); }
+
+/* ---------- barra del dibujo seleccionado ---------- */
+function barraDib() {
+  const b = $("#barraDib"), d = S.sel; if (!d || S.ocultar) { b.hidden = true; return; }
+  if (!b.dataset.armada) { b.dataset.armada = 1;
+    b.innerHTML = COLORES.map(c => `<button class="col" data-col="${c}" style="background:${c}" aria-label="Color"></button>`).join("") + '<button data-ancho="1" title="Grosor">━</button><button data-ajustes title="Configuración (o doble clic)">⚙</button><button data-editar title="Editar texto">✎</button><button data-clonar title="Duplicar">⧉</button><button data-borrar title="Borrar" style="color:#F23645">🗑</button>';
+    b.addEventListener("pointerdown", e => e.stopPropagation());
+    b.addEventListener("click", e => { const d = S.sel; if (!d) return; const t = e.target.closest("button"); if (!t) return; historia();
+      if (t.dataset.col) d.color = t.dataset.col; if (t.dataset.ancho) d.ancho = (d.ancho || 2) % 4 + 1;
+      if (t.hasAttribute("data-borrar")) { S.dib = S.dib.filter(x => x !== d); S.sel = null; }
+      if (t.hasAttribute("data-clonar")) { const n = JSON.parse(JSON.stringify(d)); n.id = S.idSig++; n.pts = n.pts.map(p => ({ t: tDeIdx(idxDeT(p.t) + 5), p: p.p })); S.dib.push(n); S.sel = n; }
+      if (t.hasAttribute("data-ajustes")) { S.historial.pop(); return ventanaDibujo(d); }
+      if (t.hasAttribute("data-editar") && d.tipo === "texto") { const P = XY(d.pts[0], PANES[0]); abrirTexto(P, d.pts[0], d); }
+      guardarDib(); barraDib(); pedirDibujo(); }); }
+  b.querySelectorAll("[data-col]").forEach(x => x.classList.toggle("on", x.dataset.col === d.color)); b.querySelector("[data-editar]").hidden = d.tipo !== "texto";
+  const pa = PANES[0]; if (!pa) return; const pts = agarres(d, pa); const top = Math.min(...pts.map(p => p.y)), mx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+  b.hidden = false; b.style.left = Math.max(8, Math.min(plotW() - b.offsetWidth - 8, mx - b.offsetWidth / 2)) + "px"; b.style.top = Math.max(8, top - 56) + "px";
+}
+
+/* ---------- leyenda ---------- */
+function armarLeyenda() {
+  const L = $("#leyenda"); L.innerHTML = `<div class="ley-top"><b id="lNom"></b><span id="lOhlc"></span></div>` + S.inds.filter(i => INDICADORES[i.tipo].panel !== "propio").map(filaLeyenda).join("");
+  document.querySelectorAll(".ley-sub").forEach(x => x.remove());
+  S.inds.filter(i => INDICADORES[i.tipo].panel === "propio").forEach(i => { const d = document.createElement("div"); d.className = "ley-sub"; d.dataset.pane = i.id; d.innerHTML = filaLeyenda(i); $("#zona").appendChild(d); });
+}
+function filaLeyenda(i) { const def = INDICADORES[i.tipo], ps = Object.values(i.p).filter(v => typeof v === "number").join(" ");
+  return `<div class="ley-ind${i.visible === false ? " oculto" : ""}" data-ind="${i.id}"><span class="nom">${def.corto}${ps ? " " + ps : ""}</span><span class="val" data-val="${i.id}"></span>
+    <span class="acc"><button data-ojo="${i.id}" title="Ocultar/mostrar">👁</button><button data-conf="${i.id}" title="Configuración">⚙</button><button data-quitar="${i.id}" title="Quitar">✕</button></span></div>`; }
+document.addEventListener("click", e => { const t = e.target.closest("[data-ojo],[data-conf],[data-quitar]"); if (!t) return; const id = +(t.dataset.ojo || t.dataset.conf || t.dataset.quitar), ind = S.inds.find(i => i.id === id); if (!ind) return;
+  if (t.dataset.ojo) { ind.visible = ind.visible === false; guardarInds(); armarLeyenda(); pedirDibujo(); }
+  if (t.dataset.quitar) { S.inds = S.inds.filter(i => i !== ind); delete S.pesos[id]; guardarInds(); armarDatos(); armarLeyenda(); pedirDibujo(); }
+  if (t.dataset.conf) ventanaConfig(ind); });
+function actualizarLeyenda() {
+  const r = S.raton, i = r.dentro && r.x < plotW() ? Math.max(0, Math.min(S.b.length - 1, Math.round(iDeX(r.x)))) : S.b.length - 1, b = S.b[i]; if (!b) return;
+  const c = b.c >= b.o ? COL.sube : COL.baja, prev = S.b[i - 1], ch = prev ? b.c - prev.c : 0;
+  $("#lNom").textContent = `${S.a.n} · ${S.tf.l} · ALEMA`;
+  $("#lOhlc").innerHTML = `<span class="v">A</span><em style="color:${c}">${fmtP(b.o)}</em> <span class="v">Mx</span><em style="color:${c}">${fmtP(b.h)}</em> <span class="v">Mn</span><em style="color:${c}">${fmtP(b.l)}</em> <span class="v">C</span><em style="color:${c}">${fmtP(b.c)}</em> <em style="color:${c}">${ch >= 0 ? "+" : ""}${fmtP(ch)} (${prev ? (ch / prev.c * 100).toFixed(2) : "0.00"}%)</em>`;
+  S.inds.forEach(ind => { const el = document.querySelector(`[data-val="${ind.id}"]`); if (!el) return; const def = INDICADORES[ind.tipo], est = ind.lineas || def.lineas;
+    if (ind.tipo === "VOL") { el.innerHTML = `<span style="color:${c}">${fmtV(b.v)}</span>`; return; }
+    el.innerHTML = (SERIES[ind.id] || []).map((s, k) => { const v = s[i]; return `<span style="color:${(est[k] || {}).c}">${isFinite(v) ? (def.panel === "precio" ? fmtP(v) : fmtInd(v, ind)) : "∅"}</span>`; }).join(" "); });
+  document.querySelectorAll(".ley-sub").forEach(d => { const pa = PANES.find(p => String(p.id) === d.dataset.pane); if (pa) d.style.top = (pa.top + 4) + "px"; });
+  if (S.sel) barraDib();
+}
+
+/* ---------- ventanas ---------- */
+function abrirVentana(html) { cerrarVentana(); const v = document.createElement("div"); v.className = "velo"; v.id = "velo"; v.innerHTML = `<div class="ven" role="dialog">${html}</div>`; document.body.appendChild(v);
+  v.addEventListener("pointerdown", e => { if (e.target === v) cerrarVentana(); }); v.querySelector("[data-cerrar]") && v.querySelectorAll("[data-cerrar]").forEach(b => b.onclick = cerrarVentana); return v; }
+function cerrarVentana() { const v = $("#velo"); if (v) v.remove(); }
+function ventanaSimbolos() {
+  let merc = "Todos"; const v = abrirVentana(`<header>Buscar activo<button data-cerrar>×</button></header><div class="buscar">🔍<input id="qS" placeholder="Símbolo o nombre" autocomplete="off"></div>
+    <div class="pest">${["Todos"].concat(MERCADOS).map(m => `<button data-m="${m}">${m}</button>`).join("")}</div><div class="lista" id="lS"></div>`);
+  const pintar = () => { const q = $("#qS").value.trim().toLowerCase(); v.querySelectorAll("[data-m]").forEach(b => b.classList.toggle("on", b.dataset.m === merc));
+    $("#lS").innerHTML = ACTIVOS.filter(a => (merc === "Todos" || a.m === merc) && (!q || (a.s + " " + a.n).toLowerCase().includes(q))).map(a => `<button class="fila" data-s="${a.s}"><b>${a.s}</b><span>${a.n}</span><small>${a.m}</small></button>`).join("") || '<p style="padding:10px;color:#787B86">Sin resultados</p>'; };
+  v.addEventListener("click", e => { const m = e.target.closest("[data-m]"); if (m) { merc = m.dataset.m; pintar(); } const s = e.target.closest("[data-s]"); if (s) { cerrarVentana(); cambiarActivo(ACTIVOS.find(a => a.s === s.dataset.s)); } });
+  $("#qS").addEventListener("input", pintar); pintar(); $("#qS").focus();
+}
+function ventanaIndicadores() {
+  const v = abrirVentana(`<header>Indicadores y osciladores<button data-cerrar>×</button></header><div class="buscar">🔍<input id="qI" placeholder="Buscar" autocomplete="off"></div><div class="lista" id="lI"></div>`);
+  const pintar = () => { const q = $("#qI").value.trim().toLowerCase(); $("#lI").innerHTML = Object.entries(INDICADORES).filter(([k, d]) => !q || (d.n + " " + d.corto).toLowerCase().includes(q))
+    .map(([k, d]) => `<button class="fila" data-add="${k}"><b>${d.corto}</b><span>${d.n}</span><small>${d.panel === "propio" ? "Oscilador" : d.panel === "volumen" ? "Volumen" : "Sobre el precio"}</small></button>`).join(""); };
+  v.addEventListener("click", e => { const b = e.target.closest("[data-add]"); if (!b) return; agregarInd(b.dataset.add); b.style.background = "rgba(41,98,255,.18)"; setTimeout(() => b.style.background = "", 400); });
+  $("#qI").addEventListener("input", pintar); pintar(); $("#qI").focus();
+}
+function agregarInd(tipo, p, lineas) { const def = INDICADORES[tipo], id = S.inds.reduce((m, i) => Math.max(m, i.id), 0) + 1;
+  S.inds.push({ id, tipo, p: Object.assign({}, def.p, p || {}), lineas: lineas || def.lineas.map(l => ({ ...l })), visible: true }); guardarInds(); armarDatos(); armarLeyenda(); pedirDibujo(); }
+function ventanaConfig(ind) {
+  const def = INDICADORES[ind.tipo], ps = Object.entries(ind.p), est = ind.lineas || def.lineas;
+  const v = abrirVentana(`<header>${def.n}<button data-cerrar>×</button></header><div class="cuerpo">
+    ${ps.map(([k, val]) => k === "fuente" ? `<label>${NOMBRES_PARAM[k] || k}<select data-p="${k}" style="background:#131722;color:#D1D4DC;border:1px solid #2A2E39;border-radius:4px;padding:6px">${["close", "open", "high", "low", "hl2", "hlc3"].map(f => `<option ${f === val ? "selected" : ""}>${f}</option>`).join("")}</select></label>`
+      : `<label>${NOMBRES_PARAM[k] || k}<input type="number" step="any" data-p="${k}" value="${val}"></label>`).join("")}
+    ${est.map((l, k) => `<label>Color ${l.t || "línea"}<input type="color" data-c="${k}" value="${l.c}"></label>`).join("")}
+    ${!ps.length && !est.length ? "<p>Sin ajustes.</p>" : ""}</div><footer><button data-cerrar>Cancelar</button><button class="pri" id="okC">Aceptar</button></footer>`);
+  $("#okC").onclick = () => { v.querySelectorAll("[data-p]").forEach(x => { const k = x.dataset.p; ind.p[k] = k === "fuente" ? x.value : Math.max(k === "inicio" || k === "paso" || k === "max" || k === "desv" ? .0001 : 1, +x.value || def.p[k]); });
+    ind.lineas = est.map((l, k) => ({ ...l, c: (v.querySelector(`[data-c="${k}"]`) || {}).value || l.c })); guardarInds(); cerrarVentana(); armarDatos(); armarLeyenda(); pedirDibujo(); };
+}
+
+/* ---------- configuración de un dibujo (doble clic): Estilo · Texto · Coordenadas ---------- */
+function ventanaDibujo(orig) {
+  const d = JSON.parse(JSON.stringify(orig)), def = HERRAMIENTAS[d.tipo], conNiv = !!def.niveles; if (conNiv) nivelesDe(d);
+  const esFib = d.tipo === "fib" || d.tipo === "fibExt", conTexto = ["horizontal", "rayoH", "texto"].includes(d.tipo), esPos = d.tipo === "largo" || d.tipo === "corto";
+  const pest = ["Estilo"].concat(conTexto ? ["Texto"] : [], ["Coordenadas"]);
+  const op = (v, t, actual) => `<option value="${v}" ${String(actual) === String(v) ? "selected" : ""}>${t}</option>`;
+  const fila = (et, ctl) => `<div class="cfila"><span>${et}</span><div>${ctl}</div></div>`;
+  const chk = (k, et, val) => `<label class="chk"><input type="checkbox" data-b="${k}" ${val !== false ? "checked" : ""}> ${et}</label>`;
+  const estiloLinea = fila("Línea", `<input type="color" data-k="color" value="${d.color || "#2962FF"}"><select data-k="ancho">${[1, 2, 3, 4].map(w => op(w, `${w}px`, d.ancho || 2)).join("")}</select><select data-k="estilo">${op("solida", "Sólida", d.estilo || "solida")}${op("guiones", "Guiones", d.estilo)}${op("puntos", "Puntos", d.estilo)}</select>`);
+  let estilo = "";
+  if (conNiv) {
+    if (esFib) estilo += fila(chk("tendencia", "Línea de tendencia", d.tendencia), `<input type="color" data-k="colorTend" value="${d.colorTend || "#9598A1"}">`);
+    if (esFib || d.tipo === "fibCanal") estilo += fila("Ampliar", `<select data-k="ext">${op("no", "No ampliar", d.ext || "no")}${op("izq", "Ampliar a la izquierda", d.ext)}${op("der", "Ampliar a la derecha", d.ext)}${op("ambos", "Ampliar a ambos lados", d.ext)}</select>`);
+    else estilo += estiloLinea;
+    estilo += `<div class="niveles">${d.niveles.map((n, i) => `<div class="niv"><input type="checkbox" data-non="${i}" ${n.on ? "checked" : ""}><input type="number" step="any" data-nv="${i}" value="${n.v}"><input type="color" data-nc="${i}" value="${n.c}"></div>`).join("")}</div>`;
+    estilo += fila(chk("fondo", "Fondo", d.fondo), `<input type="range" min="0" max="40" data-k="opacidad" value="${Math.round((d.opacidad ?? .1) * 100)}">`);
+    if (d.tipo === "fib" || d.tipo === "fibCanal") estilo += fila(chk("revertir", "Revertir", d.revertir === true), "");
+    if (esFib) estilo += fila(chk("precios", "Precios", d.precios), "");
+    estilo += fila(chk("niveles_txt", "Niveles", d.niveles_txt), `<select data-k="pct">${op("", "Valores", d.pct ? "1" : "")}${op("1", "Porcentaje", d.pct ? "1" : "")}</select>`);
+    if (esFib) estilo += fila("Etiquetas", `<select data-k="etiq">${op("izq", "Izquierda", d.etiq || "izq")}${op("der", "Derecha", d.etiq)}</select>`);
+    estilo += fila("Tamaño de la fuente", `<select data-k="tam">${[10, 11, 12, 14, 16, 20].map(t => op(t, t, d.tam || 11)).join("")}</select>`);
+  } else if (!esPos && d.tipo !== "medir") {
+    estilo = estiloLinea; if (d.tipo === "horizontal" || d.tipo === "rayoH") estilo += fila(chk("etiquetaPrecio", "Etiqueta de precios", d.etiquetaPrecio), "");
+  } else estilo = '<p class="nota-v">Esta herramienta usa sus colores propios. Ajusta sus precios en Coordenadas.</p>';
+  const texto = conTexto ? fila("Texto", `<input type="text" data-k="texto" value="${(d.texto || "").replace(/"/g, "&quot;")}" placeholder="Escribe un texto" style="width:220px">`) + (d.tipo === "texto" ? fila("Tamaño", `<select data-k="ancho">${[1, 2, 3, 4, 5, 6].map(w => op(w, 14 + (w - 2) * 2 + "px", d.ancho || 2)).join("")}</select>`) : "") : "";
+  const nomPt = esPos ? ["Entrada", "Objetivo (TP)", "Stop (SL)"] : d.tipo === "xabcd" ? ["X", "A", "B", "C", "D"] : d.tipo === "elliott5" ? ["Inicio", "1", "2", "3", "4", "5"] : d.tipo === "elliottABC" ? ["Inicio", "A", "B", "C"] : d.tipo === "abc" ? ["A", "B", "C", "D"] : null;
+  const coords = d.pts.map((p, i) => fila(`${nomPt ? nomPt[i] : d.pts.length > 1 ? "Punto " + (i + 1) : "Precio"}`, `<input type="number" step="any" data-pp="${i}" value="${p.p.toFixed(S.a.d)}" style="width:130px">${d.tipo === "horizontal" || d.tipo === "rayoH" || esPos && i ? "" : `<span class="fecha-p">${fmtT(p.t, true)}</span>`}`)).join("");
+  const v = abrirVentana(`<header><span>${def.n}</span><button data-cerrar>×</button></header><nav class="tabs-d">${pest.map((p, i) => `<button data-tab="${i}" class="${i ? "" : "on"}">${p}</button>`).join("")}</nav>
+    <div class="cuerpo cfg"><section data-sec="0">${estilo}</section>${conTexto ? `<section data-sec="1" hidden>${texto}</section>` : ""}<section data-sec="${pest.length - 1}" hidden>${coords}</section></div>
+    <footer><button data-cerrar>Cancelar</button><button class="pri" id="okD">Aceptar</button></footer>`);
+  v.querySelector(".ven").classList.add("ven-d");
+  v.addEventListener("click", e => { const t = e.target.closest("[data-tab]"); if (!t) return; v.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("on", b === t)); v.querySelectorAll("[data-sec]").forEach(s => s.hidden = s.dataset.sec !== t.dataset.tab); });
+  $("#okD").onclick = () => {
+    v.querySelectorAll("[data-k]").forEach(x => { const k = x.dataset.k; let val = x.value; if (k === "ancho" || k === "tam") val = +val; if (k === "opacidad") val = +val / 100; if (k === "pct") val = !!val; if (k === "ext" && val === "no") val = undefined; d[k] = val; });
+    v.querySelectorAll("[data-b]").forEach(x => d[x.dataset.b] = x.checked);
+    if (conNiv) d.niveles.forEach((n, i) => { n.on = v.querySelector(`[data-non="${i}"]`).checked; const nv = parseFloat(v.querySelector(`[data-nv="${i}"]`).value); if (isFinite(nv)) n.v = nv; n.c = v.querySelector(`[data-nc="${i}"]`).value; });
+    v.querySelectorAll("[data-pp]").forEach(x => { const p = parseFloat(x.value); if (isFinite(p)) d.pts[+x.dataset.pp].p = p; });
+    historia(); Object.keys(orig).forEach(k => delete orig[k]); Object.assign(orig, d); S.sel = orig; guardarDib(); cerrarVentana(); barraDib(); pedirDibujo(); };
+}
+
+/* ---------- repetición (replay) ---------- */
+function iniciarReplay() {
+  if (S.replay) return salirReplay();
+  S.replay = { eligiendo: true, fin: S.todo.length - 1, vel: 1, timer: null }; $("#bReplay").classList.add("on"); $("#replayAviso").hidden = false; elegirHerr("cursor");
+}
+function textoReplay() { const b = S.todo[S.replay.fin]; $("#rFecha").textContent = b ? fmtT(b.t, true) : ""; $("#rPlay").textContent = S.replay.timer ? "⏸" : "▶"; }
+function pasoReplay() { if (!S.replay || S.replay.fin >= S.todo.length - 1) { pausarReplay(); return; } const enVista = iDeX(plotW()) >= S.b.length - 2; S.replay.fin++; armarDatos(); if (enVista) S.der += 1; textoReplay(); pedirDibujo(); }
+function pausarReplay() { if (S.replay && S.replay.timer) { clearInterval(S.replay.timer); S.replay.timer = null; textoReplay(); } }
+function salirReplay() { pausarReplay(); S.replay = null; $("#replay").hidden = true; $("#replayAviso").hidden = true; $("#bReplay").classList.remove("on"); armarDatos(); S.der = S.b.length - 1 + 6; pedirDibujo(); }
+function armarReplay() {
+  $("#rPlay").onclick = () => { if (S.replay.timer) return pausarReplay(); S.replay.timer = setInterval(pasoReplay, 1000 / S.replay.vel); textoReplay(); };
+  $("#rPaso").onclick = () => { pausarReplay(); pasoReplay(); };
+  $("#rInicio").onclick = () => { pausarReplay(); S.replay.eligiendo = true; S.replay.fin = S.todo.length - 1; armarDatos(); $("#replay").hidden = true; $("#replayAviso").hidden = false; pedirDibujo(); };
+  $("#rVel").onchange = e => { S.replay.vel = +e.target.value; if (S.replay.timer) { pausarReplay(); $("#rPlay").click(); } };
+  $("#rSalir").onclick = salirReplay;
+}
+
+/* ---------- inicio ---------- */
+async function iniciar() {
+  armarIzquierda(); armarArriba(); armarReplay(); elegirHerr("cursor"); medir();
+  const guardados = leer("inds", null); if (guardados && guardados.length) S.inds = guardados.filter(i => INDICADORES[i.tipo]).map(i => ({ ...i, p: Object.assign({}, INDICADORES[i.tipo].p, i.p) }));
+  else { agregarInd("VOL"); }
+  const u = leer("ultimo", null), a = u && ACTIVOS.find(x => x.s === u.s) || ACTIVOS[0], tf = u && TFS.find(x => x.k === u.tf) || TFS[5];
+  await cargar(a, tf, false);
+  setInterval(() => { if (!S.replay && !S.arrastre) pedirDibujo(); }, 1000); // cuenta regresiva de la vela
+}
+iniciar();
+
+</script>
+</body>
+</html>

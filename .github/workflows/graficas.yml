@@ -1,0 +1,47 @@
+# ALEMA Gráficas · baja las velas reales (Yahoo Finanzas) y las guarda en la rama "graficas-datos".
+# Esa rama se reescribe cada vez (sin historial), así el repositorio no crece.
+name: ALEMA Gráficas (velas)
+
+on:
+  schedule:
+    - cron: "23 */3 * * *"   # cada 3 horas
+  workflow_dispatch:          # botón "Run workflow" para correrla a mano
+
+permissions:
+  contents: write
+
+concurrency:
+  group: graficas-datos
+  cancel-in-progress: false
+
+jobs:
+  velas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Traer las velas que ya están guardadas
+        run: |
+          mkdir -p datos
+          if git ls-remote --exit-code --heads origin graficas-datos > /dev/null; then
+            git fetch --depth=1 origin graficas-datos
+            git archive FETCH_HEAD | tar -x -C datos
+          fi
+
+      - name: Bajar velas nuevas y juntarlas
+        run: node tools/graficas-datos.mjs datos
+
+      - name: Guardar en la rama graficas-datos (sin historial)
+        run: |
+          cd datos
+          git init -q -b graficas-datos
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Velas $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push -f -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" graficas-datos
