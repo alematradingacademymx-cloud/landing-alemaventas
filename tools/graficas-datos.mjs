@@ -45,7 +45,7 @@ async function yahoo(sym, intervalo, desde, hasta, rango) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=${intervalo}&` + (rango ? `range=${rango}` : `period1=${desde}&period2=${hasta}`) + `&includePrePost=false`;
   for (let intento = 0; intento < 3; intento++) {
     try {
-      const r = await fetch(intento === 1 ? url.replace("query1", "query2") : url, { headers: { "User-Agent": "Mozilla/5.0 (ALEMA Graficas)" } });
+      const r = await fetch(intento === 1 ? url.replace("query1", "query2") : url, { headers: { "User-Agent": "Mozilla/5.0 (ALEMA Graficas)" }, signal: AbortSignal.timeout(20000) });
       if (r.status === 429) { await espera(4000 * (intento + 1)); continue; }
       const j = await r.json(), res = j && j.chart && j.chart.result && j.chart.result[0];
       if (!res || !res.timestamp) return [];
@@ -119,7 +119,8 @@ console.log(`Listo · ${resumen.length} activos`);
 async function duka(instr, ruta) {
   for (let i = 0; i < 3; i++) {
     try {
-      const r = await fetch(`https://datafeed.dukascopy.com/datafeed/${instr}/${ruta}`, { headers: { "User-Agent": "Mozilla/5.0 (ALEMA Graficas)" } });
+      if (Date.now() > LIMITE_DUKA) return null;
+      const r = await fetch(`https://datafeed.dukascopy.com/datafeed/${instr}/${ruta}`, { headers: { "User-Agent": "Mozilla/5.0 (ALEMA Graficas)" }, signal: AbortSignal.timeout(15000) });
       if (r.status === 404) return Buffer.alloc(0);
       if (!r.ok) { await espera(1500 * (i + 1)); continue; }
       const b = Buffer.from(await r.arrayBuffer()); if (!b.length) return b;
@@ -131,27 +132,30 @@ async function duka(instr, ruta) {
 // registros de 24 bytes: segundos desde el inicio del archivo, apertura, cierre, mínimo, máximo (enteros) y volumen (decimal)
 function leerDuka(raw, base) { const out = []; for (let i = 0; i + 24 <= raw.length; i += 24) out.push([base + raw.readUInt32BE(i), raw.readUInt32BE(i + 4), raw.readUInt32BE(i + 16), raw.readUInt32BE(i + 12), raw.readUInt32BE(i + 8), raw.readFloatBE(i + 20)]); return out; }
 function dd(n) { return String(n).padStart(2, "0"); }
+var LIMITE_DUKA = Infinity;
+// baja varios archivos a la vez (8 en paralelo) y devuelve las velas ordenadas
+async function bajarVarios(instr, lista) {
+  const res = new Array(lista.length); let i = 0;
+  await Promise.all(Array.from({ length: 8 }, async () => { while (i < lista.length) { const k = i++, [ruta, base] = lista[k]; const raw = await duka(instr, ruta); res[k] = raw && raw.length ? leerDuka(raw, base) : []; } }));
+  return res.flat();
+}
 async function pruebaDukascopy() {
   try { if (!fs.readFileSync(path.join(DIR, "prueba_resumen.json"), "utf8").includes("error")) return; } catch {}
+  LIMITE_DUKA = Date.now() + 10 * 60000; // como máximo 10 minutos para la prueba
   const PRUEBAS = [["EURUSD", "EURUSD", 5], ["GER40", "DEUIDXEUR", 2], ["NVDA", "NVDAUSUSD", 2]], res = {};
   for (const [s, instr, d] of PRUEBAS) {
     const r = res[s] = { instr };
     try {
       const ref = leer(`${s}_60.json`), refC = ref.length ? ref[ref.length - 1][4] : null;
       // 1 hora: un archivo por mes desde 2012
-      let h1 = [];
-      for (let y = 2012; y <= new Date().getUTCFullYear(); y++) for (let m = 0; m < 12; m++) {
-        const base = Date.UTC(y, m, 1) / 1000; if (base > ahora) break;
-        const raw = await duka(instr, `${y}/${dd(m)}/BID_candles_hour_1.bi5`); await espera(120);
-        if (raw && raw.length) h1 = h1.concat(leerDuka(raw, base));
-      }
+      const lh = [];
+      for (let y = 2012; y <= new Date().getUTCFullYear(); y++) for (let m = 0; m < 12; m++) { const base = Date.UTC(y, m, 1) / 1000; if (base <= ahora) lh.push([`${y}/${dd(m)}/BID_candles_hour_1.bi5`, base]); }
+      const h1 = await bajarVarios(instr, lh);
       // 1 minuto: un archivo por día, últimos 30 días
-      let m1 = [];
-      for (let k = 30; k >= 0; k--) {
-        const t = new Date((ahora - k * 86400) * 1000), base = Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate()) / 1000;
-        const raw = await duka(instr, `${t.getUTCFullYear()}/${dd(t.getUTCMonth())}/${dd(t.getUTCDate())}/BID_candles_min_1.bi5`); await espera(120);
-        if (raw && raw.length) m1 = m1.concat(leerDuka(raw, base));
-      }
+      const lm = [];
+      for (let k = 30; k >= 0; k--) { const t = new Date((ahora - k * 86400) * 1000), base = Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate()) / 1000;
+        lm.push([`${t.getUTCFullYear()}/${dd(t.getUTCMonth())}/${dd(t.getUTCDate())}/BID_candles_min_1.bi5`, base]); }
+      const m1 = await bajarVarios(instr, lm);
       // escala de precio: la potencia de 10 que más se acerca al último cierre de Yahoo
       const ultimo = (h1.length ? h1 : m1).slice(-1)[0];
       const esc = ultimo && refC ? 10 ** Math.round(Math.log10(ultimo[4] / refC)) : 10 ** d;
@@ -159,7 +163,7 @@ async function pruebaDukascopy() {
       const H1 = conv(h1), M1 = conv(m1);
       if (H1.length) escribir(`prueba_${s}`, "60", H1, d);
       if (M1.length) escribir(`prueba_${s}`, "1", M1, d);
-      Object.assign(r, { escala: esc, refYahoo: refC, ultimoDuka: ultimo ? ultimo[4] / esc : null,
+      Object.assign(r, { completo: Date.now() <= LIMITE_DUKA, escala: esc, refYahoo: refC, ultimoDuka: ultimo ? ultimo[4] / esc : null,
         h1: H1.length, h1Desde: H1.length ? new Date(H1[0][0] * 1000).toISOString() : null, h1ConVolumen: H1.length ? Math.round(100 * H1.filter(v => v[5] > 0).length / H1.length) : 0,
         m1: M1.length, m1ConVolumen: M1.length ? Math.round(100 * M1.filter(v => v[5] > 0).length / M1.length) : 0 });
     } catch (e) { r.error = String(e && e.message || e); }
