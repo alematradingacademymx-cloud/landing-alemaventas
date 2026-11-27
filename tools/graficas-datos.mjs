@@ -97,8 +97,11 @@ for (const [s, sym, d, horario] of ACTIVOS) {
   for (const a of ARMAR) { const base = leer(`${s}_${a.de}.json`); if (!base.length) continue; const v = armar(base, a.min, horario, d); escribir(s, a.tf, v.slice(-a.max), d); fila.push(`${a.tf}:${v.length}`); }
   for (const g of LARGOS) {
     try {
-      const viejas = leer(`${s}_${g.tf}.json`);
-      const nuevas = await yahoo(sym, g.y, 0, 0, viejas.length ? (g.tf === "D" ? "3mo" : "1y") : "max"); await espera(350);
+      let viejas = leer(`${s}_${g.tf}.json`);
+      // si lo guardado no es diario/semanal (Yahoo con "range=max" lo manda mensual), se vuelve a bajar completo
+      if (viejas.length > 2) { const sep = viejas.slice(1).map((v, i) => v[0] - viejas[i][0]).sort((a, b) => a - b)[Math.floor(viejas.length / 2)]; if (sep > (g.tf === "D" ? 5 : 10) * 86400) viejas = []; }
+      // periodo desde 1900 (así Yahoo manda velas diarias/semanales de todo el historial, no mensuales)
+      const nuevas = await yahoo(sym, g.y, viejas.length ? ahora - (g.tf === "D" ? 100 : 400) * 86400 : -2208994789, ahora + 86400); await espera(350);
       // Yahoo marca la vela del día/semana en curso con la hora actual: se alinea con las anteriores para no duplicarla
       const norm = nuevas.map(v => v.slice()), paso = g.tf === "D" ? 86400 : 604800, n = norm.length;
       if (n > 1) { const p = norm[n - 2][0], dt = norm[n - 1][0] - p; if (dt % paso) norm[n - 1][0] = p + Math.max(1, Math.floor(dt / paso)) * paso; }
@@ -140,10 +143,12 @@ async function bajarVarios(instr, lista) {
   return res.flat();
 }
 async function pruebaDukascopy() {
-  try { if (!fs.readFileSync(path.join(DIR, "prueba_resumen.json"), "utf8").includes("error")) return; } catch {}
+  let res = {}; try { res = JSON.parse(fs.readFileSync(path.join(DIR, "prueba_resumen.json"), "utf8")); } catch {}
   LIMITE_DUKA = Date.now() + 10 * 60000; // como máximo 10 minutos para la prueba
-  const PRUEBAS = [["EURUSD", "EURUSD", 5], ["GER40", "DEUIDXEUR", 2], ["NVDA", "NVDAUSUSD", 2]], res = {};
+  const PRUEBAS = [["EURUSD", "EURUSD", 5], ["GER40", "DEUIDXEUR", 2], ["NVDA", "NVDAUSUSD", 2]];
+  if (PRUEBAS.every(([s]) => res[s] && res[s].completo && !res[s].error)) return; // ya se hizo completa
   for (const [s, instr, d] of PRUEBAS) {
+    if (res[s] && res[s].completo && !res[s].error) continue;
     const r = res[s] = { instr };
     try {
       const ref = leer(`${s}_60.json`), refC = ref.length ? ref[ref.length - 1][4] : null;
