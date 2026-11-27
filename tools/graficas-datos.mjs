@@ -5,6 +5,7 @@
 //   en "ticks" de 10^-d. Así cada archivo pesa ~3 veces menos que con precios completos.
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 const DIR = process.argv[2] || "datos";
 fs.mkdirSync(DIR, { recursive: true });
@@ -28,6 +29,8 @@ const BAJAR = [
   { tf: "60", y: "60m", dias: 729, trozo: 729, max: 40000 },
 ];
 const ARMAR = [{ tf: "45", de: "15", min: 45, max: 20000 }, { tf: "240", de: "60", min: 240, max: 12000 }];
+// diario y semanal: Yahoo da todo el historial (décadas)
+const LARGOS = [{ tf: "D", y: "1d", max: 20000 }, { tf: "W", y: "1wk", max: 5000 }];
 
 const espera = ms => new Promise(r => setTimeout(r, ms));
 function leer(f) { try { const j = JSON.parse(fs.readFileSync(path.join(DIR, f), "utf8")), e = 10 ** j.d, out = []; let t = j.t0, pc = null;
@@ -38,8 +41,8 @@ function escribir(s, tf, velas, d) {
     k.push([Math.round((t - tp) / 60), pc === null ? O : O - pc, Math.max(0, H - O), Math.max(0, O - L), C - O, Math.round(v)]); pc = C; tp = t; }
   fs.writeFileSync(path.join(DIR, `${s}_${tf}.json`), JSON.stringify({ s, tf, d, act: Math.floor(Date.now() / 1000), t0: velas.length ? velas[0][0] : 0, k })); }
 
-async function yahoo(sym, intervalo, desde, hasta) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=${intervalo}&period1=${desde}&period2=${hasta}&includePrePost=false`;
+async function yahoo(sym, intervalo, desde, hasta, rango) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=${intervalo}&` + (rango ? `range=${rango}` : `period1=${desde}&period2=${hasta}`) + `&includePrePost=false`;
   for (let intento = 0; intento < 3; intento++) {
     try {
       const r = await fetch(intento === 1 ? url.replace("query1", "query2") : url, { headers: { "User-Agent": "Mozilla/5.0 (ALEMA Graficas)" } });
@@ -92,8 +95,75 @@ for (const [s, sym, d, horario] of ACTIVOS) {
     fila.push(`${b.tf}:${velas.length}(+${nuevas.length})`);
   }
   for (const a of ARMAR) { const base = leer(`${s}_${a.de}.json`); if (!base.length) continue; const v = armar(base, a.min, horario, d); escribir(s, a.tf, v.slice(-a.max), d); fila.push(`${a.tf}:${v.length}`); }
+  for (const g of LARGOS) {
+    try {
+      const viejas = leer(`${s}_${g.tf}.json`);
+      const nuevas = await yahoo(sym, g.y, 0, 0, viejas.length ? (g.tf === "D" ? "3mo" : "1y") : "max"); await espera(350);
+      // Yahoo marca la vela del día/semana en curso con la hora actual: se alinea con las anteriores para no duplicarla
+      const norm = nuevas.map(v => v.slice()), paso = g.tf === "D" ? 86400 : 604800, n = norm.length;
+      if (n > 1) { const p = norm[n - 2][0], dt = norm[n - 1][0] - p; if (dt % paso) norm[n - 1][0] = p + Math.max(1, Math.floor(dt / paso)) * paso; }
+      const velas = juntar(viejas.filter(v => !norm.length || v[0] < norm[0][0]), norm, d, g.max);
+      if (velas.length) escribir(s, g.tf, velas, d);
+      fila.push(`${g.tf}:${velas.length}`);
+    } catch (e) { fila.push(`${g.tf}:error`); }
+  }
   resumen.push(fila.join("  ")); console.log(fila.join("  "));
 }
+await pruebaDukascopy();
 fs.writeFileSync(path.join(DIR, "indice.json"), JSON.stringify({ act: ahora, activos: ACTIVOS.map(a => a[0]) }));
 fs.writeFileSync(path.join(DIR, "README.md"), "Velas de ALEMA Gráficas (Yahoo Finanzas). Esta rama la reescribe la tarea automática; no la edites a mano.\n");
 console.log(`Listo · ${resumen.length} activos`);
+
+/* ---------- PRUEBA Dukascopy (volumen de ticks + historial largo) ----------
+   Solo genera archivos "prueba_*.json" para revisarlos; la página todavía no los usa. Corre una sola vez (si ya existe prueba_resumen.json no repite). */
+async function duka(instr, ruta) {
+  for (let i = 0; i < 3; i++) {
+    try {
+      const r = await fetch(`https://datafeed.dukascopy.com/datafeed/${instr}/${ruta}`, { headers: { "User-Agent": "Mozilla/5.0 (ALEMA Graficas)" } });
+      if (r.status === 404) return Buffer.alloc(0);
+      if (!r.ok) { await espera(1500 * (i + 1)); continue; }
+      const b = Buffer.from(await r.arrayBuffer()); if (!b.length) return b;
+      return execFileSync("xz", ["--format=lzma", "-dc"], { input: b, maxBuffer: 64 << 20 });
+    } catch (e) { await espera(1500 * (i + 1)); }
+  }
+  return null;
+}
+// registros de 24 bytes: segundos desde el inicio del archivo, apertura, cierre, mínimo, máximo (enteros) y volumen (decimal)
+function leerDuka(raw, base) { const out = []; for (let i = 0; i + 24 <= raw.length; i += 24) out.push([base + raw.readUInt32BE(i), raw.readUInt32BE(i + 4), raw.readUInt32BE(i + 16), raw.readUInt32BE(i + 12), raw.readUInt32BE(i + 8), raw.readFloatBE(i + 20)]); return out; }
+function dd(n) { return String(n).padStart(2, "0"); }
+async function pruebaDukascopy() {
+  try { if (!fs.readFileSync(path.join(DIR, "prueba_resumen.json"), "utf8").includes("error")) return; } catch {}
+  const PRUEBAS = [["EURUSD", "EURUSD", 5], ["GER40", "DEUIDXEUR", 2], ["NVDA", "NVDAUSUSD", 2]], res = {};
+  for (const [s, instr, d] of PRUEBAS) {
+    const r = res[s] = { instr };
+    try {
+      const ref = leer(`${s}_60.json`), refC = ref.length ? ref[ref.length - 1][4] : null;
+      // 1 hora: un archivo por mes desde 2012
+      let h1 = [];
+      for (let y = 2012; y <= new Date().getUTCFullYear(); y++) for (let m = 0; m < 12; m++) {
+        const base = Date.UTC(y, m, 1) / 1000; if (base > ahora) break;
+        const raw = await duka(instr, `${y}/${dd(m)}/BID_candles_hour_1.bi5`); await espera(120);
+        if (raw && raw.length) h1 = h1.concat(leerDuka(raw, base));
+      }
+      // 1 minuto: un archivo por día, últimos 30 días
+      let m1 = [];
+      for (let k = 30; k >= 0; k--) {
+        const t = new Date((ahora - k * 86400) * 1000), base = Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate()) / 1000;
+        const raw = await duka(instr, `${t.getUTCFullYear()}/${dd(t.getUTCMonth())}/${dd(t.getUTCDate())}/BID_candles_min_1.bi5`); await espera(120);
+        if (raw && raw.length) m1 = m1.concat(leerDuka(raw, base));
+      }
+      // escala de precio: la potencia de 10 que más se acerca al último cierre de Yahoo
+      const ultimo = (h1.length ? h1 : m1).slice(-1)[0];
+      const esc = ultimo && refC ? 10 ** Math.round(Math.log10(ultimo[4] / refC)) : 10 ** d;
+      const conv = arr => arr.filter(v => v[5] > 0 || v[1] !== v[4]).map(([t, o, h, l, c, v]) => [t, o / esc, h / esc, l / esc, c / esc, Math.round(v * 1000)]);
+      const H1 = conv(h1), M1 = conv(m1);
+      if (H1.length) escribir(`prueba_${s}`, "60", H1, d);
+      if (M1.length) escribir(`prueba_${s}`, "1", M1, d);
+      Object.assign(r, { escala: esc, refYahoo: refC, ultimoDuka: ultimo ? ultimo[4] / esc : null,
+        h1: H1.length, h1Desde: H1.length ? new Date(H1[0][0] * 1000).toISOString() : null, h1ConVolumen: H1.length ? Math.round(100 * H1.filter(v => v[5] > 0).length / H1.length) : 0,
+        m1: M1.length, m1ConVolumen: M1.length ? Math.round(100 * M1.filter(v => v[5] > 0).length / M1.length) : 0 });
+    } catch (e) { r.error = String(e && e.message || e); }
+    console.log("Prueba Dukascopy", s, JSON.stringify(r));
+  }
+  fs.writeFileSync(path.join(DIR, "prueba_resumen.json"), JSON.stringify(res, null, 1));
+}
