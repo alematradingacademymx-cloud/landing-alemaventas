@@ -85,7 +85,7 @@ const ahora = Math.floor(Date.now() / 1000);
    Solo genera archivos "prueba_*.json" para revisarlos; la página todavía no los usa. Corre una sola vez (si ya existe prueba_resumen.json no repite). */
 var ACTIVAS = 0, COLA = [];
 async function duka(instr, ruta) {
-  if (ACTIVAS >= 16) await new Promise(r => COLA.push(r)); else ACTIVAS++;
+  if (ACTIVAS >= 24) await new Promise(r => COLA.push(r)); else ACTIVAS++;
   try { return await duka0(instr, ruta); } finally { const r = COLA.shift(); if (r) r(); else ACTIVAS--; }
 }
 async function duka0(instr, ruta) {
@@ -153,7 +153,7 @@ async function pruebaDukascopy() {
 const DUKA = { EURUSD: "EURUSD", GBPUSD: "GBPUSD", USDJPY: "USDJPY", USDCHF: "USDCHF", AUDUSD: "AUDUSD", USDCAD: "USDCAD", NZDUSD: "NZDUSD",
   EURJPY: "EURJPY", GBPJPY: "GBPJPY", USDMXN: "USDMXN", XAUUSD: "XAUUSD", XAGUSD: "XAGUSD", USOIL: "LIGHTCMDUSD", UKOIL: "BRENTCMDUSD",
   NATGAS: "GASCMDUSD", GER40: "DEUIDXEUR", JP225: "JPNIDXJPY" };
-const DUKA_MIN = +(process.env.DUKA_MIN || 22), DIAS_ATRAS = 420, DESDE_ANIO = 2012;
+const DUKA_MIN = +(process.env.DUKA_MIN || 28), DIAS_ATRAS = 420, DESDE_ANIO = 2012;
 const TOPES = { "1": 60000, "5": 60000, "15": 40000, "45": 20000, "60": 100000, "240": 25000, D: 6000, W: 1500 };
 function leerTicks(raw, base) { const out = []; for (let i = 0; i + 20 <= raw.length; i += 20) out.push([base + Math.floor(raw.readUInt32BE(i) / 1000), raw.readUInt32BE(i + 8), raw.readFloatBE(i + 16)]); return out; }
 function ticksAMinutos(ticks) { const m = new Map(); for (const [t, p, v] of ticks) { const k = t - t % 60, c = m.get(k); if (!c) m.set(k, [k, p, p, p, p, v]); else { c[2] = Math.max(c[2], p); c[3] = Math.min(c[3], p); c[4] = p; c[5] += v; } } return [...m.values()].sort((a, b) => a[0] - b[0]); }
@@ -207,9 +207,16 @@ async function dukascopy() {
     } catch (err) { console.log("Dukascopy", s, "error", String(err && err.message || err)); }
   }));
   guardarEstado();
-  // 2) historial de 1 hora por meses cerrados (del más reciente al más viejo) y 3) días viejos de 1 minuto (para 5m y 15m)
+  // 2) días viejos de 1 minuto, del más reciente al más viejo (dan historial a 1m, 5m, 15m, 45m, 1h y 4h) y 3) meses de 1 hora (1h, 4h, 1D y 1S hasta 2012)
   const historial = async ([s, , d, horario]) => {
     const e = est[s]; if (!e || !e.esc) return;
+    while (Date.now() < LIMITE_DUKA) {
+      const lote = [];
+      for (let k = 5; k <= DIAS_ATRAS && lote.length < 8; k++) { const dia = hoy - k * 86400, txt = diaTxt(dia); if (new Date(dia * 1000).getUTCDay() === 6 || e.dias.includes(txt)) continue; lote.push([dia, txt]); }
+      if (!lote.length) break;
+      const res = await Promise.all(lote.map(async ([dia, txt]) => { const raw = await duka(DUKA[s], `${rutaDia(dia)}/BID_candles_min_1.bi5`); if (raw !== null) e.dias.push(txt); return raw && raw.length ? leerDuka(raw, dia) : []; }));
+      const m1 = conv(e, res.flat().filter(vale)); if (m1.length) actualizarDk(s, d, horario, m1);
+    }
     while (Date.now() < LIMITE_DUKA) {
       const hoyD = new Date(ahora * 1000); let y = hoyD.getUTCFullYear(), m = hoyD.getUTCMonth() - 1; if (m < 0) { m = 11; y--; }
       const lote = [];
@@ -217,13 +224,6 @@ async function dukascopy() {
       if (!lote.length) break;
       const res = await Promise.all(lote.map(async ([ruta, base, id]) => { const raw = await duka(DUKA[s], ruta); if (raw !== null) e.meses.push(id); return raw && raw.length ? leerDuka(raw, base) : []; }));
       const h1 = conv(e, res.flat().filter(vale)); if (h1.length) actualizarDk(s, d, horario, h1);
-    }
-    while (Date.now() < LIMITE_DUKA) {
-      const lote = [];
-      for (let k = 5; k <= DIAS_ATRAS && lote.length < 8; k++) { const dia = hoy - k * 86400, txt = diaTxt(dia); if (new Date(dia * 1000).getUTCDay() === 6 || e.dias.includes(txt)) continue; lote.push([dia, txt]); }
-      if (!lote.length) break;
-      const res = await Promise.all(lote.map(async ([dia, txt]) => { const raw = await duka(DUKA[s], `${rutaDia(dia)}/BID_candles_min_1.bi5`); if (raw !== null) e.dias.push(txt); return raw && raw.length ? leerDuka(raw, dia) : []; }));
-      const m1 = conv(e, res.flat().filter(vale)); if (m1.length) actualizarDk(s, d, horario, m1);
     }
   };
   const reloj = setInterval(guardarEstado, 60000);
