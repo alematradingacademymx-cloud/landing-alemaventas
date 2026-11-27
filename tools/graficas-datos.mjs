@@ -83,7 +83,12 @@ const ahora = Math.floor(Date.now() / 1000);
 
 /* ---------- PRUEBA Dukascopy (volumen de ticks + historial largo) ----------
    Solo genera archivos "prueba_*.json" para revisarlos; la página todavía no los usa. Corre una sola vez (si ya existe prueba_resumen.json no repite). */
+var ACTIVAS = 0, COLA = [];
 async function duka(instr, ruta) {
+  if (ACTIVAS >= 16) await new Promise(r => COLA.push(r)); else ACTIVAS++;
+  try { return await duka0(instr, ruta); } finally { const r = COLA.shift(); if (r) r(); else ACTIVAS--; }
+}
+async function duka0(instr, ruta) {
   for (let i = 0; i < 3; i++) {
     try {
       if (Date.now() > LIMITE_DUKA) return null;
@@ -165,71 +170,69 @@ async function dukascopy() {
   let est = {}; try { est = JSON.parse(fs.readFileSync(path.join(DIR, "dk_estado.json"), "utf8")); } catch {}
   const guardarEstado = () => fs.writeFileSync(path.join(DIR, "dk_estado.json"), JSON.stringify(est));
   const hoy = Math.floor(ahora / 86400) * 86400, lista = ACTIVOS.filter(a => DUKA[a[0]]);
-  const conv = (e, arr) => arr.map(([t, o, h, l, c, v]) => [t, o / e.esc, h / e.esc, l / e.esc, c / e.esc, Math.round(v * 1000)]);
-  // 1) escala de precio (una vez) y velas recientes: días cerrados con archivo de 1 minuto, el resto con ticks por hora
-  for (const [s, , d, horario] of lista) {
-    const instr = DUKA[s], e = est[s] = est[s] || { dias: [], horas: [], meses: [] };
+  // versión 2: el volumen se guarda con un factor por activo (antes x1000 fijo); lo de la versión anterior se borra
+  for (const [s] of lista) if (est[s] && est[s].v !== 2) { delete est[s]; for (const f of fs.readdirSync(DIR)) if (f.startsWith(`dk_${s}_`)) fs.unlinkSync(path.join(DIR, f)); }
+  const conv = (e, arr) => arr.map(([t, o, h, l, c, v]) => [t, o / e.esc, h / e.esc, l / e.esc, c / e.esc, Math.round(v * e.vf)]);
+  const vale = v => v[5] > 0 || v[1] !== v[4];
+  // 1) escala de precio y de volumen (una vez) + velas recientes (días cerrados con archivo de 1 minuto; el día en curso con ticks por hora)
+  await Promise.all(lista.map(async ([s, , d, horario]) => {
+    const instr = DUKA[s], e = est[s] = est[s] || { v: 2, dias: [], horas: [], meses: [] };
     try {
       if (!e.esc) {
-        const y1 = leer(`${s}_1.json`); if (!y1.length) continue;
+        const y1 = leer(`${s}_1.json`); if (!y1.length) return;
         const m = new Map(y1.map(v => [v[0], v[4]]));
         for (let k = 1; k <= 6 && !e.esc; k++) { const raw = await duka(instr, `${rutaDia(hoy - k * 86400)}/BID_candles_min_1.bi5`); if (!raw || !raw.length) continue;
-          const v = leerDuka(raw, hoy - k * 86400).find(x => m.has(x[0])); if (v) e.esc = 10 ** Math.round(Math.log10(v[4] / m.get(v[0]))); }
-        if (!e.esc) continue;
+          const velas = leerDuka(raw, hoy - k * 86400), v = velas.find(x => m.has(x[0])); if (!v) continue;
+          e.esc = 10 ** Math.round(Math.log10(v[4] / m.get(v[0])));
+          const vols = velas.map(x => x[5]).filter(x => x > 0).sort((a, b) => a - b), med = vols[vols.length >> 1] || 1;
+          e.vf = 10 ** Math.max(0, Math.ceil(3 - Math.log10(med))); // que el volumen típico de 1 minuto quede en cientos/miles
+          const h = 13, tk = await duka(instr, `${rutaDia(hoy - k * 86400)}/${dd(h)}h_ticks.bi5`);
+          if (tk && tk.length) { const a = velas.filter(x => x[0] >= hoy - k * 86400 + h * 3600 && x[0] < hoy - k * 86400 + (h + 1) * 3600).reduce((z, x) => z + x[5], 0), b = leerTicks(tk, 0).reduce((z, x) => z + x[2], 0); if (a > 0 && b > 0) e.volTicks = a / b; } }
+        if (!e.esc) return;
       }
-      if (!e.volTicks) for (let k = 1; k <= 6 && !e.volTicks; k++) { const dia = hoy - k * 86400, raw = await duka(instr, `${rutaDia(dia)}/BID_candles_min_1.bi5`); if (!raw || !raw.length) continue;
-        const h = 13, tk = await duka(instr, `${rutaDia(dia)}/${dd(h)}h_ticks.bi5`); if (!tk || !tk.length) continue;
-        const a = leerDuka(raw, dia).filter(v => v[0] >= dia + h * 3600 && v[0] < dia + (h + 1) * 3600).reduce((x, v) => x + v[5], 0), b = leerTicks(tk, dia + h * 3600).reduce((x, v) => x + v[2], 0);
-        if (a > 0 && b > 0) e.volTicks = a / b; }
       let nuevas = [];
       for (let k = 4; k >= 0; k--) { // últimos 4 días + hoy
         const dia = hoy - k * 86400, txt = diaTxt(dia); if (e.dias.includes(txt)) continue;
         if (k > 0) { const raw = await duka(instr, `${rutaDia(dia)}/BID_candles_min_1.bi5`);
-          if (raw && raw.length) { nuevas = nuevas.concat(conv(e, leerDuka(raw, dia).filter(v => v[5] > 0 || v[1] !== v[4]))); e.dias.push(txt); continue; }
+          if (raw && raw.length) { nuevas = nuevas.concat(conv(e, leerDuka(raw, dia).filter(vale))); e.dias.push(txt); continue; }
           if (raw && !raw.length) { e.dias.push(txt); continue; } } // fin de semana / feriado
-        // día en curso (o archivo del día aún no publicado): ticks por hora ya cerrada
-        const hMax = k === 0 ? Math.floor((ahora - dia) / 3600) - 1 : 23;
-        for (let h = 0; h <= hMax; h++) { const id = `${txt}T${dd(h)}`; if (e.horas.includes(id)) continue;
-          const raw = await duka(instr, `${rutaDia(dia)}/${dd(h)}h_ticks.bi5`); if (!raw) break;
-          nuevas = nuevas.concat(conv(e, ticksAMinutos(leerTicks(raw, dia + h * 3600)).map(v => (v[5] *= e.volTicks || 1, v)))); e.horas.push(id); }
+        const hMax = k === 0 ? Math.floor((ahora - dia) / 3600) - 1 : 23, horas = [];
+        for (let h = 0; h <= hMax; h++) if (!e.horas.includes(`${txt}T${dd(h)}`)) horas.push(h);
+        const res = await Promise.all(horas.map(async h => { const raw = await duka(instr, `${rutaDia(dia)}/${dd(h)}h_ticks.bi5`); if (raw === false || raw === null) return [];
+          e.horas.push(`${txt}T${dd(h)}`); return ticksAMinutos(leerTicks(raw, dia + h * 3600)).map(v => (v[5] *= e.volTicks || 1, v)); }));
+        nuevas = nuevas.concat(conv(e, res.flat()));
       }
       e.dias = e.dias.slice(-DIAS_ATRAS - 10); e.horas = e.horas.filter(x => x >= diaTxt(hoy - 6 * 86400));
-      if (nuevas.length) actualizarDk(s, d, horario, nuevas, true);
+      if (nuevas.length) actualizarDk(s, d, horario, nuevas);
     } catch (err) { console.log("Dukascopy", s, "error", String(err && err.message || err)); }
-  }
+  }));
   guardarEstado();
-  // 2) historial de 1 hora por meses cerrados (del más reciente al más viejo), por turnos entre activos
-  let hubo = true;
-  while (hubo && Date.now() < LIMITE_DUKA) { hubo = false;
-    for (const [s, , d, horario] of lista) { const e = est[s]; if (!e || !e.esc || Date.now() > LIMITE_DUKA) continue;
+  // 2) historial de 1 hora por meses cerrados (del más reciente al más viejo) y 3) días viejos de 1 minuto (para 5m y 15m)
+  const historial = async ([s, , d, horario]) => {
+    const e = est[s]; if (!e || !e.esc) return;
+    while (Date.now() < LIMITE_DUKA) {
       const hoyD = new Date(ahora * 1000); let y = hoyD.getUTCFullYear(), m = hoyD.getUTCMonth() - 1; if (m < 0) { m = 11; y--; }
       const lote = [];
-      while (y >= DESDE_ANIO && lote.length < 12) { const id = `${y}-${dd(m)}`; if (!e.meses.includes(id)) lote.push([`${y}/${dd(m)}/BID_candles_hour_1.bi5`, Date.UTC(y, m, 1) / 1000, id]); if (--m < 0) { m = 11; y--; } }
-      if (!lote.length) continue; hubo = true;
+      while (y >= DESDE_ANIO && lote.length < 6) { const id = `${y}-${dd(m)}`; if (!e.meses.includes(id)) lote.push([`${y}/${dd(m)}/BID_candles_hour_1.bi5`, Date.UTC(y, m, 1) / 1000, id]); if (--m < 0) { m = 11; y--; } }
+      if (!lote.length) break;
       const res = await Promise.all(lote.map(async ([ruta, base, id]) => { const raw = await duka(DUKA[s], ruta); if (raw !== null) e.meses.push(id); return raw && raw.length ? leerDuka(raw, base) : []; }));
-      const h1 = conv(e, res.flat().filter(v => v[5] > 0 || v[1] !== v[4]));
-      if (h1.length) actualizarDk(s, d, horario, h1, false);
-      guardarEstado(); }
-  }
-  // 3) días viejos de 1 minuto (para que 5m y 15m tengan más historial), del más reciente al más viejo
-  hubo = true;
-  while (hubo && Date.now() < LIMITE_DUKA) { hubo = false;
-    for (const [s, , d, horario] of lista) { const e = est[s]; if (!e || !e.esc || Date.now() > LIMITE_DUKA) continue;
+      const h1 = conv(e, res.flat().filter(vale)); if (h1.length) actualizarDk(s, d, horario, h1);
+    }
+    while (Date.now() < LIMITE_DUKA) {
       const lote = [];
-      for (let k = 5; k <= DIAS_ATRAS && lote.length < 16; k++) { const dia = hoy - k * 86400, txt = diaTxt(dia), wd = new Date(dia * 1000).getUTCDay();
-        if (wd === 6 || e.dias.includes(txt)) continue; lote.push([dia, txt]); }
-      if (!lote.length) continue; hubo = true;
+      for (let k = 5; k <= DIAS_ATRAS && lote.length < 8; k++) { const dia = hoy - k * 86400, txt = diaTxt(dia); if (new Date(dia * 1000).getUTCDay() === 6 || e.dias.includes(txt)) continue; lote.push([dia, txt]); }
+      if (!lote.length) break;
       const res = await Promise.all(lote.map(async ([dia, txt]) => { const raw = await duka(DUKA[s], `${rutaDia(dia)}/BID_candles_min_1.bi5`); if (raw !== null) e.dias.push(txt); return raw && raw.length ? leerDuka(raw, dia) : []; }));
-      const m1 = conv(e, res.flat().filter(v => v[5] > 0 || v[1] !== v[4]).sort((a, b) => a[0] - b[0]));
-      if (m1.length) actualizarDk(s, d, horario, m1, false);
-      guardarEstado(); }
-  }
-  guardarEstado();
-  const fila = lista.map(([s]) => { const e = est[s] || {}; return `${s}: escala ${e.esc || "?"} · meses ${e.meses ? e.meses.length : 0} · días ${e.dias ? e.dias.length : 0}`; });
-  console.log("Dukascopy\n" + fila.join("\n"));
+      const m1 = conv(e, res.flat().filter(vale)); if (m1.length) actualizarDk(s, d, horario, m1);
+    }
+  };
+  const reloj = setInterval(guardarEstado, 60000);
+  await Promise.all(lista.map(historial));
+  clearInterval(reloj); guardarEstado();
+  console.log("Dukascopy\n" + lista.map(([s]) => { const e = est[s] || {}; return `${s}: escala ${e.esc || "?"} · vol x${e.vf || "?"} · meses ${e.meses ? e.meses.length : 0} · días ${e.dias ? e.dias.length : 0}`; }).join("\n"));
 }
 // junta velas nuevas de 1 minuto (o de 1 hora) en los archivos dk_ y rearma las temporalidades
-function actualizarDk(s, d, horario, velas, esMinuto) {
+function actualizarDk(s, d, horario, velas) {
   const ord = velas.sort((a, b) => a[0] - b[0]);
   const meter = (tf, nuevas) => { if (!nuevas.length) return; const v = juntar(leer(`dk_${s}_${tf}.json`), nuevas, d, TOPES[tf]); escribir(`dk_${s}`, tf, v, d); };
   const esM1 = ord.length > 1 && ord.slice(1).some((v, i) => v[0] - ord[i][0] < 3600);
