@@ -1,0 +1,38 @@
+{
+ "EURUSD": {
+  "instr": "EURUSD",
+  "completo": true,
+  "escala": 100000,
+  "refYahoo": 1.09806,
+  "ultimoDuka": 1.1155,
+  "h1": 92480,
+  "h1Desde": "2012-01-01T22:00:00.000Z",
+  "h1ConVolumen": 100,
+  "m1": 30129,
+  "m1ConVolumen": 100
+ },
+ "GER40": {
+  "instr": "DEUIDXEUR",
+  "completo": true,
+  "escala": 1000,
+  "refYahoo": 25215.52,
+  "ultimoDuka": 25775.699,
+  "h1": 69103,
+  "h1Desde": "2013-09-30T14:00:00.000Z",
+  "h1ConVolumen": 99,
+  "m1": 19904,
+  "m1ConVolumen": 100
+ },
+ "NVDA": {
+  "instr": "NVDAUSUSD",
+  "completo": true,
+  "escala": 1000,
+  "refYahoo": 149.3,
+  "ultimoDuka": 204.786,
+  "h1": 12170,
+  "h1Desde": "2017-05-01T13:00:00.000Z",
+  "h1ConVolumen": 100,
+  "m1": 7672,
+  "m1ConVolumen": 100
+ }
+}
